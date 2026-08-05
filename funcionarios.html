@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Funcionários | AutoLog ERP</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+    body{display:flex;min-height:100vh;background:#edf2f7;color:#172033}
+    .sidebar{position:fixed;inset:0 auto 0 0;width:240px;padding:24px 18px;background:#071d49;color:#fff}
+    .sidebar h2{margin-bottom:28px}
+    .sidebar a{display:block;margin-bottom:8px;padding:12px 14px;border-radius:8px;color:#fff;text-decoration:none}
+    .sidebar a:hover,.sidebar a.active{background:#0b5ed7}
+    .main{width:calc(100% - 240px);margin-left:240px;padding:28px}
+    .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+    .header p{margin-top:5px;color:#667085}
+    .card{margin-bottom:20px;padding:22px;background:#fff;border-radius:14px;box-shadow:0 8px 24px rgba(7,29,73,.08)}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .field{display:flex;flex-direction:column;gap:7px}
+    .field label{font-size:14px;font-weight:bold}
+    .field input,.field select{height:44px;padding:0 12px;border:1px solid #d5ddea;border-radius:8px}
+    .actions{display:flex;gap:10px;margin-top:18px}
+    button{padding:11px 16px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}
+    .primary{background:#0b5ed7;color:#fff}
+    .secondary{background:#e9eef5;color:#172033}
+    .toolbar{display:flex;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .toolbar input{width:320px;max-width:100%;height:42px;padding:0 12px;border:1px solid #d5ddea;border-radius:8px}
+    .counter{padding:10px 12px;border-radius:8px;background:#e9f2ff;color:#0b5ed7;font-weight:bold}
+    .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:collapse}
+    th{padding:12px;background:#0b5ed7;color:#fff;text-align:left}
+    td{padding:12px;border-bottom:1px solid #edf0f5}
+    .status{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:bold}
+    .ativo{background:#d9f7e8;color:#087443}.inativo{background:#ffe2e2;color:#b42318}
+    .edit{background:#fff1cc;color:#8a5a00}.delete{background:#ffe2e2;color:#b42318}
+    .empty{padding:28px;text-align:center;color:#667085}
+    @media(max-width:900px){body{display:block}.sidebar{position:static;width:100%;height:auto}.main{width:100%;margin-left:0}.grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:600px){.grid{grid-template-columns:1fr}.header,.toolbar{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <h2>🚛 AutoLog ERP</h2>
+    <a href="dashboard.html">🏠 Dashboard</a>
+    <a href="#">📦 Conferência</a>
+    <a class="active" href="funcionarios.html">👥 Funcionários</a>
+    <a href="#">📈 Desempenho</a>
+    <a href="#">📋 Relatórios</a>
+    <a href="#">⚙ Configurações</a>
+  </aside>
+
+  <main class="main">
+    <header class="header">
+      <div>
+        <h1>Funcionários</h1>
+        <p>Cadastre e gerencie os colaboradores da operação.</p>
+      </div>
+      <a href="dashboard.html">Voltar ao dashboard</a>
+    </header>
+
+    <section class="card">
+      <h2 id="formTitle">Novo funcionário</h2>
+      <form id="employeeForm">
+        <input type="hidden" id="employeeId">
+        <div class="grid">
+          <div class="field"><label>Nome completo</label><input id="nome" required></div>
+          <div class="field"><label>Matrícula</label><input id="matricula" required></div>
+          <div class="field">
+            <label>Cargo</label>
+            <select id="cargo" required>
+              <option value="">Selecione</option>
+              <option>Conferente</option>
+              <option>Auxiliar de logística</option>
+              <option>Operador de estoque</option>
+              <option>Líder</option>
+              <option>Supervisor</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Setor</label>
+            <select id="setor" required>
+              <option value="">Selecione</option>
+              <option>Recebimento</option>
+              <option>Conferência</option>
+              <option>Armazenagem</option>
+              <option>Separação</option>
+              <option>Expedição</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Turno</label>
+            <select id="turno" required>
+              <option value="">Selecione</option>
+              <option>Manhã</option>
+              <option>Tarde</option>
+              <option>Noite</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="status" required>
+              <option>Ativo</option>
+              <option>Inativo</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="primary" type="submit">Salvar funcionário</button>
+          <button class="secondary" id="cancelButton" type="button" hidden>Cancelar edição</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Funcionários cadastrados</h2>
+      <div class="toolbar">
+        <input id="searchInput" type="search" placeholder="Pesquisar nome ou matrícula">
+        <span class="counter" id="employeeCounter">0 funcionário(s)</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Nome</th><th>Matrícula</th><th>Cargo</th><th>Setor</th><th>Turno</th><th>Status</th><th>Ações</th></tr>
+          </thead>
+          <tbody id="employeeTableBody"></tbody>
+        </table>
+        <p class="empty" id="emptyMessage">Nenhum funcionário cadastrado.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const storageKey = "autolog-funcionarios";
+    const form = document.getElementById("employeeForm");
+    const tableBody = document.getElementById("employeeTableBody");
+    const searchInput = document.getElementById("searchInput");
+    const emptyMessage = document.getElementById("emptyMessage");
+    const employeeCounter = document.getElementById("employeeCounter");
+    const formTitle = document.getElementById("formTitle");
+    const cancelButton = document.getElementById("cancelButton");
+
+    let funcionarios = JSON.parse(localStorage.getItem(storageKey)) || [
+      {id: crypto.randomUUID(), nome:"João Silva", matricula:"001", cargo:"Conferente", setor:"Conferência", turno:"Manhã", status:"Ativo"},
+      {id: crypto.randomUUID(), nome:"Carlos Henrique", matricula:"002", cargo:"Auxiliar de logística", setor:"Recebimento", turno:"Tarde", status:"Ativo"}
+    ];
+
+    function salvarDados(){localStorage.setItem(storageKey, JSON.stringify(funcionarios));}
+
+    function renderizarFuncionarios(filtro=""){
+      const termo = filtro.toLowerCase().trim();
+      const lista = funcionarios.filter(f => f.nome.toLowerCase().includes(termo) || f.matricula.toLowerCase().includes(termo));
+      tableBody.innerHTML = "";
+
+      lista.forEach(f => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${f.nome}</td><td>${f.matricula}</td><td>${f.cargo}</td><td>${f.setor}</td><td>${f.turno}</td>
+          <td><span class="status ${f.status.toLowerCase()}">${f.status}</span></td>
+          <td>
+            <button class="edit" onclick="editarFuncionario('${f.id}')">Editar</button>
+            <button class="delete" onclick="excluirFuncionario('${f.id}')">Excluir</button>
+          </td>`;
+        tableBody.appendChild(tr);
+      });
+
+      emptyMessage.style.display = lista.length ? "none" : "block";
+      employeeCounter.textContent = `${funcionarios.length} funcionário(s)`;
+    }
+
+    function limparFormulario(){
+      form.reset();
+      document.getElementById("employeeId").value = "";
+      document.getElementById("status").value = "Ativo";
+      formTitle.textContent = "Novo funcionário";
+      cancelButton.hidden = true;
+    }
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const id = document.getElementById("employeeId").value;
+      const funcionario = {
+        id: id || crypto.randomUUID(),
+        nome: document.getElementById("nome").value.trim(),
+        matricula: document.getElementById("matricula").value.trim(),
+        cargo: document.getElementById("cargo").value,
+        setor: document.getElementById("setor").value,
+        turno: document.getElementById("turno").value,
+        status: document.getElementById("status").value
+      };
+
+      const duplicada = funcionarios.some(item => item.matricula === funcionario.matricula && item.id !== funcionario.id);
+      if (duplicada){alert("Já existe um funcionário com essa matrícula."); return;}
+
+      if (id){
+        const i = funcionarios.findIndex(item => item.id === id);
+        funcionarios[i] = funcionario;
+      } else {
+        funcionarios.push(funcionario);
+      }
+
+      salvarDados();
+      limparFormulario();
+      renderizarFuncionarios(searchInput.value);
+    });
+
+    function editarFuncionario(id){
+      const f = funcionarios.find(item => item.id === id);
+      document.getElementById("employeeId").value = f.id;
+      document.getElementById("nome").value = f.nome;
+      document.getElementById("matricula").value = f.matricula;
+      document.getElementById("cargo").value = f.cargo;
+      document.getElementById("setor").value = f.setor;
+      document.getElementById("turno").value = f.turno;
+      document.getElementById("status").value = f.status;
+      formTitle.textContent = "Editar funcionário";
+      cancelButton.hidden = false;
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function excluirFuncionario(id){
+      if (!confirm("Deseja realmente excluir este funcionário?")) return;
+      funcionarios = funcionarios.filter(item => item.id !== id);
+      salvarDados();
+      renderizarFuncionarios(searchInput.value);
+    }
+
+    searchInput.addEventListener("input", () => renderizarFuncionarios(searchInput.value));
+    cancelButton.addEventListener("click", limparFormulario);
+
+    salvarDados();
+    renderizarFuncionarios();
+  </script>
+</body>
+</html>

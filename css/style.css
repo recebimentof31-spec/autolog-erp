@@ -1,0 +1,84 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #06172d, #0b4c91);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 390px;
+    padding: 40px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.logo {
+    text-align: center;
+    color: #0b5ed7;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.logo span {
+    display: block;
+    margin-top: 5px;
+    color: #667085;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+h2 {
+    margin: 30px 0 24px;
+    text-align: center;
+    color: #172033;
+}
+
+input {
+    width: 100%;
+    margin-bottom: 18px;
+    padding: 15px;
+    border: 1px solid #d0d7e2;
+    border-radius: 9px;
+    outline: none;
+    font-size: 16px;
+}
+
+input:focus {
+    border-color: #0b5ed7;
+    box-shadow: 0 0 0 4px rgba(11, 94, 215, 0.12);
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 9px;
+    background: #0b5ed7;
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #084298;
+}
+
+#mensagem {
+    min-height: 20px;
+    margin-top: 15px;
+    text-align: center;
+    color: #dc3545;
+    font-size: 14px;
+}
