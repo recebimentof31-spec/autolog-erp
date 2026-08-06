@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conferência | AutoLog ERP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{display:flex;min-height:100vh;background:#edf2f7;color:#172033}
+aside{position:fixed;inset:0 auto 0 0;width:240px;background:#071d49;color:white;padding:24px 18px}
+aside h2{margin-bottom:28px}
+aside a{display:block;color:white;text-decoration:none;padding:12px 14px;margin-bottom:8px;border-radius:8px}
+aside a:hover,aside a.active{background:#0b5ed7}
+main{margin-left:240px;width:calc(100% - 240px);padding:28px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.card{background:white;border-radius:14px;padding:22px;margin-bottom:20px;box-shadow:0 8px 24px rgba(7,29,73,.08)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field.full{grid-column:1/-1}
+input,select,textarea{padding:11px 12px;border:1px solid #d5ddea;border-radius:8px}
+textarea{min-height:90px}
+.actions{display:flex;gap:10px;margin-top:18px}
+button{padding:10px 14px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}
+.primary{background:#0b5ed7;color:white}
+.secondary{background:#e9eef5}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi{background:white;padding:18px;border-radius:12px}
+.kpi span{display:block;color:#667085;font-size:13px}
+.kpi strong{display:block;margin-top:8px;font-size:28px;color:#0b5ed7}
+.toolbar{display:flex;justify-content:space-between;gap:12px;margin-bottom:14px}
+.toolbar input{width:340px}
+table{width:100%;border-collapse:collapse}
+th{background:#0b5ed7;color:white;text-align:left;padding:12px}
+td{padding:12px;border-bottom:1px solid #edf0f5}
+.status{padding:5px 9px;border-radius:999px;font-size:12px;font-weight:bold}
+.concluida{background:#d9f7e8;color:#087443}
+.pendente{background:#fff1cc;color:#8a5a00}
+.com-divergencia{background:#ffe2e2;color:#b42318}
+.edit{background:#fff1cc}.delete{background:#ffe2e2}
+@media(max-width:900px){body{display:block}aside{position:static;width:100%}main{margin-left:0;width:100%}.grid{grid-template-columns:1fr 1fr}.kpis{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.grid,.kpis{grid-template-columns:1fr}header,.toolbar{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<aside>
+<h2>🚛 AutoLog ERP</h2>
+<a href="dashboard.html">🏠 Dashboard</a>
+<a class="active" href="conferencia.html">📦 Conferência</a>
+<a href="funcionarios.html">👥 Funcionários</a>
+<a href="#">📈 Desempenho</a>
+<a href="#">📋 Relatórios</a>
+<a href="#">⚙ Configurações</a>
+</aside>
+
+<main>
+<header>
+<div><h1>Conferência de Mercadorias</h1><p>Registre e acompanhe as conferências.</p></div>
+<a href="dashboard.html">Voltar ao dashboard</a>
+</header>
+
+<section class="kpis">
+<div class="kpi"><span>Total</span><strong id="kpiTotal">0</strong></div>
+<div class="kpi"><span>Concluídas</span><strong id="kpiConcluidas">0</strong></div>
+<div class="kpi"><span>Com divergência</span><strong id="kpiDivergencias">0</strong></div>
+<div class="kpi"><span>Volumes</span><strong id="kpiVolumes">0</strong></div>
+</section>
+
+<section class="card">
+<h2 id="formTitle">Nova conferência</h2>
+<form id="conferenceForm">
+<input type="hidden" id="conferenceId">
+<div class="grid">
+<div class="field"><label>Nota fiscal</label><input id="notaFiscal" required></div>
+<div class="field"><label>Fornecedor</label><input id="fornecedor" required></div>
+<div class="field"><label>Transportadora</label><input id="transportadora" required></div>
+<div class="field"><label>Volumes</label><input id="volumes" type="number" min="1" required></div>
+<div class="field"><label>Conferente</label><select id="conferente" required><option value="">Selecione</option></select></div>
+<div class="field"><label>Status</label><select id="status"><option>Concluída</option><option>Pendente</option><option>Com divergência</option></select></div>
+<div class="field"><label>Data</label><input id="data" type="date" required></div>
+<div class="field"><label>Início</label><input id="horaInicio" type="time" required></div>
+<div class="field"><label>Fim</label><input id="horaFim" type="time" required></div>
+<div class="field full"><label>Divergências</label><textarea id="divergencias"></textarea></div>
+<div class="field full"><label>Observações</label><textarea id="observacoes"></textarea></div>
+</div>
+<div class="actions">
+<button class="primary" type="submit">Salvar conferência</button>
+<button class="secondary" id="cancelButton" type="button" hidden>Cancelar edição</button>
+</div>
+</form>
+</section>
+
+<section class="card">
+<h2>Conferências registradas</h2>
+<div class="toolbar">
+<input id="searchInput" type="search" placeholder="Pesquisar NF, fornecedor ou conferente">
+<strong id="conferenceCounter">0 conferência(s)</strong>
+</div>
+<div style="overflow:auto">
+<table>
+<thead><tr><th>Data</th><th>NF</th><th>Fornecedor</th><th>Volumes</th><th>Conferente</th><th>Tempo</th><th>Status</th><th>Ações</th></tr></thead>
+<tbody id="conferenceTableBody"></tbody>
+</table>
+<p id="emptyMessage" style="padding:28px;text-align:center;color:#667085">Nenhuma conferência registrada.</p>
+</div>
+</section>
+</main>
+
+<script>
+const key="autolog-conferencias", employeeKey="autolog-funcionarios";
+const form=document.querySelector("#conferenceForm"),tbody=document.querySelector("#conferenceTableBody"),search=document.querySelector("#searchInput");
+const select=document.querySelector("#conferente"),cancel=document.querySelector("#cancelButton"),title=document.querySelector("#formTitle");
+let data=JSON.parse(localStorage.getItem(key))||[];
+
+function loadEmployees(){
+  const employees=JSON.parse(localStorage.getItem(employeeKey))||[];
+  select.innerHTML='<option value="">Selecione</option>';
+  employees.filter(e=>e.status==="Ativo").forEach(e=>{
+    const o=document.createElement("option");o.value=e.nome;o.textContent=`${e.nome} - ${e.matricula}`;select.appendChild(o);
+  });
+}
+function save(){localStorage.setItem(key,JSON.stringify(data))}
+function duration(a,b){
+  if(!a||!b)return"-";
+  const [h1,m1]=a.split(":").map(Number),[h2,m2]=b.split(":").map(Number);
+  let t=h2*60+m2-(h1*60+m1);if(t<0)t+=1440;
+  return t>=60?`${Math.floor(t/60)}h ${t%60}min`:`${t}min`;
+}
+function statusClass(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replaceAll(" ","-")}
+function render(filter=""){
+  const term=filter.toLowerCase();
+  const list=data.filter(c=>c.notaFiscal.toLowerCase().includes(term)||c.fornecedor.toLowerCase().includes(term)||c.conferente.toLowerCase().includes(term));
+  tbody.innerHTML="";
+  list.forEach(c=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${c.data.split("-").reverse().join("/")}</td><td>${c.notaFiscal}</td><td>${c.fornecedor}</td><td>${c.volumes}</td><td>${c.conferente}</td><td>${duration(c.horaInicio,c.horaFim)}</td><td><span class="status ${statusClass(c.status)}">${c.status}</span></td><td><button class="edit" onclick="editItem('${c.id}')">Editar</button> <button class="delete" onclick="deleteItem('${c.id}')">Excluir</button></td>`;
+    tbody.appendChild(tr);
+  });
+  document.querySelector("#emptyMessage").style.display=list.length?"none":"block";
+  document.querySelector("#conferenceCounter").textContent=`${data.length} conferência(s)`;
+  document.querySelector("#kpiTotal").textContent=data.length;
+  document.querySelector("#kpiConcluidas").textContent=data.filter(c=>c.status==="Concluída").length;
+  document.querySelector("#kpiDivergencias").textContent=data.filter(c=>c.status==="Com divergência").length;
+  document.querySelector("#kpiVolumes").textContent=data.reduce((s,c)=>s+Number(c.volumes||0),0);
+}
+function clearForm(){
+  form.reset();document.querySelector("#conferenceId").value="";
+  document.querySelector("#data").value=new Date().toISOString().slice(0,10);
+  document.querySelector("#status").value="Concluída";title.textContent="Nova conferência";cancel.hidden=true;
+}
+form.addEventListener("submit",e=>{
+  e.preventDefault();
+  const id=document.querySelector("#conferenceId").value;
+  const item={id:id||crypto.randomUUID(),notaFiscal:document.querySelector("#notaFiscal").value.trim(),fornecedor:document.querySelector("#fornecedor").value.trim(),transportadora:document.querySelector("#transportadora").value.trim(),volumes:Number(document.querySelector("#volumes").value),conferente:select.value,status:document.querySelector("#status").value,data:document.querySelector("#data").value,horaInicio:document.querySelector("#horaInicio").value,horaFim:document.querySelector("#horaFim").value,divergencias:document.querySelector("#divergencias").value.trim(),observacoes:document.querySelector("#observacoes").value.trim()};
+  if(data.some(x=>x.notaFiscal===item.notaFiscal&&x.id!==item.id)){alert("Já existe uma conferência para essa nota fiscal.");return}
+  if(id)data[data.findIndex(x=>x.id===id)]=item;else data.push(item);
+  save();clearForm();render(search.value);
+});
+function editItem(id){
+  const c=data.find(x=>x.id===id);
+  ["notaFiscal","fornecedor","transportadora","volumes","conferente","status","data","horaInicio","horaFim","divergencias","observacoes"].forEach(k=>document.querySelector("#"+k).value=c[k]);
+  document.querySelector("#conferenceId").value=c.id;title.textContent="Editar conferência";cancel.hidden=false;scrollTo({top:0,behavior:"smooth"});
+}
+function deleteItem(id){if(confirm("Excluir esta conferência?")){data=data.filter(x=>x.id!==id);save();render(search.value)}}
+search.addEventListener("input",()=>render(search.value));cancel.addEventListener("click",clearForm);
+loadEmployees();clearForm();save();render();
+</script>
+</body>
+</html>
