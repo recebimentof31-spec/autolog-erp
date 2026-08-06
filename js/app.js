@@ -19,3 +19,5 @@ function login(){
     }
 
 }
+console.log("Supabase conectado!");
+console.log(supabase);
