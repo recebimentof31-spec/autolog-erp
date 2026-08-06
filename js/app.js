@@ -1,23 +1,43 @@
-function login(){
+async function login() {
+  const email = document.getElementById("usuario").value.trim();
+  const senha = document.getElementById("senha").value;
+  const mensagem = document.getElementById("mensagem");
 
-    let usuario = document.getElementById("usuario").value;
+  mensagem.textContent = "";
 
-    let senha = document.getElementById("senha").value;
+  if (!email || !senha) {
+    mensagem.textContent = "Informe o e-mail e a senha.";
+    return;
+  }
 
-    if(usuario=="admin" && senha=="1234"){
+  mensagem.textContent = "Entrando...";
 
-        window.location.href = "dashboard.html";
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: senha
+  });
 
-    
+  if (error) {
+    console.error(error);
+    mensagem.textContent = "E-mail ou senha incorretos.";
+    return;
+  }
 
-    }
-
-    else{
-
-        document.getElementById("mensagem").innerHTML="Usuário ou senha incorretos.";
-
-    }
-
+  if (data.session) {
+    window.location.href = "dashboard.html";
+  }
 }
-console.log("Supabase conectado!");
-console.log(supabase);
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const { data } = await supabase.auth.getSession();
+
+  if (data.session) {
+    window.location.href = "dashboard.html";
+  }
+
+  document.getElementById("senha")?.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      login();
+    }
+  });
+});
