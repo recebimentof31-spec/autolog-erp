@@ -12,7 +12,7 @@ async function login() {
 
   mensagem.textContent = "Entrando...";
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
     email: email,
     password: senha
   });
@@ -29,7 +29,7 @@ async function login() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const { data } = await supabase.auth.getSession();
+ const { data } = await supabaseClient.auth.getSession();
 
   if (data.session) {
     window.location.href = "dashboard.html";
