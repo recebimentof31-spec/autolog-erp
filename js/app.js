@@ -4,11 +4,14 @@ async function login() {
   const mensagem = document.getElementById("mensagem");
 
   mensagem.textContent = "";
+if (error) {
+  console.error("Erro do Supabase:", error);
 
-  if (!email || !senha) {
-    mensagem.textContent = "Informe o e-mail e a senha.";
-    return;
-  }
+  mensagem.textContent =
+    `${error.message} | código: ${error.code || "sem código"}`;
+
+  return;
+}
 
   mensagem.textContent = "Entrando...";
 
