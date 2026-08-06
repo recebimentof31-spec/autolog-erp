@@ -4,25 +4,26 @@ async function login() {
   const mensagem = document.getElementById("mensagem");
 
   mensagem.textContent = "";
-if (error) {
-  console.error("Erro do Supabase:", error);
 
-  mensagem.textContent =
-    `${error.message} | código: ${error.code || "sem código"}`;
-
-  return;
-}
+  if (!email || !senha) {
+    mensagem.textContent = "Informe o e-mail e a senha.";
+    return;
+  }
 
   mensagem.textContent = "Entrando...";
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email: email,
-    password: senha
-  });
+  const { data, error } =
+    await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: senha
+    });
 
   if (error) {
-    console.error(error);
-    mensagem.textContent = "E-mail ou senha incorretos.";
+    console.error("Erro do Supabase:", error);
+
+    mensagem.textContent =
+      `${error.message} | código: ${error.code || "sem código"}`;
+
     return;
   }
 
@@ -32,15 +33,23 @@ if (error) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
- const { data } = await supabaseClient.auth.getSession();
+  const { data, error } =
+    await supabaseClient.auth.getSession();
+
+  if (error) {
+    console.error("Erro ao verificar sessão:", error);
+    return;
+  }
 
   if (data.session) {
     window.location.href = "dashboard.html";
   }
 
-  document.getElementById("senha")?.addEventListener("keydown", event => {
-    if (event.key === "Enter") {
-      login();
-    }
-  });
+  document
+    .getElementById("senha")
+    ?.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        login();
+      }
+    });
 });
