@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desempenho | AutoLog ERP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{display:flex;min-height:100vh;background:#edf2f7;color:#172033}
+aside{position:fixed;inset:0 auto 0 0;width:240px;background:#071d49;color:#fff;padding:24px 18px}
+aside h2{margin-bottom:28px}aside a{display:block;color:#fff;text-decoration:none;padding:12px 14px;margin-bottom:8px;border-radius:8px}
+aside a:hover,aside a.active{background:#0b5ed7}
+main{margin-left:240px;width:calc(100% - 240px);padding:28px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+header p{margin-top:5px;color:#667085}.back{padding:10px 14px;border-radius:8px;background:#071d49;color:#fff;text-decoration:none}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi,.card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 8px 24px rgba(7,29,73,.08)}
+.kpi span{display:block;color:#667085;font-size:13px}.kpi strong{display:block;margin-top:8px;font-size:28px;color:#0b5ed7}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}.card h2{margin-bottom:16px}
+table{width:100%;border-collapse:collapse}th{background:#0b5ed7;color:#fff;text-align:left;padding:12px}td{padding:12px;border-bottom:1px solid #edf0f5}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:bold}
+.excelente{background:#d9f7e8;color:#087443}.bom{background:#e9f2ff;color:#0b5ed7}.atencao{background:#fff1cc;color:#8a5a00}.critico{background:#ffe2e2;color:#b42318}
+.bar-row{margin-bottom:16px}.bar-label{display:flex;justify-content:space-between;margin-bottom:6px;font-size:14px}.bar{height:12px;background:#e9eef5;border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;background:#0b5ed7}
+.empty{padding:28px;text-align:center;color:#667085}
+@media(max-width:1000px){.kpis{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
+@media(max-width:900px){body{display:block}aside{position:static;width:100%}main{margin-left:0;width:100%}}
+@media(max-width:600px){.kpis{grid-template-columns:1fr}header{flex-direction:column;align-items:flex-start;gap:12px}}
+</style></head>
+<body>
+<aside><h2>🚛 AutoLog ERP</h2>
+<a href="dashboard.html">🏠 Dashboard</a>
+<a href="conferencia.html">📦 Conferência</a>
+<a href="funcionarios.html">👥 Funcionários</a>
+<a class="active" href="desempenho.html">📈 Desempenho</a>
+<a href="relatorios.html">📋 Relatórios</a>
+<a href="configuracoes.html">⚙ Configurações</a></aside>
+<main>
+<header><div><h1>Desempenho da Equipe</h1><p>Indicadores calculados com base nas conferências registradas.</p></div><a class="back" href="dashboard.html">Voltar ao dashboard</a></header>
+<section class="kpis">
+<article class="kpi"><span>Funcionários ativos</span><strong id="kpiFuncionarios">0</strong></article>
+<article class="kpi"><span>Conferências registradas</span><strong id="kpiConferencias">0</strong></article>
+<article class="kpi"><span>Taxa sem divergência</span><strong id="kpiQualidade">0%</strong></article>
+<article class="kpi"><span>Melhor desempenho</span><strong id="kpiMelhor">-</strong></article>
+</section>
+<section class="grid">
+<article class="card"><h2>Ranking dos colaboradores</h2><div style="overflow:auto">
+<table><thead><tr><th>Posição</th><th>Colaborador</th><th>Conferências</th><th>Divergências</th><th>Nota</th><th>Status</th></tr></thead><tbody id="rankingBody"></tbody></table>
+<p id="emptyRanking" class="empty">Nenhum dado disponível.</p></div></article>
+<article class="card"><h2>Participação nas conferências</h2><div id="participation"></div><p id="emptyBars" class="empty">Nenhum dado disponível.</p></article>
+</section>
+</main>
+<script>
+const employeeKey="autolog-funcionarios",conferenceKey="autolog-conferencias";
+const employees=(JSON.parse(localStorage.getItem(employeeKey))||[]).filter(e=>e.status==="Ativo");
+const conferences=JSON.parse(localStorage.getItem(conferenceKey))||[];
+function scoreFor(name){const own=conferences.filter(c=>c.conferente===name),total=own.length,issues=own.filter(c=>c.status==="Com divergência").length,quality=total?((total-issues)/total)*10:0,volumeBonus=Math.min(total/10,1);return Math.min(10,quality*.9+volumeBonus)}
+function statusFor(score){if(score>=9)return["Excelente","excelente"];if(score>=7.5)return["Bom","bom"];if(score>=6)return["Atenção","atencao"];return["Crítico","critico"]}
+const ranking=employees.map(e=>{const own=conferences.filter(c=>c.conferente===e.nome);return{nome:e.nome,total:own.length,divergencias:own.filter(c=>c.status==="Com divergência").length,nota:scoreFor(e.nome)}}).sort((a,b)=>b.nota-a.nota||b.total-a.total);
+document.querySelector("#kpiFuncionarios").textContent=employees.length;document.querySelector("#kpiConferencias").textContent=conferences.length;
+const divergencias=conferences.filter(c=>c.status==="Com divergência").length,qualidade=conferences.length?Math.round(((conferences.length-divergencias)/conferences.length)*100):0;
+document.querySelector("#kpiQualidade").textContent=qualidade+"%";document.querySelector("#kpiMelhor").textContent=ranking[0]?.nome||"-";
+const tbody=document.querySelector("#rankingBody");
+ranking.forEach((item,index)=>{const [label,cls]=statusFor(item.nota),tr=document.createElement("tr");tr.innerHTML=`<td>${index+1}º</td><td>${item.nome}</td><td>${item.total}</td><td>${item.divergencias}</td><td>${item.nota.toFixed(1).replace(".",",")}</td><td><span class="badge ${cls}">${label}</span></td>`;tbody.appendChild(tr)});
+document.querySelector("#emptyRanking").style.display=ranking.length?"none":"block";
+const participation=document.querySelector("#participation"),max=Math.max(...ranking.map(r=>r.total),1);
+ranking.forEach(item=>{const percent=Math.round((item.total/max)*100),row=document.createElement("div");row.className="bar-row";row.innerHTML=`<div class="bar-label"><span>${item.nome}</span><strong>${item.total}</strong></div><div class="bar"><i style="width:${percent}%"></i></div>`;participation.appendChild(row)});
+document.querySelector("#emptyBars").style.display=ranking.length?"none":"block";
+</script></body></html>
