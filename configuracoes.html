@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configurações | AutoLog ERP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+body{display:flex;min-height:100vh;background:#edf2f7;color:#172033}
+aside{position:fixed;inset:0 auto 0 0;width:240px;background:#071d49;color:#fff;padding:24px 18px}
+aside h2{margin-bottom:28px} aside a{display:block;color:#fff;text-decoration:none;padding:12px 14px;margin-bottom:8px;border-radius:8px}
+aside a:hover,aside a.active{background:#0b5ed7}
+main{margin-left:240px;width:calc(100% - 240px);padding:28px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+header p{margin-top:5px;color:#667085}.back{padding:10px 14px;border-radius:8px;background:#071d49;color:#fff;text-decoration:none}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 8px 24px rgba(7,29,73,.08)}
+.card h2{margin-bottom:18px}.field{display:flex;flex-direction:column;gap:7px;margin-bottom:15px}
+.field label{font-size:14px;font-weight:bold}.field input{height:44px;padding:0 12px;border:1px solid #d5ddea;border-radius:8px}
+.meta-row{display:grid;grid-template-columns:1fr 120px;gap:12px;align-items:center;margin-bottom:12px}
+.toggle{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+button{padding:11px 16px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}
+.primary{background:#0b5ed7;color:#fff}.secondary{background:#e9eef5;color:#172033}
+.actions{display:flex;gap:10px;margin-top:16px}.notice{margin-top:12px;color:#087443;min-height:18px;font-size:14px}
+.info{padding:14px;border-radius:10px;background:#f5f8fc;color:#475467;line-height:1.5}
+@media(max-width:900px){body{display:block}aside{position:static;width:100%}main{margin-left:0;width:100%}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<aside>
+<h2>🚛 AutoLog ERP</h2>
+<a href="dashboard.html">🏠 Dashboard</a>
+<a href="conferencia.html">📦 Conferência</a>
+<a href="funcionarios.html">👥 Funcionários</a>
+<a href="desempenho.html">📈 Desempenho</a>
+<a href="relatorios.html">📋 Relatórios</a>
+<a class="active" href="configuracoes.html">⚙ Configurações</a>
+</aside>
+<main>
+<header>
+<div><h1>Configurações</h1><p>Personalize as regras e preferências do AutoLog ERP.</p></div>
+<a class="back" href="dashboard.html">Voltar ao dashboard</a>
+</header>
+
+<section class="grid">
+<article class="card">
+<h2>Dados da empresa</h2>
+<div class="field"><label for="empresa">Nome da empresa</label><input id="empresa"></div>
+<div class="field"><label for="setor">Setor principal</label><input id="setor"></div>
+<div class="field"><label for="responsavel">Responsável</label><input id="responsavel"></div>
+<div class="field"><label for="email">E-mail</label><input id="email" type="email"></div>
+<button class="primary" onclick="salvarEmpresa()">Salvar dados</button>
+<p class="notice" id="empresaMsg"></p>
+</article>
+
+<article class="card">
+<h2>Metas da operação</h2>
+<div class="meta-row"><label for="metaConferencias">Conferências por dia</label><input id="metaConferencias" type="number" min="0"></div>
+<div class="meta-row"><label for="metaQualidade">Meta de qualidade (%)</label><input id="metaQualidade" type="number" min="0" max="100"></div>
+<div class="meta-row"><label for="metaTempo">Tempo médio máximo (min)</label><input id="metaTempo" type="number" min="0"></div>
+<div class="meta-row"><label for="notaMinima">Nota mínima da equipe</label><input id="notaMinima" type="number" min="0" max="10" step="0.1"></div>
+<button class="primary" onclick="salvarMetas()">Salvar metas</button>
+<p class="notice" id="metasMsg"></p>
+</article>
+
+<article class="card">
+<h2>Preferências</h2>
+<div class="toggle"><input id="mostrarInativos" type="checkbox"><label for="mostrarInativos">Mostrar funcionários inativos nos relatórios</label></div>
+<div class="toggle"><input id="confirmarExclusao" type="checkbox"><label for="confirmarExclusao">Confirmar antes de excluir registros</label></div>
+<div class="toggle"><input id="destacarDivergencias" type="checkbox"><label for="destacarDivergencias">Destacar conferências com divergência</label></div>
+<div class="actions">
+<button class="primary" onclick="salvarPreferencias()">Salvar preferências</button>
+<button class="secondary" onclick="restaurarPadrao()">Restaurar padrão</button>
+</div>
+<p class="notice" id="preferenciasMsg"></p>
+</article>
+
+<article class="card">
+<h2>Armazenamento atual</h2>
+<div class="info">
+Os dados ainda ficam no navegador deste dispositivo por meio do <strong>localStorage</strong>.
+Na próxima etapa, conectaremos o AutoLog ERP ao Supabase para salvar tudo na nuvem e compartilhar entre computadores.
+</div>
+<div class="actions"><button class="secondary" onclick="exportarBackup()">Exportar backup JSON</button></div>
+</article>
+</section>
+</main>
+
+<script>
+const configKey="autolog-configuracoes";
+function padrao(){return{
+empresa:{nome:"AutoLog ERP",setor:"Recebimento",responsavel:"",email:""},
+metas:{conferencias:180,qualidade:95,tempo:6,notaMinima:8},
+preferencias:{mostrarInativos:false,confirmarExclusao:true,destacarDivergencias:true}
+}}
+let config=JSON.parse(localStorage.getItem(configKey))||padrao();
+function persistir(){localStorage.setItem(configKey,JSON.stringify(config))}
+function mensagem(id,texto){const el=document.getElementById(id);el.textContent=texto;setTimeout(()=>el.textContent="",2500)}
+function carregar(){
+empresa.value=config.empresa.nome;setor.value=config.empresa.setor;responsavel.value=config.empresa.responsavel;email.value=config.empresa.email;
+metaConferencias.value=config.metas.conferencias;metaQualidade.value=config.metas.qualidade;metaTempo.value=config.metas.tempo;notaMinima.value=config.metas.notaMinima;
+mostrarInativos.checked=config.preferencias.mostrarInativos;confirmarExclusao.checked=config.preferencias.confirmarExclusao;destacarDivergencias.checked=config.preferencias.destacarDivergencias;
+}
+function salvarEmpresa(){config.empresa={nome:empresa.value.trim(),setor:setor.value.trim(),responsavel:responsavel.value.trim(),email:email.value.trim()};persistir();mensagem("empresaMsg","Dados da empresa salvos.")}
+function salvarMetas(){config.metas={conferencias:Number(metaConferencias.value),qualidade:Number(metaQualidade.value),tempo:Number(metaTempo.value),notaMinima:Number(notaMinima.value)};persistir();mensagem("metasMsg","Metas atualizadas.")}
+function salvarPreferencias(){config.preferencias={mostrarInativos:mostrarInativos.checked,confirmarExclusao:confirmarExclusao.checked,destacarDivergencias:destacarDivergencias.checked};persistir();mensagem("preferenciasMsg","Preferências salvas.")}
+function restaurarPadrao(){if(!confirm("Restaurar todas as configurações padrão?"))return;config=padrao();persistir();carregar();mensagem("preferenciasMsg","Configurações restauradas.")}
+function exportarBackup(){
+const backup={geradoEm:new Date().toISOString(),configuracoes:config,funcionarios:JSON.parse(localStorage.getItem("autolog-funcionarios"))||[],conferencias:JSON.parse(localStorage.getItem("autolog-conferencias"))||[]};
+const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+a.href=url;a.download="autolog-backup.json";a.click();URL.revokeObjectURL(url);
+}
+carregar();
+</script>
+</body>
+</html>
