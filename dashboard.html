@@ -3,114 +3,397 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Gestão de Desempenho</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="css/style.css">
+    <title>Gestão de Desempenho - Dashboard</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="css/v2.css">
 </head>
 
-<body>
 
-    <aside class="sidebar">
+<body class="app-v2">
 
-        <div class="logo">
-            📊 Gestão de Desempenho
-        </div>
+    <!-- SIDEBAR -->
+    <aside
+        id="appSidebar"
+        class="v2-sidebar"
+    ></aside>
 
-        <nav class="menu">
 
-            <a class="active" href="dashboard.html">
-                🏠 Dashboard
-            </a>
+    <!-- CONTEÚDO -->
+    <main class="v2-main">
 
-            <a href="funcionarios.html">
-                👥 Funcionários
-            </a>
-
-            <a href="avaliacoes.html">
-                📝 Avaliações
-            </a>
-
-            <a href="ranking.html">
-                🏆 Ranking
-            </a>
-
-            <a href="relatorios.html">
-                📈 Relatórios
-            </a>
-
-            <a href="configuracoes.html">
-                ⚙ Configurações
-            </a>
-
-        </nav>
-
-    </aside>
-
-    <main>
-
-        <header class="topbar">
+        <!-- CABEÇALHO -->
+        <header class="v2-page-header">
 
             <div>
 
-                <h1>Dashboard</h1>
+                <span class="v2-label">
+                    VISÃO GERAL
+                </span>
+
+                <h1>
+                    Dashboard
+                </h1>
 
                 <p>
-                    Gestão de desempenho da equipe
+                    Indicadores de desempenho da equipe e acompanhamento das avaliações.
                 </p>
 
             </div>
 
+
+            <button class="v2-btn-primary">
+                Nova Avaliação
+            </button>
+
         </header>
 
-        <section class="grid-cards">
 
-            <div class="card">
+        <!-- KPIs -->
+        <section class="dashboard-kpis">
 
-                <small>Funcionários Ativos</small>
+            <article class="v2-card dashboard-kpi">
 
-                <h2 class="blue" id="totalFuncionarios">
+                <span class="dashboard-kpi-label">
+                    Funcionários ativos
+                </span>
+
+                <strong
+                    class="dashboard-kpi-value"
+                    id="kpiFuncionarios"
+                >
                     0
-                </h2>
+                </strong>
 
-            </div>
+                <small class="dashboard-kpi-info">
+                    Colaboradores cadastrados
+                </small>
 
-            <div class="card">
+            </article>
 
-                <small>Média Geral</small>
 
-                <h2 class="green">
-                    0%
-                </h2>
+            <article class="v2-card dashboard-kpi">
 
-            </div>
+                <span class="dashboard-kpi-label">
+                    Média geral
+                </span>
 
-            <div class="card">
-
-                <small>Avaliações Pendentes</small>
-
-                <h2 class="orange">
+                <strong
+                    class="dashboard-kpi-value"
+                    id="kpiMedia"
+                >
                     0
+                </strong>
+
+                <small class="dashboard-kpi-info">
+                    Pontuação média da equipe
+                </small>
+
+            </article>
+
+
+            <article class="v2-card dashboard-kpi">
+
+                <span class="dashboard-kpi-label">
+                    Avaliações realizadas
+                </span>
+
+                <strong
+                    class="dashboard-kpi-value"
+                    id="kpiAvaliacoes"
+                >
+                    0
+                </strong>
+
+                <small class="dashboard-kpi-info">
+                    Total registrado
+                </small>
+
+            </article>
+
+
+            <article class="v2-card dashboard-kpi">
+
+                <span class="dashboard-kpi-label">
+                    Melhor desempenho
+                </span>
+
+                <strong
+                    class="dashboard-kpi-value dashboard-kpi-text"
+                    id="kpiMelhor"
+                >
+                    -
+                </strong>
+
+                <small class="dashboard-kpi-info">
+                    Destaque atual
+                </small>
+
+            </article>
+
+        </section>
+
+
+        <!-- GRID PRINCIPAL -->
+        <section class="dashboard-main-grid">
+
+            <!-- EVOLUÇÃO -->
+            <article class="v2-card dashboard-panel dashboard-evolution">
+
+                <div class="dashboard-panel-header">
+
+                    <div>
+
+                        <span class="v2-label">
+                            DESEMPENHO
+                        </span>
+
+                        <h2>
+                            Evolução da equipe
+                        </h2>
+
+                    </div>
+
+                    <select class="dashboard-filter">
+
+                        <option>
+                            Últimos 30 dias
+                        </option>
+
+                        <option>
+                            Últimos 60 dias
+                        </option>
+
+                        <option>
+                            Últimos 90 dias
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="dashboard-chart-placeholder">
+
+                    <div class="chart-bars">
+
+                        <span style="height:38%"></span>
+                        <span style="height:50%"></span>
+                        <span style="height:45%"></span>
+                        <span style="height:61%"></span>
+                        <span style="height:57%"></span>
+                        <span style="height:72%"></span>
+                        <span style="height:68%"></span>
+                        <span style="height:81%"></span>
+                        <span style="height:77%"></span>
+                        <span style="height:90%"></span>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- RESUMO -->
+            <article class="v2-card dashboard-panel dashboard-summary">
+
+                <span class="v2-label">
+                    STATUS
+                </span>
+
+                <h2>
+                    Resumo das avaliações
                 </h2>
 
-            </div>
 
-            <div class="card">
+                <div class="dashboard-score-ring">
 
-                <small>Destaque do Mês</small>
+                    <div class="dashboard-score-inner">
 
-                <h2 class="red">
-                    ⭐
-                </h2>
+                        <strong id="dashboardNotaMedia">
+                            0
+                        </strong>
 
-            </div>
+                        <span>
+                            média
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-summary-items">
+
+                    <div>
+
+                        <span class="status-dot excellent"></span>
+
+                        <span>
+                            Excelente
+                        </span>
+
+                        <strong id="statusExcelente">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="status-dot good"></span>
+
+                        <span>
+                            Bom
+                        </span>
+
+                        <strong id="statusBom">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="status-dot warning"></span>
+
+                        <span>
+                            Atenção
+                        </span>
+
+                        <strong id="statusAtencao">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="status-dot critical"></span>
+
+                        <span>
+                            Crítico
+                        </span>
+
+                        <strong id="statusCritico">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- PARTE INFERIOR -->
+        <section class="dashboard-bottom-grid">
+
+            <!-- RANKING -->
+            <article class="v2-card dashboard-panel">
+
+                <div class="dashboard-panel-header">
+
+                    <div>
+
+                        <span class="v2-label">
+                            RANKING
+                        </span>
+
+                        <h2>
+                            Top colaboradores
+                        </h2>
+
+                    </div>
+
+                    <a
+                        href="ranking.html"
+                        class="dashboard-link"
+                    >
+                        Ver ranking
+                    </a>
+
+                </div>
+
+
+                <div
+                    id="dashboardRanking"
+                    class="dashboard-ranking"
+                >
+
+                    <div class="ranking-empty">
+                        Nenhum dado disponível.
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- ÚLTIMAS AVALIAÇÕES -->
+            <article class="v2-card dashboard-panel">
+
+                <div class="dashboard-panel-header">
+
+                    <div>
+
+                        <span class="v2-label">
+                            ATIVIDADE
+                        </span>
+
+                        <h2>
+                            Últimas avaliações
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="dashboardAvaliacoes"
+                    class="dashboard-activity"
+                >
+
+                    <div class="ranking-empty">
+                        Nenhuma avaliação registrada.
+                    </div>
+
+                </div>
+
+            </article>
 
         </section>
 
     </main>
+
+
+    <!-- SCRIPTS -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/layout.js"></script>
+
+    <script src="js/dashboard.js"></script>
+
+
+    <script>
+        carregarLayout("dashboard");
+    </script>
 
 </body>
 

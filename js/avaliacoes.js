@@ -232,3 +232,74 @@ function atualizarClassificacao(nota) {
             "#dc2626";
     }
 }
+document.getElementById("salvar").addEventListener("click", salvarAvaliacao);
+
+async function salvarAvaliacao() {
+    const funcionarioId = document.getElementById("funcionario").value;
+    const semana = document.getElementById("semana").value;
+
+    if (!funcionarioId) {
+        alert("Selecione um funcionário.");
+        return;
+    }
+
+    const produtividade =
+        Number(document.getElementById("produtividade").value);
+
+    const prazo =
+        Number(document.getElementById("prazo").value);
+
+    const qualidade =
+        Number(document.getElementById("qualidade").value);
+
+    const conhecimentoTecnico =
+        Number(document.getElementById("conhecimentoTecnico").value);
+
+    const proatividade =
+        Number(document.getElementById("proatividade").value);
+
+    const trabalhoEquipe =
+        Number(document.getElementById("trabalhoEquipe").value);
+
+    const adaptabilidade =
+        Number(document.getElementById("adaptabilidade").value);
+
+    const responsabilidade =
+        Number(document.getElementById("responsabilidade").value);
+
+    const notaFinal =
+        produtividade +
+        prazo +
+        qualidade +
+        conhecimentoTecnico +
+        proatividade +
+        trabalhoEquipe +
+        adaptabilidade +
+        responsabilidade;
+
+    const { error } = await supabaseClient
+        .from("avaliacoes_desempenho")
+        .insert([
+            {
+                funcionario_id: funcionarioId,
+                semana: semana,
+                produtividade: produtividade,
+                prazo: prazo,
+                qualidade: qualidade,
+                conhecimento_tecnico: conhecimentoTecnico,
+                proatividade: proatividade,
+                trabalho_equipe: trabalhoEquipe,
+                adaptabilidade: adaptabilidade,
+                responsabilidade: responsabilidade,
+                nota_final: notaFinal
+            }
+        ]);
+
+    if (error) {
+        console.error("Erro ao salvar avaliação:", error);
+        alert("Erro ao salvar avaliação.");
+        return;
+    }
+
+    alert("Avaliação salva com sucesso!");
+}
