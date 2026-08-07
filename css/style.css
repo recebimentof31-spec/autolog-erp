@@ -730,3 +730,34 @@ body {
         grid-template-columns: 1fr !important;
     }
 }
+/* AJUSTE FINAL DA TELA DE AVALIAÇÕES */
+
+.content {
+    max-width: 1200px !important;
+}
+
+.content > .card {
+    width: 100% !important;
+}
+
+/* Mantém o resultado logo abaixo dos critérios */
+#classificacao {
+    margin-bottom: 16px !important;
+}
+
+/* Evita espaços exagerados entre blocos */
+.content br {
+    display: none !important;
+}
+
+/* Card de resultado com largura normal */
+.content .card:last-of-type {
+    max-width: 100% !important;
+}
+
+/* Mantém a página organizada em coluna */
+main.content {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+}
