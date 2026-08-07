@@ -159,58 +159,29 @@ function atualizarNota() {
 // ========================================
 
 function atualizarClassificacao(nota) {
+    const classificacao = document.getElementById("classificacao");
 
-    const classificacao =
-        document.getElementById("classificacao");
+    if (!classificacao) {
+        console.error("Elemento classificacao não encontrado.");
+        return;
+    }
 
     if (nota >= 90) {
-
-        classificacao.textContent =
-            "🟢 EXCELENTE";
-
-        classificacao.style.color =
-            "#16a34a";
-
+        classificacao.textContent = "🟢 EXCELENTE";
+        classificacao.style.color = "#16a34a";
+    } else if (nota >= 80) {
+        classificacao.textContent = "🔵 MUITO BOM";
+        classificacao.style.color = "#2563eb";
+    } else if (nota >= 70) {
+        classificacao.textContent = "🟡 BOM";
+        classificacao.style.color = "#ca8a04";
+    } else if (nota >= 60) {
+        classificacao.textContent = "🟠 ATENÇÃO";
+        classificacao.style.color = "#ea580c";
+    } else {
+        classificacao.textContent = "🔴 CRÍTICO";
+        classificacao.style.color = "#dc2626";
     }
 
-    else if (nota >= 80) {
-
-        classificacao.textContent =
-            "🔵 MUITO BOM";
-
-        classificacao.style.color =
-            "#2563eb";
-
-    }
-
-    else if (nota >= 70) {
-
-        classificacao.textContent =
-            "🟡 BOM";
-
-        classificacao.style.color =
-            "#ca8a04";
-
-    }
-
-    else if (nota >= 60) {
-
-        classificacao.textContent =
-            "🟠 ATENÇÃO";
-
-        classificacao.style.color =
-            "#ea580c";
-
-    }
-
-    else {
-
-        classificacao.textContent =
-            "🔴 CRÍTICO";
-
-        classificacao.style.color =
-            "#dc2626";
-
-    }
-
+    console.log("Nota:", nota, "Classificação:", classificacao.textContent);
 }
