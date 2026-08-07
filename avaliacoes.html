@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gestão de Desempenho - Avaliações</title>
+
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+    <aside class="sidebar">
+
+        <h2>📊 Gestão de Desempenho</h2>
+
+        <nav>
+
+            <a href="dashboard.html">🏠 Dashboard</a>
+
+            <a href="funcionarios.html">👥 Funcionários</a>
+
+            <a href="avaliacoes.html" class="active">📝 Avaliações</a>
+
+            <a href="ranking.html">🏆 Ranking</a>
+
+            <a href="relatorios.html">📈 Relatórios</a>
+
+            <a href="configuracoes.html">⚙ Configurações</a>
+
+        </nav>
+
+    </aside>
+
+    <main class="content">
+
+       <h1>Avaliação Semanal</h1>
+
+<div class="card">
+
+    <div class="form-grid">
+
+        <div>
+            <label>Funcionário</label>
+            <select id="funcionario"></select>
+        </div>
+
+        <div>
+            <label>Semana</label>
+            <select id="semana">
+                <option>Semana 1</option>
+                <option>Semana 2</option>
+                <option>Semana 3</option>
+                <option>Semana 4</option>
+                <option>Semana 5</option>
+            </select>
+        </div>
+
+    </div>
+
+</div>
+
+<br>
+
+<div class="card">
+
+    <h2>Critérios de Avaliação</h2>
+
+    <div class="criterio">
+
+        <label>Organização</label>
+
+        <input type="range"
+               id="organizacao"
+               min="0"
+               max="15"
+               value="15">
+
+        <span id="organizacaoValor">15</span>
+
+    </div>
+
+    <div class="criterio">
+
+        <label>Coletividade</label>
+
+        <input type="range"
+               id="coletividade"
+               min="0"
+               max="15"
+               value="15">
+
+        <span id="coletividadeValor">15</span>
+
+    </div>
+
+    <div class="criterio">
+
+        <label>Limpeza</label>
+
+        <input type="range"
+               id="limpeza"
+               min="0"
+               max="10"
+               value="10">
+
+        <span id="limpezaValor">10</span>
+
+    </div>
+
+    <div class="criterio">
+
+        <label>Efetividade</label>
+
+        <input type="range"
+               id="efetividade"
+               min="0"
+               max="20"
+               value="20">
+
+        <span id="efetividadeValor">20</span>
+
+    </div>
+
+    <div class="criterio">
+
+        <label>Qualidade da Conferência</label>
+
+        <input type="range"
+               id="conferencia"
+               min="0"
+               max="20"
+               value="20">
+
+        <span id="conferenciaValor">20</span>
+
+    </div>
+
+    <div class="criterio">
+
+        <label>Agilidade</label>
+
+        <input type="range"
+               id="agilidade"
+               min="0"
+               max="20"
+               value="20">
+
+        <span id="agilidadeValor">20</span>
+
+    </div>
+
+</div>
+
+<br>
+
+<div class="card">
+
+    <h2>Resultado</h2>
+
+    <h1 id="notaFinal">100</h1>
+
+    <button id="salvar">Salvar Avaliação</button>
+
+</div>
+
+        <div class="card">
+
+            <div class="form-grid">
+
+                <div>
+
+                    <label>Funcionário</label>
+
+                    <select id="funcionario"></select>
+
+                </div>
+
+                <div>
+
+                    <label>Semana</label>
+
+                    <select id="semana">
+
+                        <option>Semana 1</option>
+                        <option>Semana 2</option>
+                        <option>Semana 3</option>
+                        <option>Semana 4</option>
+                        <option>Semana 5</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="js/avaliacoes.js"></script>
+
+</body>
+</html>

@@ -2,333 +2,116 @@
 <html lang="pt-BR">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>AutoLog ERP</title>
+    <title>Gestão de Desempenho</title>
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
 
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,Helvetica,sans-serif;
-}
-
-body{
-display:flex;
-background:#edf2f7;
-}
-
-.sidebar{
-
-width:240px;
-height:100vh;
-
-background:#071d49;
-
-color:white;
-
-padding:25px;
-
-}
-
-.sidebar h2{
-
-margin-bottom:35px;
-
-}
-
-.sidebar ul{
-
-list-style:none;
-
-}
-
-.sidebar li{
-
-padding:15px 0;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-.sidebar li:hover{
-
-color:#64b5ff;
-
-}
-
-.main{
-
-flex:1;
-
-padding:30px;
-
-}
-
-.cards{
-
-display:grid;
-
-grid-template-columns:repeat(4,1fr);
-
-gap:20px;
-
-margin-top:25px;
-
-}
-
-.card{
-
-background:white;
-
-padding:25px;
-
-border-radius:15px;
-
-box-shadow:0 10px 20px rgba(0,0,0,.08);
-
-}
-
-.card h3{
-
-font-size:18px;
-
-color:#777;
-
-margin-bottom:15px;
-
-}
-
-.card span{
-
-font-size:35px;
-
-font-weight:bold;
-
-color:#0b5ed7;
-
-}
-
-table{
-
-width:100%;
-
-margin-top:30px;
-
-background:white;
-
-border-collapse:collapse;
-
-border-radius:15px;
-
-overflow:hidden;
-
-}
-
-th{
-
-background:#0b5ed7;
-
-color:white;
-
-padding:15px;
-
-}
-
-td{
-
-padding:15px;
-
-border-bottom:1px solid #eee;
-
-text-align:center;
-
-}
-
-</style>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
-...
-</div> <!-- fim do conteúdo da página -->
+<body>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js"></script>
-<script src="js/dashboard.js"></script>
+    <aside class="sidebar">
 
+        <div class="logo">
+            📊 Gestão de Desempenho
+        </div>
 
+        <nav class="menu">
 
-<div class="sidebar">
+            <a class="active" href="dashboard.html">
+                🏠 Dashboard
+            </a>
 
-<h2>🚛 AutoLog ERP</h2>
+            <a href="funcionarios.html">
+                👥 Funcionários
+            </a>
 
-<ul>
+            <a href="avaliacoes.html">
+                📝 Avaliações
+            </a>
 
-<li>
-    <a href="dashboard.html" style="color:white;text-decoration:none">
-        🏠 Dashboard
-    </a>
-</li>
+            <a href="ranking.html">
+                🏆 Ranking
+            </a>
 
-<li>
-  <a href="conferencia.html" style="color:white;text-decoration:none">
-    📦 Conferência
-  </a>
-</li>
+            <a href="relatorios.html">
+                📈 Relatórios
+            </a>
 
-<li>
-    <a
-        href="funcionarios.html"
-        style="color:white;text-decoration:none"
-    >
-        👥 Funcionários
-    </a>
-</li>
+            <a href="configuracoes.html">
+                ⚙ Configurações
+            </a>
 
-<li>
-  <a href="desempenho.html" style="color:white;text-decoration:none">
-    📈 Desempenho
-  </a>
-</li>
+        </nav>
 
-<li>
-    <a href="relatorios.html"
-       style="color:white;text-decoration:none">
-       📋 Relatórios
-    </a>
-</li>
+    </aside>
 
-<li>
-    <a href="configuracoes.html"
-       style="color:white;text-decoration:none">
-       ⚙ Configurações
-    </a>
-</li> 
-<li>
-    <a href="#" onclick="sair()" style="color:white;text-decoration:none">
-        🚪 Sair
-    </a>
-</li>
+    <main>
 
-</ul>
+        <header class="topbar">
 
-</div>
+            <div>
 
-<div class="main">
+                <h1>Dashboard</h1>
 
-<h1>Dashboard</h1>
+                <p>
+                    Gestão de desempenho da equipe
+                </p>
 
-<p>Bem-vindo ao AutoLog ERP Logística</p>
+            </div>
 
-<div class="cards">
+        </header>
 
-<div class="card">
+        <section class="grid-cards">
 
-<h3>Conferências Hoje</h3>
+            <div class="card">
 
-<span>182</span>
+                <small>Funcionários Ativos</small>
 
-</div>
+                <h2 class="blue" id="totalFuncionarios">
+                    0
+                </h2>
 
-<div class="card">
+            </div>
 
-<h3>Funcionários</h3>
+            <div class="card">
 
-<span>25</span>
+                <small>Média Geral</small>
 
-</div>
+                <h2 class="green">
+                    0%
+                </h2>
 
-<div class="card">
+            </div>
 
-<h3>Desempenho Médio</h3>
+            <div class="card">
 
-<span>94%</span>
+                <small>Avaliações Pendentes</small>
 
-</div>
+                <h2 class="orange">
+                    0
+                </h2>
 
-<div class="card">
+            </div>
 
-<h3>Pendências</h3>
+            <div class="card">
 
-<span>8</span>
+                <small>Destaque do Mês</small>
 
-</div>
+                <h2 class="red">
+                    ⭐
+                </h2>
 
-</div>
+            </div>
 
-<table>
+        </section>
 
-<tr>
-
-<th>Funcionário</th>
-
-<th>Conferências</th>
-
-<th>Agilidade</th>
-
-<th>Organização</th>
-
-<th>Nota</th>
-
-</tr>
-
-<tr>
-
-<td>João</td>
-
-<td>165</td>
-
-<td>98%</td>
-
-<td>96%</td>
-
-<td>9,8</td>
-
-</tr>
-
-<tr>
-
-<td>Carlos</td>
-
-<td>158</td>
-
-<td>93%</td>
-
-<td>91%</td>
-
-<td>9,2</td>
-
-</tr>
-
-<tr>
-
-<td>Maria</td>
-
-<td>174</td>
-
-<td>97%</td>
-
-<td>99%</td>
-
-<td>9,9</td>
-
-</tr>
-
-</table>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js"></script>
-<script src="js/dashboard.js"></script>
+    </main>
 
 </body>
+
 </html>
