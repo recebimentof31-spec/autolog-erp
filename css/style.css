@@ -129,3 +129,313 @@ main{
 .green{
     color:#16a34a !important;
 }
+/* =========================================================
+   NOVO PADRÃO VISUAL - GESTÃO DE DESEMPENHO
+   ========================================================= */
+
+body{
+    margin:0;
+    min-height:100vh;
+    background:#f1f5f9;
+    color:#0f172a;
+    font-family:"Segoe UI",Arial,sans-serif;
+}
+
+/* ESTRUTURA */
+
+.container{
+    min-height:100vh;
+}
+
+.sidebar{
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+
+    width:250px;
+    padding:24px 16px;
+
+    background:#0b1f4d;
+    color:#fff;
+
+    display:flex;
+    flex-direction:column;
+
+    box-shadow:4px 0 18px rgba(15,23,42,.08);
+}
+
+.sidebar h2{
+    margin:0 0 30px;
+    padding:0 10px;
+
+    font-size:23px;
+    line-height:1.25;
+    color:#fff;
+}
+
+/* MENU LATERAL */
+
+.sidebar nav{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    width:100%;
+}
+
+.sidebar nav a{
+    display:flex;
+    align-items:center;
+
+    width:100%;
+    min-height:46px;
+
+    padding:0 14px;
+
+    color:#dbeafe;
+    text-decoration:none;
+
+    font-size:15px;
+    font-weight:600;
+
+    border-radius:10px;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
+}
+
+.sidebar nav a:hover{
+    background:#172f68;
+    color:#fff;
+    transform:translateX(3px);
+}
+
+.sidebar nav a.active{
+    background:#2563eb;
+    color:#fff;
+}
+
+/* CONTEÚDO */
+
+.content{
+    margin-left:250px;
+    padding:38px 42px;
+    min-height:100vh;
+}
+
+.content > h1{
+    margin:0 0 8px;
+
+    font-size:32px;
+    font-weight:750;
+    color:#0f172a;
+}
+
+/* CARDS */
+
+.card{
+    background:#fff;
+    border:1px solid #e2e8f0;
+    border-radius:16px;
+
+    padding:24px;
+
+    margin-bottom:20px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.06);
+}
+
+.card h2{
+    margin:0 0 22px;
+
+    font-size:22px;
+    color:#0f172a;
+}
+
+/* FUNCIONÁRIO + SEMANA */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:18px;
+}
+
+.form-grid > div{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.form-grid label{
+    font-size:13px;
+    font-weight:700;
+    color:#475569;
+}
+
+.form-grid select{
+    width:100%;
+    height:44px;
+
+    padding:0 12px;
+
+    background:#fff;
+    color:#0f172a;
+
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+
+    font-size:14px;
+}
+
+/* CRITÉRIOS */
+
+.criterio{
+    display:grid;
+    grid-template-columns:190px 1fr 48px;
+    align-items:center;
+
+    gap:16px;
+
+    min-height:50px;
+
+    padding:8px 0;
+
+    border-bottom:1px solid #f1f5f9;
+}
+
+.criterio:last-child{
+    border-bottom:none;
+}
+
+.criterio label{
+    font-size:14px;
+    font-weight:650;
+    color:#334155;
+}
+
+.criterio span{
+    text-align:center;
+
+    font-size:15px;
+    font-weight:750;
+
+    color:#2563eb;
+
+    background:#eff6ff;
+
+    padding:6px 7px;
+    border-radius:7px;
+}
+
+/* SLIDERS */
+
+.criterio input[type="range"]{
+    width:100%;
+    cursor:pointer;
+
+    accent-color:#2563eb;
+}
+
+/* RESULTADO */
+
+#notaFinal{
+    margin:4px 0;
+
+    font-size:52px;
+    line-height:1;
+
+    color:#0f172a;
+}
+
+#classificacao{
+    display:inline-flex;
+    align-items:center;
+
+    margin:10px 0 20px;
+
+    padding:8px 12px;
+
+    border-radius:999px;
+
+    background:#f8fafc;
+
+    font-size:15px;
+    font-weight:800;
+}
+
+/* BOTÃO */
+
+#salvar{
+    border:none;
+    border-radius:9px;
+
+    padding:12px 20px;
+
+    background:#2563eb;
+    color:#fff;
+
+    font-size:14px;
+    font-weight:750;
+
+    cursor:pointer;
+
+    transition:
+        transform .2s ease,
+        background .2s ease;
+}
+
+#salvar:hover{
+    background:#1d4ed8;
+    transform:translateY(-1px);
+}
+
+/* DESKTOP - ORGANIZA CRITÉRIOS + RESULTADO */
+
+@media(min-width:1100px){
+
+    .content{
+        max-width:1250px;
+    }
+
+    /*
+       O card de Resultado fica mais consistente
+       sem ficar excessivamente estreito.
+    */
+
+    #notaFinal{
+        font-size:56px;
+    }
+}
+
+/* RESPONSIVO */
+
+@media(max-width:800px){
+
+    .sidebar{
+        position:relative;
+
+        width:100%;
+        min-height:auto;
+    }
+
+    .content{
+        margin-left:0;
+        padding:24px 16px;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .criterio{
+        grid-template-columns:1fr;
+        gap:8px;
+    }
+
+    .criterio span{
+        width:max-content;
+    }
+}
