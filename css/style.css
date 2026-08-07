@@ -761,3 +761,256 @@ main.content {
     flex-direction: column !important;
     gap: 20px !important;
 }
+/* ======================================================
+   LAYOUT EXCLUSIVO - PÁGINA DE AVALIAÇÕES
+   ====================================================== */
+
+.avaliacoes-page {
+    margin: 0 !important;
+    min-height: 100vh !important;
+    background: #eef2f7 !important;
+    font-family: "Segoe UI", Arial, sans-serif !important;
+}
+
+.avaliacoes-page .container {
+    display: block !important;
+    min-height: 100vh !important;
+}
+
+/* SIDEBAR */
+
+.avaliacoes-page .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+
+    width: 250px !important;
+    height: 100vh !important;
+
+    padding: 26px 16px !important;
+
+    background: #13265c !important;
+    color: white !important;
+
+    z-index: 1000 !important;
+}
+
+.avaliacoes-page .sidebar nav {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+.avaliacoes-page .sidebar nav a {
+    display: flex !important;
+    align-items: center !important;
+
+    min-height: 46px !important;
+    width: 100% !important;
+
+    padding: 0 14px !important;
+    margin: 0 !important;
+
+    border-radius: 9px !important;
+
+    color: #dbeafe !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+}
+
+.avaliacoes-page .sidebar nav a.active {
+    background: #4169e1 !important;
+    color: white !important;
+}
+
+/* ÁREA PRINCIPAL */
+
+.avaliacoes-page main.content {
+    position: static !important;
+
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 280px !important;
+    gap: 22px !important;
+
+    width: auto !important;
+    max-width: 1350px !important;
+
+    margin-left: 250px !important;
+    padding: 36px 42px !important;
+}
+
+/* TÍTULO */
+
+.avaliacoes-page main.content > h1 {
+    grid-column: 1 / -1 !important;
+
+    margin: 0 !important;
+
+    font-size: 34px !important;
+    color: #0f172a !important;
+}
+
+/* CARD FUNCIONÁRIO/SEMANA */
+
+.avaliacoes-page main.content > .card:first-of-type {
+    grid-column: 1 / -1 !important;
+}
+
+/* CARD DOS CRITÉRIOS */
+
+.avaliacoes-page main.content > .card:nth-of-type(2) {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+}
+
+/* RESULTADO */
+
+.avaliacoes-page .resultado-card {
+    position: static !important;
+    inset: auto !important;
+
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    align-self: start !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+
+    margin: 0 !important;
+    padding: 28px !important;
+
+    background: white !important;
+
+    border-radius: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+
+    box-shadow: 0 8px 24px rgba(15,23,42,.07) !important;
+}
+
+/* TODOS OS CARDS */
+
+.avaliacoes-page .card {
+    position: static !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 26px !important;
+
+    background: white !important;
+
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+
+    box-shadow: 0 8px 24px rgba(15,23,42,.06) !important;
+}
+
+/* CRITÉRIOS */
+
+.avaliacoes-page .criterio {
+    display: grid !important;
+
+    grid-template-columns: 190px minmax(250px, 1fr) 55px !important;
+
+    align-items: center !important;
+    gap: 18px !important;
+
+    min-height: 52px !important;
+
+    padding: 8px 0 !important;
+
+    border-bottom: 1px solid #eef2f7 !important;
+}
+
+.avaliacoes-page .criterio input[type="range"] {
+    width: 100% !important;
+    accent-color: #4169e1 !important;
+}
+
+.avaliacoes-page .criterio span {
+    display: block !important;
+
+    padding: 7px !important;
+
+    text-align: center !important;
+
+    color: #315be8 !important;
+    background: #eef4ff !important;
+
+    border-radius: 8px !important;
+
+    font-weight: 800 !important;
+}
+
+/* RESULTADO */
+
+.avaliacoes-page #notaFinal {
+    position: static !important;
+
+    margin: 8px 0 !important;
+
+    font-size: 56px !important;
+}
+
+.avaliacoes-page #classificacao {
+    position: static !important;
+
+    display: inline-flex !important;
+
+    margin: 8px 0 22px !important;
+}
+
+/* BOTÃO */
+
+.avaliacoes-page #salvar {
+    position: static !important;
+    inset: auto !important;
+    float: none !important;
+
+    display: flex !important;
+
+    width: 100% !important;
+    height: 46px !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 0 !important;
+    padding: 0 18px !important;
+
+    border: none !important;
+    border-radius: 9px !important;
+
+    background: #315be8 !important;
+    color: white !important;
+
+    font-weight: 700 !important;
+
+    cursor: pointer !important;
+}
+
+/* REMOVE BR QUE ATRAPALHA O GRID */
+
+.avaliacoes-page main.content > br {
+    display: none !important;
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 1000px) {
+
+    .avaliacoes-page main.content {
+        grid-template-columns: 1fr !important;
+    }
+
+    .avaliacoes-page main.content > .card,
+    .avaliacoes-page .resultado-card {
+        grid-column: 1 !important;
+        grid-row: auto !important;
+    }
+}
