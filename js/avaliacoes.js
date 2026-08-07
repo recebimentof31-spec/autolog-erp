@@ -2,15 +2,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     await carregarFuncionarios();
     configurarSliders();
     atualizarNota();
+    configurarEventos();
 });
 
 
-// ========================================
-// CARREGA FUNCIONÁRIOS ATIVOS DO SUPABASE
-// ========================================
+// =====================================================
+// CARREGA FUNCIONÁRIOS ATIVOS
+// =====================================================
 
 async function carregarFuncionarios() {
     const select = document.getElementById("funcionario");
+
+    if (!select) {
+        console.error("Campo funcionario não encontrado.");
+        return;
+    }
 
     select.innerHTML =
         '<option value="">Carregando...</option>';
@@ -40,19 +46,54 @@ async function carregarFuncionarios() {
         const option =
             document.createElement("option");
 
-        option.value = funcionario.id;
+        option.value =
+            funcionario.id;
 
         option.textContent =
             `${funcionario.nome} - ${funcionario.matricula || "Sem matrícula"}`;
 
         select.appendChild(option);
     });
+
+    console.log(
+        "Funcionários carregados:",
+        data
+    );
 }
 
 
-// ========================================
-// CONFIGURA OS SLIDERS
-// ========================================
+// =====================================================
+// CONFIGURA EVENTOS GERAIS
+// =====================================================
+
+function configurarEventos() {
+    const botaoSalvar =
+        document.getElementById("salvar");
+
+    if (botaoSalvar) {
+        botaoSalvar.addEventListener(
+            "click",
+            salvarAvaliacao
+        );
+    }
+
+    const semana =
+        document.getElementById("semana");
+
+    if (semana) {
+        semana.addEventListener(
+            "change",
+            atualizarSemanaResultado
+        );
+
+        atualizarSemanaResultado();
+    }
+}
+
+
+// =====================================================
+// CONFIGURA SLIDERS
+// =====================================================
 
 function configurarSliders() {
     const sliders = [
@@ -67,100 +108,116 @@ function configurarSliders() {
     ];
 
     sliders.forEach(id => {
-        const slider = document.getElementById(id);
+        const slider =
+            document.getElementById(id);
 
-        if (slider) {
-            slider.addEventListener(
-                "input",
-                atualizarNota
+        if (!slider) {
+            console.warn(
+                `Slider ${id} não encontrado.`
             );
+
+            return;
         }
+
+        slider.addEventListener(
+            "input",
+            atualizarNota
+        );
     });
 }
 
 
-// ========================================
-// CALCULA A NOTA EM TEMPO REAL
-// ========================================
+// =====================================================
+// ATUALIZA SEMANA NO CARD RESULTADO
+// =====================================================
+
+function atualizarSemanaResultado() {
+    const semana =
+        document.getElementById("semana");
+
+    const resultadoSemana =
+        document.getElementById("resultadoSemana");
+
+    if (
+        semana &&
+        resultadoSemana
+    ) {
+        resultadoSemana.textContent =
+            semana.value;
+    }
+}
+
+
+// =====================================================
+// CALCULA A NOTA
+// =====================================================
 
 function atualizarNota() {
     const produtividade =
-        Number(
-            document.getElementById("produtividade").value
-        );
+        obterValorSlider("produtividade");
 
     const prazo =
-        Number(
-            document.getElementById("prazo").value
-        );
+        obterValorSlider("prazo");
 
     const qualidade =
-        Number(
-            document.getElementById("qualidade").value
-        );
+        obterValorSlider("qualidade");
 
     const conhecimentoTecnico =
-        Number(
-            document.getElementById("conhecimentoTecnico").value
-        );
+        obterValorSlider("conhecimentoTecnico");
 
     const proatividade =
-        Number(
-            document.getElementById("proatividade").value
-        );
+        obterValorSlider("proatividade");
 
     const trabalhoEquipe =
-        Number(
-            document.getElementById("trabalhoEquipe").value
-        );
+        obterValorSlider("trabalhoEquipe");
 
     const adaptabilidade =
-        Number(
-            document.getElementById("adaptabilidade").value
-        );
+        obterValorSlider("adaptabilidade");
 
     const responsabilidade =
-        Number(
-            document.getElementById("responsabilidade").value
-        );
+        obterValorSlider("responsabilidade");
 
 
-    // Atualiza os valores exibidos ao lado dos sliders
+    atualizarValorVisual(
+        "produtividadeValor",
+        produtividade
+    );
 
-    document.getElementById(
-        "produtividadeValor"
-    ).textContent = produtividade;
+    atualizarValorVisual(
+        "prazoValor",
+        prazo
+    );
 
-    document.getElementById(
-        "prazoValor"
-    ).textContent = prazo;
+    atualizarValorVisual(
+        "qualidadeValor",
+        qualidade
+    );
 
-    document.getElementById(
-        "qualidadeValor"
-    ).textContent = qualidade;
+    atualizarValorVisual(
+        "conhecimentoTecnicoValor",
+        conhecimentoTecnico
+    );
 
-    document.getElementById(
-        "conhecimentoTecnicoValor"
-    ).textContent = conhecimentoTecnico;
+    atualizarValorVisual(
+        "proatividadeValor",
+        proatividade
+    );
 
-    document.getElementById(
-        "proatividadeValor"
-    ).textContent = proatividade;
+    atualizarValorVisual(
+        "trabalhoEquipeValor",
+        trabalhoEquipe
+    );
 
-    document.getElementById(
-        "trabalhoEquipeValor"
-    ).textContent = trabalhoEquipe;
+    atualizarValorVisual(
+        "adaptabilidadeValor",
+        adaptabilidade
+    );
 
-    document.getElementById(
-        "adaptabilidadeValor"
-    ).textContent = adaptabilidade;
+    atualizarValorVisual(
+        "responsabilidadeValor",
+        responsabilidade
+    );
 
-    document.getElementById(
-        "responsabilidadeValor"
-    ).textContent = responsabilidade;
-
-
-    // Soma máxima = 100 pontos
 
     const nota =
         produtividade +
@@ -173,26 +230,66 @@ function atualizarNota() {
         responsabilidade;
 
 
-    document.getElementById(
-        "notaFinal"
-    ).textContent = nota;
+    const notaFinal =
+        document.getElementById("notaFinal");
+
+    if (notaFinal) {
+        notaFinal.textContent =
+            nota;
+    }
+
 
     atualizarClassificacao(nota);
 }
 
 
-// ========================================
-// CLASSIFICAÇÃO DO DESEMPENHO
-// ========================================
+// =====================================================
+// PEGA VALOR DO SLIDER
+// =====================================================
+
+function obterValorSlider(id) {
+    const elemento =
+        document.getElementById(id);
+
+    if (!elemento) {
+        return 0;
+    }
+
+    return Number(
+        elemento.value
+    );
+}
+
+
+// =====================================================
+// ATUALIZA VALOR AO LADO DO SLIDER
+// =====================================================
+
+function atualizarValorVisual(
+    id,
+    valor
+) {
+    const elemento =
+        document.getElementById(id);
+
+    if (elemento) {
+        elemento.textContent =
+            valor;
+    }
+}
+
+
+// =====================================================
+// CLASSIFICAÇÃO
+// =====================================================
 
 function atualizarClassificacao(nota) {
     const classificacao =
-        document.getElementById("classificacao");
+        document.getElementById(
+            "classificacao"
+        );
 
     if (!classificacao) {
-        console.error(
-            "Elemento classificacao não encontrado."
-        );
         return;
     }
 
@@ -201,71 +298,181 @@ function atualizarClassificacao(nota) {
             "🟢 EXCELENTE";
 
         classificacao.style.color =
-            "#16a34a";
+            "#35c979";
 
     } else if (nota >= 80) {
         classificacao.textContent =
             "🔵 MUITO BOM";
 
         classificacao.style.color =
-            "#2563eb";
+            "#5c85ff";
 
     } else if (nota >= 70) {
         classificacao.textContent =
             "🟡 BOM";
 
         classificacao.style.color =
-            "#ca8a04";
+            "#f3c94c";
 
     } else if (nota >= 60) {
         classificacao.textContent =
             "🟠 ATENÇÃO";
 
         classificacao.style.color =
-            "#ea580c";
+            "#ff7518";
 
     } else {
         classificacao.textContent =
             "🔴 CRÍTICO";
 
         classificacao.style.color =
-            "#dc2626";
+            "#ef5350";
     }
 }
-document.getElementById("salvar").addEventListener("click", salvarAvaliacao);
+
+
+// =====================================================
+// RETORNA CLASSIFICAÇÃO EM TEXTO
+// =====================================================
+
+function obterClassificacao(nota) {
+    if (nota >= 90) {
+        return "EXCELENTE";
+    }
+
+    if (nota >= 80) {
+        return "MUITO BOM";
+    }
+
+    if (nota >= 70) {
+        return "BOM";
+    }
+
+    if (nota >= 60) {
+        return "ATENÇÃO";
+    }
+
+    return "CRÍTICO";
+}
+
+
+// =====================================================
+// SALVA A AVALIAÇÃO NO SUPABASE
+// =====================================================
 
 async function salvarAvaliacao() {
-    const funcionarioId = document.getElementById("funcionario").value;
-    const semana = document.getElementById("semana").value;
+    const botao =
+        document.getElementById("salvar");
 
-    if (!funcionarioId) {
-        alert("Selecione um funcionário.");
+    const funcionario =
+        document.getElementById(
+            "funcionario"
+        );
+
+    const campoSemana =
+        document.getElementById(
+            "semana"
+        );
+
+
+    if (
+        !funcionario ||
+        !funcionario.value
+    ) {
+        alert(
+            "Selecione um funcionário."
+        );
+
         return;
     }
 
+
+    if (!campoSemana) {
+        alert(
+            "Campo de semana não encontrado."
+        );
+
+        return;
+    }
+
+
+    const funcionarioId =
+        funcionario.value;
+
+    const semanaTexto =
+        campoSemana.value;
+
+
+    const semana =
+        Number(
+            semanaTexto.replace(
+                /\D/g,
+                ""
+            )
+        );
+
+
+    if (
+        !semana ||
+        semana < 1 ||
+        semana > 5
+    ) {
+        alert(
+            "Semana inválida."
+        );
+
+        return;
+    }
+
+
+    // =========================================
+    // NOTAS
+    // =========================================
+
     const produtividade =
-        Number(document.getElementById("produtividade").value);
+        obterValorSlider(
+            "produtividade"
+        );
 
     const prazo =
-        Number(document.getElementById("prazo").value);
+        obterValorSlider(
+            "prazo"
+        );
 
     const qualidade =
-        Number(document.getElementById("qualidade").value);
+        obterValorSlider(
+            "qualidade"
+        );
 
     const conhecimentoTecnico =
-        Number(document.getElementById("conhecimentoTecnico").value);
+        obterValorSlider(
+            "conhecimentoTecnico"
+        );
 
     const proatividade =
-        Number(document.getElementById("proatividade").value);
+        obterValorSlider(
+            "proatividade"
+        );
 
     const trabalhoEquipe =
-        Number(document.getElementById("trabalhoEquipe").value);
+        obterValorSlider(
+            "trabalhoEquipe"
+        );
 
     const adaptabilidade =
-        Number(document.getElementById("adaptabilidade").value);
+        obterValorSlider(
+            "adaptabilidade"
+        );
 
     const responsabilidade =
-        Number(document.getElementById("responsabilidade").value);
+        obterValorSlider(
+            "responsabilidade"
+        );
+
+
+    // =========================================
+    // NOTA FINAL
+    // =========================================
 
     const notaFinal =
         produtividade +
@@ -277,29 +484,277 @@ async function salvarAvaliacao() {
         adaptabilidade +
         responsabilidade;
 
-    const { error } = await supabaseClient
-        .from("avaliacoes_desempenho")
-        .insert([
-            {
-                funcionario_id: funcionarioId,
-                semana: semana,
-                produtividade: produtividade,
-                prazo: prazo,
-                qualidade: qualidade,
-                conhecimento_tecnico: conhecimentoTecnico,
-                proatividade: proatividade,
-                trabalho_equipe: trabalhoEquipe,
-                adaptabilidade: adaptabilidade,
-                responsabilidade: responsabilidade,
-                nota_final: notaFinal
-            }
-        ]);
 
-    if (error) {
-        console.error("Erro ao salvar avaliação:", error);
-        alert("Erro ao salvar avaliação.");
-        return;
+    const classificacao =
+        obterClassificacao(
+            notaFinal
+        );
+
+
+    // =========================================
+    // DATA / COMPETÊNCIA
+    // =========================================
+
+    const hoje =
+        new Date();
+
+    const ano =
+        hoje.getFullYear();
+
+    const mes =
+        hoje.getMonth();
+
+
+    const competencia =
+        formatarDataLocal(
+            new Date(
+                ano,
+                mes,
+                1
+            )
+        );
+
+
+    // =========================================
+    // PERÍODO DA SEMANA
+    // =========================================
+
+    const primeiroDia =
+        ((semana - 1) * 7) + 1;
+
+
+    const ultimoDiaMes =
+        new Date(
+            ano,
+            mes + 1,
+            0
+        ).getDate();
+
+
+    const ultimoDia =
+        Math.min(
+            primeiroDia + 6,
+            ultimoDiaMes
+        );
+
+
+    const periodoInicio =
+        formatarDataLocal(
+            new Date(
+                ano,
+                mes,
+                primeiroDia
+            )
+        );
+
+
+    const periodoFim =
+        formatarDataLocal(
+            new Date(
+                ano,
+                mes,
+                ultimoDia
+            )
+        );
+
+
+    // =========================================
+    // USUÁRIO LOGADO / AVALIADOR
+    // =========================================
+
+    let avaliadorId =
+        null;
+
+
+    const {
+        data: sessaoData,
+        error: sessaoError
+    } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+
+    if (sessaoError) {
+        console.warn(
+            "Não foi possível obter a sessão:",
+            sessaoError
+        );
+
+    } else {
+        avaliadorId =
+            sessaoData
+                ?.session
+                ?.user
+                ?.id
+                || null;
     }
 
-    alert("Avaliação salva com sucesso!");
+
+    // =========================================
+    // OBJETO DA AVALIAÇÃO
+    // =========================================
+
+    const avaliacao = {
+        funcionario_id:
+            funcionarioId,
+
+        semana:
+            semana,
+
+        competencia:
+            competencia,
+
+        periodo_inicio:
+            periodoInicio,
+
+        periodo_fim:
+            periodoFim,
+
+        status:
+            "Concluída",
+
+        produtividade:
+            produtividade,
+
+        prazo:
+            prazo,
+
+        qualidade:
+            qualidade,
+
+        conhecimento_tecnico:
+            conhecimentoTecnico,
+
+        proatividade:
+            proatividade,
+
+        trabalho_equipe:
+            trabalhoEquipe,
+
+        adaptabilidade:
+            adaptabilidade,
+
+        responsabilidade:
+            responsabilidade,
+
+        nota_final:
+            notaFinal,
+
+        classificacao:
+            classificacao
+    };
+
+
+    if (avaliadorId) {
+        avaliacao.avaliador_id =
+            avaliadorId;
+    }
+
+
+    // =========================================
+    // ESTADO DO BOTÃO
+    // =========================================
+
+    if (botao) {
+        botao.disabled =
+            true;
+
+        botao.textContent =
+            "Salvando...";
+    }
+
+
+    try {
+
+        // =====================================
+        // SALVA
+        // =====================================
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from(
+                    "avaliacoes_semanais"
+                )
+                .insert([
+                    avaliacao
+                ])
+                .select();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        console.log(
+            "Avaliação salva com sucesso:",
+            data
+        );
+
+
+        alert(
+            "Avaliação salva com sucesso!\n\n" +
+            `Nota: ${notaFinal}/100\n` +
+            `Classificação: ${classificacao}`
+        );
+
+
+        atualizarSemanaResultado();
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao salvar avaliação:",
+            error
+        );
+
+
+        alert(
+            "Não foi possível salvar a avaliação.\n\n" +
+            "Abra o Console do navegador para ver o erro."
+        );
+
+    } finally {
+
+        if (botao) {
+            botao.disabled =
+                false;
+
+            botao.textContent =
+                "Salvar Avaliação";
+        }
+    }
+}
+
+
+// =====================================================
+// FORMATA DATA SEM PROBLEMA DE FUSO
+// YYYY-MM-DD
+// =====================================================
+
+function formatarDataLocal(data) {
+    const ano =
+        data.getFullYear();
+
+    const mes =
+        String(
+            data.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const dia =
+        String(
+            data.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    return `${ano}-${mes}-${dia}`;
 }
