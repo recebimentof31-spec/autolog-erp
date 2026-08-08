@@ -87,6 +87,7 @@ async function carregarAvaliacoesDashboard() {
     atualizarClassificacoes(avaliacoes);
     atualizarRanking(avaliacoes);
     atualizarUltimasAvaliacoes(avaliacoes);
+    atualizarGraficoEvolucao(avaliacoes);
 }
 
 
@@ -406,4 +407,182 @@ function formatarData(dataISO) {
             year: "numeric"
         }
     );
+}
+let graficoEvolucao = null;
+
+function atualizarGraficoEvolucao(avaliacoes) {
+
+    const canvas =
+        document.getElementById("graficoEvolucao");
+
+    if (!canvas) {
+        console.warn(
+            "Canvas graficoEvolucao não encontrado."
+        );
+        return;
+    }
+
+
+    if (graficoEvolucao) {
+        graficoEvolucao.destroy();
+    }
+
+
+    const agrupado = {};
+
+
+    avaliacoes.forEach(avaliacao => {
+
+        const data =
+            avaliacao.competencia ||
+            avaliacao.created_at;
+
+        if (!data) return;
+
+
+        const chave =
+            new Date(data)
+                .toLocaleDateString(
+                    "pt-BR",
+                    {
+                        month: "short",
+                        year: "2-digit"
+                    }
+                );
+
+
+        if (!agrupado[chave]) {
+            agrupado[chave] = {
+                soma: 0,
+                quantidade: 0
+            };
+        }
+
+
+        agrupado[chave].soma +=
+            Number(
+                avaliacao.nota_final || 0
+            );
+
+        agrupado[chave].quantidade++;
+    });
+
+
+    const labels =
+        Object.keys(agrupado);
+
+
+    const valores =
+        labels.map(label => {
+
+            const item =
+                agrupado[label];
+
+            return Number(
+                (
+                    item.soma /
+                    item.quantidade
+                ).toFixed(1)
+            );
+        });
+
+
+    graficoEvolucao =
+        new Chart(
+            canvas,
+            {
+                type: "line",
+
+                data: {
+                    labels: labels,
+
+                    datasets: [
+                        {
+                            label:
+                                "Média de desempenho",
+
+                            data:
+                                valores,
+
+                            borderColor:
+                                "#ff7518",
+
+                            backgroundColor:
+                                "rgba(255,117,24,0.12)",
+
+                            borderWidth:
+                                3,
+
+                            tension:
+                                0.35,
+
+                            fill:
+                                true,
+
+                            pointRadius:
+                                5,
+
+                            pointHoverRadius:
+                                7
+                        }
+                    ]
+                },
+
+                options: {
+
+                    responsive:
+                        true,
+
+                    maintainAspectRatio:
+                        false,
+
+                    plugins: {
+
+                        legend: {
+                            display:
+                                false
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero:
+                                true,
+
+                            max:
+                                100,
+
+                            ticks: {
+                                color:
+                                    "#717b86"
+                            },
+
+                            grid: {
+                                color:
+                                    "rgba(255,255,255,0.05)"
+                            }
+
+                        },
+
+                        x: {
+
+                            ticks: {
+                                color:
+                                    "#717b86"
+                            },
+
+                            grid: {
+                                display:
+                                    false
+                            }
+
+                        }
+
+                    }
+                }
+            }
+        );
 }
