@@ -90,7 +90,6 @@ async function carregarAvaliacoesDashboard() {
     atualizarGraficoEvolucao(avaliacoes);
 }
 
-
 // =====================================================
 // QUANTIDADE DE AVALIAÇÕES
 // =====================================================
@@ -585,4 +584,157 @@ function atualizarGraficoEvolucao(avaliacoes) {
                 }
             }
         );
+}
+
+// ==========================================
+// GRÁFICO DE EVOLUÇÃO DAS AVALIAÇÕES
+// ==========================================
+
+let graficoEvolucaoInstance = null;
+
+function atualizarGraficoEvolucao(avaliacoes) {
+
+    const canvas = document.getElementById("graficoEvolucao");
+
+    if (!canvas) {
+        console.warn("Canvas graficoEvolucao não encontrado.");
+        return;
+    }
+
+    if (!avaliacoes || avaliacoes.length === 0) {
+        console.warn("Nenhuma avaliação encontrada para o gráfico.");
+
+        if (graficoEvolucaoInstance) {
+            graficoEvolucaoInstance.destroy();
+            graficoEvolucaoInstance = null;
+        }
+
+        return;
+    }
+
+    // Ordena as avaliações da mais antiga para a mais recente
+    const avaliacoesOrdenadas = [...avaliacoes].sort((a, b) => {
+        const dataA = new Date(a.created_at || a.periodo_fim || 0);
+        const dataB = new Date(b.created_at || b.periodo_fim || 0);
+
+        return dataA - dataB;
+    });
+
+    // Datas que aparecerão embaixo do gráfico
+    const labels = avaliacoesOrdenadas.map((avaliacao) => {
+
+        const data = avaliacao.created_at || avaliacao.periodo_fim;
+
+        if (!data) {
+            return `Semana ${avaliacao.semana || "-"}`;
+        }
+
+        return new Date(data).toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit"
+        });
+    });
+
+    // Notas das avaliações
+    const notas = avaliacoesOrdenadas.map((avaliacao) => {
+        return Number(avaliacao.nota_final) || 0;
+    });
+
+    // Remove gráfico anterior antes de desenhar novamente
+    if (graficoEvolucaoInstance) {
+        graficoEvolucaoInstance.destroy();
+    }
+
+    const contexto = canvas.getContext("2d");
+
+    graficoEvolucaoInstance = new Chart(contexto, {
+
+        type: "line",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+                {
+                    label: "Nota Final",
+
+                    data: notas,
+
+                    borderColor: "#ff7a1a",
+
+                    backgroundColor: "rgba(255, 122, 26, 0.12)",
+
+                    pointBackgroundColor: "#ff7a1a",
+
+                    pointBorderColor: "#ff7a1a",
+
+                    pointRadius: 5,
+
+                    pointHoverRadius: 7,
+
+                    borderWidth: 3,
+
+                    tension: 0.35,
+
+                    fill: true
+                }
+            ]
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            interaction: {
+                intersect: false,
+                mode: "index"
+            },
+
+            plugins: {
+
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Nota: ${context.parsed.y}`;
+                        }
+                    }
+                }
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    min: 0,
+
+                    max: 100,
+
+                    ticks: {
+                        stepSize: 10
+                    },
+
+                    grid: {
+                        color: "rgba(255,255,255,0.06)"
+                    }
+                },
+
+                x: {
+
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
 }
