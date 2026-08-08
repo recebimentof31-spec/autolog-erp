@@ -645,13 +645,6 @@ async function salvarAvaliacao() {
             classificacao
     };
 
-
-    if (avaliadorId) {
-        avaliacao.avaliador_id =
-            avaliadorId;
-    }
-
-
     // =========================================
     // ESTADO DO BOTÃO
     // =========================================
