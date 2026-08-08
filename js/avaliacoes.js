@@ -598,6 +598,7 @@ async function salvarAvaliacao() {
     const avaliacao = {
         funcionario_id:
             funcionarioId,
+            avaliador_id: avaliadorId,
 
         semana:
             semana,
@@ -644,6 +645,49 @@ async function salvarAvaliacao() {
         classificacao:
             classificacao
     };
+    let avaliadorId = null;
+
+const {
+    data: sessaoData,
+    error: sessaoError
+} = await supabaseClient.auth.getSession();
+
+if (sessaoError) {
+    console.error("Erro ao obter sessão:", sessaoError);
+    return;
+}
+
+const authUserId =
+    sessaoData?.session?.user?.id;
+
+if (!authUserId) {
+    alert("Usuário não autenticado.");
+    return;
+}
+
+const {
+    data: perfil,
+    error: perfilError
+} = await supabaseClient
+    .from("perfis_usuario")
+    .select("id")
+    .eq("auth_user_id", authUserId)
+    .single();
+
+if (perfilError || !perfil) {
+    console.error(
+        "Erro ao localizar perfil do avaliador:",
+        perfilError
+    );
+
+    alert(
+        "Perfil do avaliador não encontrado."
+    );
+
+    return;
+}
+
+avaliadorId = perfil.id;
 
     // =========================================
     // ESTADO DO BOTÃO
