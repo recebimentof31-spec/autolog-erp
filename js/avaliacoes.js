@@ -612,7 +612,7 @@ async function salvarAvaliacao() {
             periodoFim,
 
         status:
-            "Enviada",
+            "enviada",
 
         produtividade:
             produtividade,
