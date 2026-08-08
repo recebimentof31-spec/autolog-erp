@@ -745,3 +745,74 @@ body.app-v2 {
             1fr;
     }
 }
+.dashboard-ranking-item,
+.dashboard-activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 13px 0;
+
+    border-bottom:
+        1px solid
+        #1c2025;
+}
+
+.dashboard-ranking-item:last-child,
+.dashboard-activity-item:last-child {
+    border-bottom: 0;
+}
+
+.ranking-position {
+    width: 26px;
+    height: 26px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 7px;
+
+    background:
+        rgba(255,117,24,.10);
+
+    color:
+        var(--v2-orange);
+
+    font-size: 10px;
+    font-weight: 850;
+}
+
+.ranking-person,
+.dashboard-activity-item > div {
+    flex: 1;
+}
+
+.ranking-person strong,
+.dashboard-activity-item strong {
+    display: block;
+
+    color: #fff;
+
+    font-size: 10px;
+}
+
+.ranking-person small,
+.dashboard-activity-item small {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #626b75;
+
+    font-size: 8px;
+}
+
+.ranking-score,
+.activity-score {
+    color:
+        var(--v2-orange);
+
+    font-size: 14px;
+    font-weight: 850;
+}
