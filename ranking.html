@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Gestão de Desempenho - Ranking
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/theme-pro.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/v2.css"
+    >
+
+</head>
+
+<body class="app-v2">
+
+    <div class="app-shell">
+
+        <!-- =====================================
+             SIDEBAR
+        ====================================== -->
+
+        <aside
+            id="appSidebar"
+            class="app-sidebar"
+        ></aside>
+
+
+        <!-- =====================================
+             CONTEÚDO PRINCIPAL
+        ====================================== -->
+
+        <main class="v2-main">
+
+            <!-- =================================
+                 CABEÇALHO
+            ================================== -->
+
+            <section class="page-header">
+
+                <div>
+
+                    <span class="v2-label">
+                        DESEMPENHO DA EQUIPE
+                    </span>
+
+                    <h1>
+                        Ranking
+                    </h1>
+
+                    <p>
+                        Acompanhe os colaboradores com
+                        melhor desempenho e evolução nas
+                        avaliações.
+                    </p>
+
+                </div>
+
+                <div class="page-header-actions">
+
+                    <a
+                        href="avaliacoes.html"
+                        class="v2-btn v2-btn-primary"
+                    >
+                        Nova Avaliação
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 FILTROS
+            ================================== -->
+
+            <section class="v2-card ranking-filter-card">
+
+                <div class="ranking-filter-grid">
+
+                    <div class="ranking-filter-field">
+
+                        <label
+                            for="rankingBusca"
+                            class="v2-field-label"
+                        >
+                            Buscar colaborador
+                        </label>
+
+                        <input
+                            type="text"
+                            id="rankingBusca"
+                            class="v2-input"
+                            placeholder="Digite nome ou matrícula"
+                        >
+
+                    </div>
+
+
+                    <div class="ranking-filter-field">
+
+                        <label
+                            for="rankingPeriodo"
+                            class="v2-field-label"
+                        >
+                            Período
+                        </label>
+
+                        <select
+                            id="rankingPeriodo"
+                            class="v2-select"
+                        >
+
+                            <option value="todos">
+                                Todo período
+                            </option>
+
+                            <option value="30">
+                                Últimos 30 dias
+                            </option>
+
+                            <option value="90">
+                                Últimos 90 dias
+                            </option>
+
+                            <option value="180">
+                                Últimos 6 meses
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="ranking-filter-field">
+
+                        <label
+                            for="rankingClassificacao"
+                            class="v2-field-label"
+                        >
+                            Classificação
+                        </label>
+
+                        <select
+                            id="rankingClassificacao"
+                            class="v2-select"
+                        >
+
+                            <option value="todas">
+                                Todas
+                            </option>
+
+                            <option value="EXCELENTE">
+                                Excelente
+                            </option>
+
+                            <option value="MUITO BOM">
+                                Muito Bom
+                            </option>
+
+                            <option value="BOM">
+                                Bom
+                            </option>
+
+                            <option value="ATENÇÃO">
+                                Atenção
+                            </option>
+
+                            <option value="CRÍTICO">
+                                Crítico
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 PÓDIO
+            ================================== -->
+
+            <section class="ranking-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="v2-label">
+                            DESTAQUES
+                        </span>
+
+                        <h2>
+                            Pódio da equipe
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="rankingPodio"
+                    class="ranking-podium"
+                >
+
+                    <div class="ranking-loading">
+                        Carregando ranking...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 KPIs
+            ================================== -->
+
+            <section class="ranking-kpis">
+
+                <article class="v2-card ranking-kpi">
+
+                    <span class="v2-label">
+                        COLABORADORES
+                    </span>
+
+                    <strong
+                        id="rankingTotalColaboradores"
+                        class="ranking-kpi-value"
+                    >
+                        0
+                    </strong>
+
+                    <small>
+                        Com avaliações registradas
+                    </small>
+
+                </article>
+
+
+                <article class="v2-card ranking-kpi">
+
+                    <span class="v2-label">
+                        MÉDIA DA EQUIPE
+                    </span>
+
+                    <strong
+                        id="rankingMediaEquipe"
+                        class="ranking-kpi-value"
+                    >
+                        0.0
+                    </strong>
+
+                    <small>
+                        Média geral das avaliações
+                    </small>
+
+                </article>
+
+
+                <article class="v2-card ranking-kpi">
+
+                    <span class="v2-label">
+                        MELHOR MÉDIA
+                    </span>
+
+                    <strong
+                        id="rankingMelhorMedia"
+                        class="ranking-kpi-value"
+                    >
+                        0.0
+                    </strong>
+
+                    <small>
+                        Melhor desempenho atual
+                    </small>
+
+                </article>
+
+
+                <article class="v2-card ranking-kpi">
+
+                    <span class="v2-label">
+                        AVALIAÇÕES
+                    </span>
+
+                    <strong
+                        id="rankingTotalAvaliacoes"
+                        class="ranking-kpi-value"
+                    >
+                        0
+                    </strong>
+
+                    <small>
+                        Total considerado no ranking
+                    </small>
+
+                </article>
+
+            </section>
+
+
+            <!-- =================================
+                 RANKING GERAL
+            ================================== -->
+
+            <section class="v2-card ranking-table-card">
+
+                <div class="ranking-table-header">
+
+                    <div>
+
+                        <span class="v2-label">
+                            CLASSIFICAÇÃO
+                        </span>
+
+                        <h2>
+                            Ranking geral
+                        </h2>
+
+                    </div>
+
+                    <div
+                        id="rankingQuantidadeResultados"
+                        class="ranking-results-count"
+                    >
+                        0 colaboradores
+                    </div>
+
+                </div>
+
+
+                <div class="ranking-table-wrapper">
+
+                    <table class="ranking-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Posição
+                                </th>
+
+                                <th>
+                                    Colaborador
+                                </th>
+
+                                <th>
+                                    Avaliações
+                                </th>
+
+                                <th>
+                                    Média
+                                </th>
+
+                                <th>
+                                    Classificação
+                                </th>
+
+                                <th>
+                                    Última avaliação
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="rankingTabelaCorpo">
+
+                            <tr>
+
+                                <td
+                                    colspan="6"
+                                    class="ranking-empty-row"
+                                >
+                                    Carregando dados...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+    <!-- =====================================
+         SCRIPTS
+    ====================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/layout.js"></script>
+
+    <script src="js/ranking.js"></script>
+
+
+    <script>
+        carregarLayout("ranking");
+    </script>
+
+</body>
+
+</html>
