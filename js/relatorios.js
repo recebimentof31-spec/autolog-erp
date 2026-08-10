@@ -55,7 +55,46 @@ document.addEventListener("DOMContentLoaded", async () => {
     await carregarRelatorios();
     configurarFiltrosRelatorio();
     configurarImpressao();
+    configurarAbasRelatorio();
 });
+
+function configurarAbasRelatorio() {
+
+    const botoes =
+        document.querySelectorAll(".relatorio-tab");
+
+    const paineis =
+        document.querySelectorAll(".relatorio-tab-panel");
+
+    botoes.forEach((botao) => {
+
+        botao.addEventListener("click", () => {
+
+            const alvo =
+                botao.dataset.target;
+
+            botoes.forEach((item) => {
+                item.classList.remove("active");
+            });
+
+            paineis.forEach((painel) => {
+                painel.classList.remove("active");
+            });
+
+            botao.classList.add("active");
+
+            const painelAlvo =
+                document.getElementById(alvo);
+
+            if (painelAlvo) {
+                painelAlvo.classList.add("active");
+            }
+
+        });
+
+    });
+
+}
 
 let relatorioBase = [];
 let graficoRelatorioInstance = null;

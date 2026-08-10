@@ -76,6 +76,40 @@
 
         </header>
 
+        <!-- =========================================
+     NAVEGAÇÃO INTERNA
+========================================== -->
+
+<section class="relatorio-tabs">
+
+    <button
+        type="button"
+        class="relatorio-tab active"
+        id="tabRelatorios"
+        data-target="painelRelatorios"
+    >
+        Relatórios
+    </button>
+
+    <button
+        type="button"
+        class="relatorio-tab"
+        id="tabFechamentoMensal"
+        data-target="painelFechamentoMensal"
+    >
+        Fechamento Mensal
+    </button>
+
+</section>
+
+
+<!-- =========================================
+     PAINEL RELATÓRIOS
+========================================== -->
+
+<div id="painelRelatorios" class="relatorio-tab-panel active">
+
+
 
         <!-- =================================
              FILTROS
@@ -405,6 +439,205 @@
     <!-- =====================================
          SCRIPTS
     ====================================== -->
+
+    </div>
+
+<!-- =========================================
+     PAINEL FECHAMENTO MENSAL
+========================================== -->
+
+<div
+    id="painelFechamentoMensal"
+    class="relatorio-tab-panel"
+>
+
+    <section class="v2-card fechamento-header-card">
+
+        <div class="fechamento-header-grid">
+
+            <div>
+
+                <span class="v2-label">
+                    CONSOLIDAÇÃO
+                </span>
+
+                <h2>
+                    Fechamento Mensal
+                </h2>
+
+                <p>
+                    Consolide as avaliações semanais e acompanhe
+                    o resultado mensal dos colaboradores.
+                </p>
+
+            </div>
+
+
+            <div class="fechamento-competencia">
+
+                <label for="fechamentoCompetencia">
+                    Competência
+                </label>
+
+                <input
+                    id="fechamentoCompetencia"
+                    type="month"
+                    class="v2-input"
+                >
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="fechamento-kpis">
+
+        <article class="v2-card fechamento-kpi">
+
+            <span class="v2-label">
+                COLABORADORES
+            </span>
+
+            <strong id="fechamentoKpiColaboradores">
+                0
+            </strong>
+
+            <small>
+                Com fechamento no período
+            </small>
+
+        </article>
+
+
+        <article class="v2-card fechamento-kpi">
+
+            <span class="v2-label">
+                MÉDIA GERAL
+            </span>
+
+            <strong id="fechamentoKpiMedia">
+                0.0
+            </strong>
+
+            <small>
+                Média mensal da equipe
+            </small>
+
+        </article>
+
+
+        <article class="v2-card fechamento-kpi">
+
+            <span class="v2-label">
+                MELHOR MÉDIA
+            </span>
+
+            <strong id="fechamentoKpiMelhor">
+                0.0
+            </strong>
+
+            <small>
+                Melhor resultado mensal
+            </small>
+
+        </article>
+
+
+        <article class="v2-card fechamento-kpi">
+
+            <span class="v2-label">
+                FECHADOS
+            </span>
+
+            <strong id="fechamentoKpiFechados">
+                0
+            </strong>
+
+            <small>
+                Registros finalizados
+            </small>
+
+        </article>
+
+    </section>
+
+
+    <section class="v2-card fechamento-table-card">
+
+        <div class="fechamento-table-header">
+
+            <div>
+
+                <span class="v2-label">
+                    RESULTADOS
+                </span>
+
+                <h2>
+                    Consolidado mensal
+                </h2>
+
+            </div>
+
+            <span
+                id="fechamentoTotalRegistros"
+                class="fechamento-total-badge"
+            >
+                0 registros
+            </span>
+
+        </div>
+
+
+        <div class="fechamento-table-wrapper">
+
+            <table class="fechamento-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Colaborador</th>
+
+                        <th>Período</th>
+
+                        <th>Média</th>
+
+                        <th>Classificação</th>
+
+                        <th>Status</th>
+
+                        <th>Ação</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="fechamentoTabelaCorpo">
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="fechamento-empty-row"
+                        >
+                            Selecione uma competência para carregar os dados.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
 
     <script
         src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
