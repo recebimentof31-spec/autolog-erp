@@ -1322,3 +1322,171 @@ body.app-v2 {
         flex-direction: column;
     }
 }
+/* =========================================================
+   RELATÓRIOS V2
+   ========================================================= */
+
+.relatorio-filter-card {
+    padding: 18px;
+    margin-bottom: 18px;
+}
+
+.relatorio-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+
+/* =========================================================
+   KPIs
+   ========================================================= */
+
+.relatorio-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+
+    margin-bottom: 18px;
+}
+
+.relatorio-kpi {
+    padding: 18px;
+}
+
+
+/* =========================================================
+   GRÁFICO
+   ========================================================= */
+
+.relatorio-chart-card {
+    padding: 20px;
+    margin-bottom: 18px;
+}
+
+.relatorio-chart-container {
+    position: relative;
+
+    width: 100%;
+    height: 310px;
+
+    margin-top: 15px;
+
+    padding-top: 15px;
+
+    border-top:
+        1px solid
+        var(--v2-border);
+}
+
+.relatorio-chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+
+/* =========================================================
+   BOTÃO DE IMPRESSÃO
+   ========================================================= */
+
+#btnImprimirRelatorio {
+    border: 0;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   IMPRESSÃO
+   ========================================================= */
+
+@media print {
+
+    body {
+        background: #ffffff !important;
+        color: #111111 !important;
+    }
+
+    .v2-sidebar,
+    .page-header-actions,
+    .relatorio-filter-card {
+        display: none !important;
+    }
+
+    .v2-main {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 20px !important;
+    }
+
+    .v2-card {
+        background: #ffffff !important;
+        color: #111111 !important;
+
+        border:
+            1px solid
+            #dcdcdc !important;
+
+        box-shadow: none !important;
+    }
+
+    .v2-label {
+        color: #d85c00 !important;
+    }
+
+    h1,
+    h2,
+    strong,
+    .ranking-table-person strong {
+        color: #111111 !important;
+    }
+
+    p,
+    small,
+    td,
+    th {
+        color: #444444 !important;
+    }
+
+    .relatorio-chart-container {
+        height: 280px;
+    }
+
+    .ranking-table {
+        font-size: 10px;
+    }
+
+    .ranking-table th,
+    .ranking-table td {
+        border-color: #dddddd !important;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .relatorio-filter-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .relatorio-kpis {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 760px) {
+
+    .relatorio-filter-grid,
+    .relatorio-kpis {
+        grid-template-columns: 1fr;
+    }
+
+    .relatorio-chart-container {
+        height: 250px;
+    }
+}

@@ -1,168 +1,429 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Relatórios | AutoLog ERP</title>
 
-<link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
 
-<style>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-.main{
-    margin-left:240px;
-    padding:30px;
-}
+    <title>
+        Gestão de Desempenho - Relatórios
+    </title>
 
-.card{
-    background:white;
-    border-radius:12px;
-    padding:25px;
-    margin-top:20px;
-    box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-th{
-    background:#2d5be3;
-    color:white;
-    padding:12px;
-}
-
-td{
-    padding:12px;
-    border-bottom:1px solid #ddd;
-}
-
-button{
-    background:#2d5be3;
-    color:white;
-    border:none;
-    padding:12px 18px;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-input{
-    padding:10px;
-    margin-right:10px;
-}
-
-</style>
+    <link
+        rel="stylesheet"
+        href="css/v2.css"
+    >
 
 </head>
 
-<body>
+<body class="app-v2">
 
-<div class="sidebar">
+    <!-- =====================================
+         SIDEBAR
+    ====================================== -->
 
-<h2>🚛 AutoLog ERP</h2>
+    <aside
+        id="appSidebar"
+        class="v2-sidebar"
+    ></aside>
 
-<ul>
 
-<li><a href="dashboard.html">🏠 Dashboard</a></li>
+    <!-- =====================================
+         CONTEÚDO PRINCIPAL
+    ====================================== -->
 
-<li><a href="conferencia.html">📦 Conferência</a></li>
+    <main class="v2-main">
 
-<li><a href="funcionarios.html">👥 Funcionários</a></li>
+        <!-- =================================
+             CABEÇALHO
+        ================================== -->
 
-<li><a href="desempenho.html">📈 Desempenho</a></li>
+        <header class="v2-page-header">
 
-<li><a href="relatorios.html">📄 Relatórios</a></li>
+            <div>
 
-<li><a href="configuracoes.html">⚙ Configurações</a></li>
+                <span class="v2-label">
+                    ANÁLISE DE DESEMPENHO
+                </span>
 
-</ul>
+                <h1>
+                    Relatórios
+                </h1>
 
-</div>
+                <p>
+                    Analise avaliações, médias, evolução
+                    e desempenho dos colaboradores.
+                </p>
 
-<div class="main">
+            </div>
 
-<h1>Relatórios</h1>
+            <div class="page-header-actions">
 
-<div class="card">
+                <button
+                    id="btnImprimirRelatorio"
+                    class="v2-btn v2-btn-primary"
+                    type="button"
+                >
+                    Imprimir Relatório
+                </button>
 
-<h2>Filtro</h2>
+            </div>
 
-<input type="date">
+        </header>
 
-<input type="date">
 
-<button>Gerar Relatório</button>
+        <!-- =================================
+             FILTROS
+        ================================== -->
 
-</div>
+        <section class="v2-card relatorio-filter-card">
 
-<div class="card">
+            <div class="relatorio-filter-grid">
 
-<h2>Resultado</h2>
+                <div class="ranking-filter-field">
 
-<table>
+                    <label
+                        for="relatorioFuncionario"
+                        class="v2-field-label"
+                    >
+                        Colaborador
+                    </label>
 
-<tr>
+                    <select
+                        id="relatorioFuncionario"
+                        class="v2-select"
+                    >
+                        <option value="todos">
+                            Todos os colaboradores
+                        </option>
+                    </select>
 
-<th>Funcionário</th>
+                </div>
 
-<th>Conferências</th>
 
-<th>Agilidade</th>
+                <div class="ranking-filter-field">
 
-<th>Organização</th>
+                    <label
+                        for="relatorioPeriodo"
+                        class="v2-field-label"
+                    >
+                        Período
+                    </label>
 
-<th>Nota</th>
+                    <select
+                        id="relatorioPeriodo"
+                        class="v2-select"
+                    >
 
-</tr>
+                        <option value="todos">
+                            Todo período
+                        </option>
 
-<tr>
+                        <option value="30">
+                            Últimos 30 dias
+                        </option>
 
-<td>João</td>
+                        <option value="90">
+                            Últimos 90 dias
+                        </option>
 
-<td>165</td>
+                        <option value="180">
+                            Últimos 6 meses
+                        </option>
 
-<td>98%</td>
+                    </select>
 
-<td>96%</td>
+                </div>
 
-<td>9,8</td>
 
-</tr>
+                <div class="ranking-filter-field">
 
-<tr>
+                    <label
+                        for="relatorioClassificacao"
+                        class="v2-field-label"
+                    >
+                        Classificação
+                    </label>
 
-<td>Carlos</td>
+                    <select
+                        id="relatorioClassificacao"
+                        class="v2-select"
+                    >
 
-<td>158</td>
+                        <option value="todas">
+                            Todas
+                        </option>
 
-<td>93%</td>
+                        <option value="EXCELENTE">
+                            Excelente
+                        </option>
 
-<td>91%</td>
+                        <option value="MUITO BOM">
+                            Muito Bom
+                        </option>
 
-<td>9,2</td>
+                        <option value="BOM">
+                            Bom
+                        </option>
 
-</tr>
+                        <option value="ATENÇÃO">
+                            Atenção
+                        </option>
 
-<tr>
+                        <option value="CRÍTICO">
+                            Crítico
+                        </option>
 
-<td>Maria</td>
+                    </select>
 
-<td>174</td>
+                </div>
 
-<td>97%</td>
+            </div>
 
-<td>99%</td>
+        </section>
 
-<td>9,9</td>
 
-</tr>
+        <!-- =================================
+             INDICADORES
+        ================================== -->
 
-</table>
+        <section class="relatorio-kpis">
 
-</div>
+            <article class="v2-card relatorio-kpi">
 
-</div>
+                <span class="v2-label">
+                    AVALIAÇÕES
+                </span>
+
+                <strong
+                    id="relatorioTotalAvaliacoes"
+                    class="ranking-kpi-value"
+                >
+                    0
+                </strong>
+
+                <small>
+                    Registros encontrados
+                </small>
+
+            </article>
+
+
+            <article class="v2-card relatorio-kpi">
+
+                <span class="v2-label">
+                    MÉDIA
+                </span>
+
+                <strong
+                    id="relatorioMedia"
+                    class="ranking-kpi-value"
+                >
+                    0.0
+                </strong>
+
+                <small>
+                    Média das avaliações
+                </small>
+
+            </article>
+
+
+            <article class="v2-card relatorio-kpi">
+
+                <span class="v2-label">
+                    MELHOR RESULTADO
+                </span>
+
+                <strong
+                    id="relatorioMelhorNota"
+                    class="ranking-kpi-value"
+                >
+                    0
+                </strong>
+
+                <small>
+                    Maior nota registrada
+                </small>
+
+            </article>
+
+
+            <article class="v2-card relatorio-kpi">
+
+                <span class="v2-label">
+                    MENOR RESULTADO
+                </span>
+
+                <strong
+                    id="relatorioMenorNota"
+                    class="ranking-kpi-value"
+                >
+                    0
+                </strong>
+
+                <small>
+                    Menor nota registrada
+                </small>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================
+             GRÁFICO
+        ================================== -->
+
+        <section class="v2-card relatorio-chart-card">
+
+            <div class="ranking-table-header">
+
+                <div>
+
+                    <span class="v2-label">
+                        EVOLUÇÃO
+                    </span>
+
+                    <h2>
+                        Evolução das avaliações
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div class="relatorio-chart-container">
+
+                <canvas
+                    id="graficoRelatorio"
+                ></canvas>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================
+             TABELA
+        ================================== -->
+
+        <section class="v2-card ranking-table-card">
+
+            <div class="ranking-table-header">
+
+                <div>
+
+                    <span class="v2-label">
+                        DETALHAMENTO
+                    </span>
+
+                    <h2>
+                        Avaliações registradas
+                    </h2>
+
+                </div>
+
+                <div
+                    id="relatorioQuantidadeResultados"
+                    class="ranking-results-count"
+                >
+                    0 registros
+                </div>
+
+            </div>
+
+
+            <div class="ranking-table-wrapper">
+
+                <table class="ranking-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Data
+                            </th>
+
+                            <th>
+                                Colaborador
+                            </th>
+
+                            <th>
+                                Semana
+                            </th>
+
+                            <th>
+                                Nota
+                            </th>
+
+                            <th>
+                                Classificação
+                            </th>
+
+                            <th>
+                                Avaliador
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="relatorioTabelaCorpo"
+                    >
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="ranking-empty-row"
+                            >
+                                Carregando dados...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================
+         SCRIPTS
+    ====================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/layout.js"></script>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js"
+    ></script>
+
+    <script src="js/relatorios.js"></script>
+
+
+    <script>
+        carregarLayout("relatorios");
+    </script>
 
 </body>
 

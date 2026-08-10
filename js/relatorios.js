@@ -1,0 +1,992 @@
+document.addEventListener("DOMContentLoaded", async () => {
+    await carregarRelatorios();
+    configurarFiltrosRelatorio();
+    configurarImpressao();
+});
+
+let relatorioBase = [];
+let graficoRelatorioInstance = null;
+
+
+// =====================================================
+// CARREGA DADOS DO SUPABASE
+// =====================================================
+
+async function carregarRelatorios() {
+
+    const { data, error } = await supabaseClient
+        .from("avaliacoes_semanais")
+        .select(`
+            id,
+            funcionario_id,
+            avaliador_id,
+            nota_final,
+            classificacao,
+            semana,
+            competencia,
+            periodo_inicio,
+            periodo_fim,
+            created_at,
+            status,
+            funcionarios (
+                nome,
+                matricula
+            )
+        `)
+        .eq("status", "enviada")
+        .order("created_at", {
+            ascending: false
+        });
+
+    if (error) {
+
+        console.error(
+            "Erro ao carregar relatórios:",
+            error
+        );
+
+        mostrarErroRelatorio();
+
+        return;
+    }
+
+    relatorioBase = data || [];
+
+    carregarFuncionariosFiltro();
+
+    atualizarRelatorio();
+}
+
+
+// =====================================================
+// CARREGA FUNCIONÁRIOS NO FILTRO
+// =====================================================
+
+function carregarFuncionariosFiltro() {
+
+    const select =
+        document.getElementById(
+            "relatorioFuncionario"
+        );
+
+    if (!select) return;
+
+
+    const funcionarios = {};
+
+
+    relatorioBase.forEach(avaliacao => {
+
+        if (!avaliacao.funcionario_id) {
+            return;
+        }
+
+        if (!funcionarios[avaliacao.funcionario_id]) {
+
+            funcionarios[avaliacao.funcionario_id] = {
+
+                id:
+                    avaliacao.funcionario_id,
+
+                nome:
+                    avaliacao.funcionarios?.nome
+                    || "Funcionário",
+
+                matricula:
+                    avaliacao.funcionarios?.matricula
+                    || ""
+
+            };
+        }
+    });
+
+
+    const lista =
+        Object.values(funcionarios)
+            .sort((a, b) =>
+                a.nome.localeCompare(
+                    b.nome,
+                    "pt-BR"
+                )
+            );
+
+
+    select.innerHTML = `
+        <option value="todos">
+            Todos os colaboradores
+        </option>
+    `;
+
+
+    lista.forEach(funcionario => {
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            funcionario.id;
+
+        option.textContent =
+            funcionario.matricula
+                ? `${funcionario.nome} - ${funcionario.matricula}`
+                : funcionario.nome;
+
+        select.appendChild(option);
+    });
+}
+
+
+// =====================================================
+// CONFIGURA FILTROS
+// =====================================================
+
+function configurarFiltrosRelatorio() {
+
+    const funcionario =
+        document.getElementById(
+            "relatorioFuncionario"
+        );
+
+    const periodo =
+        document.getElementById(
+            "relatorioPeriodo"
+        );
+
+    const classificacao =
+        document.getElementById(
+            "relatorioClassificacao"
+        );
+
+
+    if (funcionario) {
+
+        funcionario.addEventListener(
+            "change",
+            atualizarRelatorio
+        );
+    }
+
+
+    if (periodo) {
+
+        periodo.addEventListener(
+            "change",
+            atualizarRelatorio
+        );
+    }
+
+
+    if (classificacao) {
+
+        classificacao.addEventListener(
+            "change",
+            atualizarRelatorio
+        );
+    }
+}
+
+
+// =====================================================
+// ATUALIZA RELATÓRIO COMPLETO
+// =====================================================
+
+function atualizarRelatorio() {
+
+    const avaliacoes =
+        aplicarFiltrosRelatorio(
+            relatorioBase
+        );
+
+    atualizarKPIsRelatorio(
+        avaliacoes
+    );
+
+    atualizarGraficoRelatorio(
+        avaliacoes
+    );
+
+    atualizarTabelaRelatorio(
+        avaliacoes
+    );
+
+    atualizarQuantidadeResultadosRelatorio(
+        avaliacoes
+    );
+}
+
+
+// =====================================================
+// FILTROS
+// =====================================================
+
+function aplicarFiltrosRelatorio(avaliacoes) {
+
+    const funcionarioId =
+        document.getElementById(
+            "relatorioFuncionario"
+        )?.value
+        || "todos";
+
+
+    const periodo =
+        document.getElementById(
+            "relatorioPeriodo"
+        )?.value
+        || "todos";
+
+
+    const classificacao =
+        document.getElementById(
+            "relatorioClassificacao"
+        )?.value
+        || "todas";
+
+
+    const agora =
+        new Date();
+
+
+    return avaliacoes.filter(avaliacao => {
+
+        const atendeFuncionario =
+            funcionarioId === "todos"
+            ||
+            avaliacao.funcionario_id ===
+            funcionarioId;
+
+
+        let atendePeriodo = true;
+
+
+        if (periodo !== "todos") {
+
+            const dias =
+                Number(periodo);
+
+            const dataAvaliacao =
+                new Date(
+                    avaliacao.created_at
+                    ||
+                    avaliacao.periodo_fim
+                );
+
+            const limite =
+                new Date();
+
+            limite.setDate(
+                agora.getDate() - dias
+            );
+
+            atendePeriodo =
+                dataAvaliacao >= limite;
+        }
+
+
+        let atendeClassificacao =
+            true;
+
+
+        if (
+            classificacao !== "todas"
+        ) {
+
+            const classe =
+                obterClassificacaoRelatorio(
+                    Number(
+                        avaliacao.nota_final
+                        || 0
+                    )
+                );
+
+            atendeClassificacao =
+                classe === classificacao;
+        }
+
+
+        return (
+            atendeFuncionario
+            &&
+            atendePeriodo
+            &&
+            atendeClassificacao
+        );
+    });
+}
+
+
+// =====================================================
+// KPIs
+// =====================================================
+
+function atualizarKPIsRelatorio(avaliacoes) {
+
+    const quantidade =
+        avaliacoes.length;
+
+
+    definirTextoRelatorio(
+        "relatorioTotalAvaliacoes",
+        quantidade
+    );
+
+
+    if (quantidade === 0) {
+
+        definirTextoRelatorio(
+            "relatorioMedia",
+            "0.0"
+        );
+
+        definirTextoRelatorio(
+            "relatorioMelhorNota",
+            "0"
+        );
+
+        definirTextoRelatorio(
+            "relatorioMenorNota",
+            "0"
+        );
+
+        return;
+    }
+
+
+    const notas =
+        avaliacoes.map(avaliacao =>
+            Number(
+                avaliacao.nota_final
+                || 0
+            )
+        );
+
+
+    const soma =
+        notas.reduce(
+            (total, nota) =>
+                total + nota,
+            0
+        );
+
+
+    const media =
+        soma / notas.length;
+
+
+    const melhor =
+        Math.max(...notas);
+
+
+    const menor =
+        Math.min(...notas);
+
+
+    definirTextoRelatorio(
+        "relatorioMedia",
+        media.toFixed(1)
+    );
+
+
+    definirTextoRelatorio(
+        "relatorioMelhorNota",
+        melhor
+    );
+
+
+    definirTextoRelatorio(
+        "relatorioMenorNota",
+        menor
+    );
+}
+
+
+// =====================================================
+// GRÁFICO
+// =====================================================
+
+function atualizarGraficoRelatorio(avaliacoes) {
+
+    const canvas =
+        document.getElementById(
+            "graficoRelatorio"
+        );
+
+    if (!canvas) return;
+
+
+    if (graficoRelatorioInstance) {
+
+        graficoRelatorioInstance.destroy();
+
+        graficoRelatorioInstance = null;
+    }
+
+
+    const ordenadas =
+        [...avaliacoes]
+            .sort((a, b) => {
+
+                const dataA =
+                    new Date(
+                        a.created_at
+                        ||
+                        a.periodo_fim
+                        ||
+                        0
+                    );
+
+                const dataB =
+                    new Date(
+                        b.created_at
+                        ||
+                        b.periodo_fim
+                        ||
+                        0
+                    );
+
+                return dataA - dataB;
+            });
+
+
+    const labels =
+        ordenadas.map(avaliacao => {
+
+            const semana =
+                avaliacao.semana
+                || "-";
+
+            const data =
+                avaliacao.created_at
+                ||
+                avaliacao.periodo_fim;
+
+
+            if (!data) {
+                return `Semana ${semana}`;
+            }
+
+
+            const dataFormatada =
+                new Date(data)
+                    .toLocaleDateString(
+                        "pt-BR",
+                        {
+                            day: "2-digit",
+                            month: "2-digit"
+                        }
+                    );
+
+
+            return `S${semana} · ${dataFormatada}`;
+        });
+
+
+    const notas =
+        ordenadas.map(avaliacao =>
+            Number(
+                avaliacao.nota_final
+                || 0
+            )
+        );
+
+
+    const contexto =
+        canvas.getContext("2d");
+
+
+    graficoRelatorioInstance =
+        new Chart(
+            contexto,
+            {
+
+                type: "line",
+
+                data: {
+
+                    labels,
+
+                    datasets: [
+                        {
+                            label:
+                                "Nota da avaliação",
+
+                            data:
+                                notas,
+
+                            borderColor:
+                                "#ff7518",
+
+                            backgroundColor:
+                                "rgba(255,117,24,0.12)",
+
+                            pointBackgroundColor:
+                                "#ff7518",
+
+                            pointBorderColor:
+                                "#ff7518",
+
+                            pointRadius:
+                                5,
+
+                            pointHoverRadius:
+                                7,
+
+                            borderWidth:
+                                3,
+
+                            tension:
+                                0.35,
+
+                            fill:
+                                true
+                        }
+                    ]
+                },
+
+
+                options: {
+
+                    responsive:
+                        true,
+
+                    maintainAspectRatio:
+                        false,
+
+                    interaction: {
+
+                        intersect:
+                            false,
+
+                        mode:
+                            "index"
+                    },
+
+
+                    plugins: {
+
+                        legend: {
+                            display:
+                                false
+                        },
+
+
+                        tooltip: {
+
+                            callbacks: {
+
+                                label:
+                                    function(context) {
+
+                                        return (
+                                            `Nota: ${context.parsed.y}`
+                                        );
+                                    }
+                            }
+                        }
+                    },
+
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero:
+                                true,
+
+                            min:
+                                0,
+
+                            max:
+                                100,
+
+                            ticks: {
+
+                                stepSize:
+                                    10,
+
+                                color:
+                                    "#717b86"
+                            },
+
+                            grid: {
+
+                                color:
+                                    "rgba(255,255,255,0.06)"
+                            }
+                        },
+
+
+                        x: {
+
+                            ticks: {
+
+                                color:
+                                    "#717b86"
+                            },
+
+                            grid: {
+
+                                display:
+                                    false
+                            }
+                        }
+                    }
+                }
+            }
+        );
+}
+
+
+// =====================================================
+// TABELA
+// =====================================================
+
+function atualizarTabelaRelatorio(avaliacoes) {
+
+    const tbody =
+        document.getElementById(
+            "relatorioTabelaCorpo"
+        );
+
+    if (!tbody) return;
+
+
+    if (avaliacoes.length === 0) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td
+                    colspan="6"
+                    class="ranking-empty-row"
+                >
+                    Nenhuma avaliação encontrada.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    const ordenadas =
+        [...avaliacoes]
+            .sort((a, b) => {
+
+                return (
+                    new Date(
+                        b.created_at
+                        ||
+                        b.periodo_fim
+                        ||
+                        0
+                    )
+                    -
+                    new Date(
+                        a.created_at
+                        ||
+                        a.periodo_fim
+                        ||
+                        0
+                    )
+                );
+            });
+
+
+    tbody.innerHTML =
+        ordenadas
+            .map(avaliacao => {
+
+                const nome =
+                    avaliacao.funcionarios?.nome
+                    || "Funcionário";
+
+
+                const matricula =
+                    avaliacao.funcionarios?.matricula
+                    || "-";
+
+
+                const nota =
+                    Number(
+                        avaliacao.nota_final
+                        || 0
+                    );
+
+
+                const classificacao =
+                    obterClassificacaoRelatorio(
+                        nota
+                    );
+
+
+                const semana =
+                    avaliacao.semana
+                    || "-";
+
+
+                return `
+                    <tr>
+
+                        <td>
+                            ${formatarDataRelatorio(
+                                avaliacao.created_at
+                                ||
+                                avaliacao.periodo_fim
+                            )}
+                        </td>
+
+
+                        <td>
+
+                            <div
+                                class="ranking-table-person"
+                            >
+
+                                <strong>
+                                    ${nome}
+                                </strong>
+
+                                <small>
+                                    Matrícula:
+                                    ${matricula}
+                                </small>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+                            ${semana}
+                        </td>
+
+
+                        <td>
+
+                            <strong
+                                class="ranking-table-score"
+                            >
+                                ${nota}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="
+                                    ${classeRelatorio(
+                                        classificacao
+                                    )}
+                                "
+                            >
+                                ${classificacao}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+                            Registrado
+                        </td>
+
+                    </tr>
+                `;
+            })
+            .join("");
+}
+
+
+// =====================================================
+// QUANTIDADE DE RESULTADOS
+// =====================================================
+
+function atualizarQuantidadeResultadosRelatorio(
+    avaliacoes
+) {
+
+    const elemento =
+        document.getElementById(
+            "relatorioQuantidadeResultados"
+        );
+
+    if (!elemento) return;
+
+
+    const quantidade =
+        avaliacoes.length;
+
+
+    elemento.textContent =
+        quantidade === 1
+            ? "1 registro"
+            : `${quantidade} registros`;
+}
+
+
+// =====================================================
+// CLASSIFICAÇÃO
+// =====================================================
+
+function obterClassificacaoRelatorio(nota) {
+
+    const valor =
+        Number(nota || 0);
+
+
+    if (valor >= 90) {
+        return "EXCELENTE";
+    }
+
+
+    if (valor >= 80) {
+        return "MUITO BOM";
+    }
+
+
+    if (valor >= 70) {
+        return "BOM";
+    }
+
+
+    if (valor >= 60) {
+        return "ATENÇÃO";
+    }
+
+
+    return "CRÍTICO";
+}
+
+
+// =====================================================
+// CLASSE VISUAL
+// =====================================================
+
+function classeRelatorio(classificacao) {
+
+    switch (classificacao) {
+
+        case "EXCELENTE":
+            return "ranking-status excelente";
+
+
+        case "MUITO BOM":
+            return "ranking-status muito-bom";
+
+
+        case "BOM":
+            return "ranking-status bom";
+
+
+        case "ATENÇÃO":
+            return "ranking-status atencao";
+
+
+        default:
+            return "ranking-status critico";
+    }
+}
+
+
+// =====================================================
+// IMPRESSÃO
+// =====================================================
+
+function configurarImpressao() {
+
+    const botao =
+        document.getElementById(
+            "btnImprimirRelatorio"
+        );
+
+    if (!botao) return;
+
+
+    botao.addEventListener(
+        "click",
+        () => {
+
+            window.print();
+        }
+    );
+}
+
+
+// =====================================================
+// DATA
+// =====================================================
+
+function formatarDataRelatorio(dataISO) {
+
+    if (!dataISO) {
+        return "-";
+    }
+
+
+    return new Date(
+        dataISO
+    ).toLocaleDateString(
+        "pt-BR",
+        {
+            day:
+                "2-digit",
+
+            month:
+                "2-digit",
+
+            year:
+                "numeric"
+        }
+    );
+}
+
+
+// =====================================================
+// TEXTO
+// =====================================================
+
+function definirTextoRelatorio(
+    id,
+    valor
+) {
+
+    const elemento =
+        document.getElementById(id);
+
+
+    if (elemento) {
+
+        elemento.textContent =
+            valor;
+    }
+}
+
+
+// =====================================================
+// ERRO
+// =====================================================
+
+function mostrarErroRelatorio() {
+
+    const tabela =
+        document.getElementById(
+            "relatorioTabelaCorpo"
+        );
+
+
+    if (tabela) {
+
+        tabela.innerHTML = `
+            <tr>
+                <td
+                    colspan="6"
+                    class="ranking-empty-row"
+                >
+                    Não foi possível carregar o relatório.
+                </td>
+            </tr>
+        `;
+    }
+}
