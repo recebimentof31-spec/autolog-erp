@@ -1490,3 +1490,877 @@ body.app-v2 {
         height: 250px;
     }
 }
+/* =========================================================
+   CONFIGURAÇÕES V2
+   ========================================================= */
+
+.config-page {
+    width: 100%;
+}
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.config-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 26px;
+}
+
+.config-header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.config-label {
+    color: #ff7317;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.config-title {
+    margin: 0;
+    color: #f4f6f8;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.config-description {
+    margin: 0;
+    color: #8f9baa;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   GRID PRINCIPAL
+   ========================================================= */
+
+.config-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.config-card {
+    background: #0f1114;
+    border: 1px solid #23272e;
+    border-radius: 16px;
+    padding: 22px;
+    min-width: 0;
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.config-card:hover {
+    border-color: #30353d;
+}
+
+.config-card-full {
+    grid-column: 1 / -1;
+}
+
+.config-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.config-card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.config-card-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: rgba(255, 115, 23, 0.10);
+    border: 1px solid rgba(255, 115, 23, 0.22);
+
+    color: #ff7317;
+    font-size: 18px;
+}
+
+.config-card-title {
+    margin: 0 0 4px;
+    color: #f4f6f8;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.config-card-subtitle {
+    margin: 0;
+    color: #748091;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   FORMULÁRIOS
+   ========================================================= */
+
+.config-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.config-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.config-field-full {
+    grid-column: 1 / -1;
+}
+
+.config-field label {
+    color: #a8b2c1;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.config-field input,
+.config-field select {
+    width: 100%;
+    height: 43px;
+
+    padding: 0 13px;
+
+    background: #090b0d;
+    color: #f4f6f8;
+
+    border: 1px solid #292e35;
+    border-radius: 9px;
+
+    font-size: 13px;
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.config-field input::placeholder {
+    color: #596575;
+}
+
+.config-field input:hover,
+.config-field select:hover {
+    border-color: #3a4049;
+}
+
+.config-field input:focus,
+.config-field select:focus {
+    border-color: #ff7317;
+
+    box-shadow:
+        0 0 0 3px rgba(255, 115, 23, 0.08);
+}
+
+.config-field select {
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   PREFERÊNCIAS / SWITCH
+   ========================================================= */
+
+.config-preferences {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.config-preference {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 18px;
+
+    padding: 16px 0;
+
+    border-bottom: 1px solid #20242a;
+}
+
+.config-preference:first-child {
+    padding-top: 2px;
+}
+
+.config-preference:last-child {
+    border-bottom: 0;
+    padding-bottom: 2px;
+}
+
+.config-preference-info {
+    min-width: 0;
+}
+
+.config-preference-title {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #e8ebef;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.config-preference-description {
+    margin: 0;
+
+    color: #707c8d;
+
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+
+/* SWITCH */
+
+.config-switch {
+    position: relative;
+
+    width: 42px;
+    height: 23px;
+
+    flex: 0 0 42px;
+}
+
+.config-switch input {
+    width: 0;
+    height: 0;
+
+    opacity: 0;
+}
+
+.config-slider {
+    position: absolute;
+
+    inset: 0;
+
+    cursor: pointer;
+
+    background: #292e35;
+
+    border-radius: 30px;
+
+    transition: 0.2s ease;
+}
+
+.config-slider::before {
+    content: "";
+
+    position: absolute;
+
+    width: 17px;
+    height: 17px;
+
+    left: 3px;
+    top: 3px;
+
+    background: #8994a3;
+
+    border-radius: 50%;
+
+    transition: 0.2s ease;
+}
+
+.config-switch input:checked + .config-slider {
+    background: rgba(255, 115, 23, 0.25);
+
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 115, 23, 0.45);
+}
+
+.config-switch input:checked + .config-slider::before {
+    transform: translateX(19px);
+
+    background: #ff7317;
+}
+
+
+/* =========================================================
+   INFORMAÇÕES DO SISTEMA
+   ========================================================= */
+
+.config-system-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+.config-system-item {
+    padding: 15px;
+
+    background: #0a0c0f;
+
+    border: 1px solid #20242a;
+    border-radius: 11px;
+}
+
+.config-system-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #748091;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.04em;
+}
+
+.config-system-value {
+    color: #f4f6f8;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.config-system-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+.config-system-status::before {
+    content: "";
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #35c979;
+
+    box-shadow:
+        0 0 8px rgba(53, 201, 121, 0.45);
+}
+
+
+/* =========================================================
+   RODAPÉ / AÇÕES
+   ========================================================= */
+
+.config-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 22px;
+}
+
+.config-btn {
+    min-height: 40px;
+
+    padding: 0 17px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border: 0;
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease,
+        opacity 0.15s ease;
+}
+
+.config-btn:hover {
+    transform: translateY(-1px);
+}
+
+.config-btn:active {
+    transform: translateY(0);
+}
+
+.config-btn:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.6;
+
+    transform: none;
+}
+
+.config-btn-primary {
+    background: #ff7317;
+    color: #08090a;
+}
+
+.config-btn-primary:hover {
+    background: #ff8836;
+}
+
+.config-btn-secondary {
+    background: #181c21;
+    color: #d7dce3;
+
+    border: 1px solid #2b3037;
+}
+
+.config-btn-secondary:hover {
+    background: #20252b;
+}
+
+
+/* =========================================================
+   MENSAGEM DE SUCESSO / ERRO
+   ========================================================= */
+
+.config-message {
+    min-height: 18px;
+
+    margin-right: auto;
+
+    display: flex;
+    align-items: center;
+
+    color: #8f9baa;
+
+    font-size: 12px;
+
+    opacity: 0;
+
+    transform: translateY(3px);
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.config-message.visivel {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.config-message.sucesso {
+    color: #35c979;
+}
+
+.config-message.erro {
+    color: #ef5b5b;
+}
+
+
+/* =========================================================
+   SEÇÃO DE SEGURANÇA
+   ========================================================= */
+
+.config-danger {
+    border-color: rgba(239, 91, 91, 0.20);
+}
+
+.config-danger .config-card-icon {
+    color: #ef5b5b;
+
+    background: rgba(239, 91, 91, 0.08);
+
+    border-color: rgba(239, 91, 91, 0.20);
+}
+
+.config-danger-description {
+    color: #7d8795;
+
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.config-btn-danger {
+    background: rgba(239, 91, 91, 0.10);
+
+    color: #ef7070;
+
+    border: 1px solid rgba(239, 91, 91, 0.20);
+}
+
+.config-btn-danger:hover {
+    background: rgba(239, 91, 91, 0.16);
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .config-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .config-card-full {
+        grid-column: auto;
+    }
+
+    .config-system-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 760px) {
+
+    .config-header {
+        flex-direction: column;
+    }
+
+    .config-title {
+        font-size: 27px;
+    }
+
+    .config-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .config-field-full {
+        grid-column: auto;
+    }
+
+    .config-system-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .config-card {
+        padding: 18px;
+    }
+
+    .config-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .config-message {
+        margin-right: 0;
+        margin-bottom: 4px;
+    }
+
+    .config-btn {
+        width: 100%;
+    }
+
+}
+/* =========================================================
+   COMPLEMENTO - CONFIGURAÇÕES V2
+   Compatibilidade com configuracoes.html
+   ========================================================= */
+
+
+/* KPIs DO TOPO */
+
+.config-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.config-kpi {
+    padding: 18px;
+}
+
+.config-kpi strong {
+    display: block;
+
+    margin: 9px 0 6px;
+
+    color: #ffffff;
+
+    font-size: 18px;
+    font-weight: 850;
+}
+
+.config-kpi small {
+    color: #687381;
+    font-size: 9px;
+}
+
+.config-online {
+    color: #35c979 !important;
+}
+
+
+/* CARDS */
+
+.config-card-wide {
+    grid-column: 1 / -1;
+}
+
+
+/* CAMPOS */
+
+.config-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.config-field label {
+    color: #9aa5b3;
+    font-size: 10px;
+    font-weight: 750;
+}
+
+
+/* CLASSIFICAÇÕES */
+
+.config-classification-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.config-classification-row {
+    min-height: 115px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    gap: 14px;
+
+    padding: 15px;
+
+    background: #0a0c0f;
+
+    border: 1px solid #20242a;
+    border-radius: 11px;
+}
+
+.config-classification-row strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+}
+
+.config-classification-row small {
+    color: #697481;
+
+    font-size: 9px;
+    line-height: 1.45;
+}
+
+
+/* PREFERÊNCIAS */
+
+.config-toggle-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.config-toggle-item {
+    min-height: 72px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid #20242a;
+
+    cursor: pointer;
+}
+
+.config-toggle-item:last-child {
+    border-bottom: 0;
+}
+
+.config-toggle-item strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #ffffff;
+
+    font-size: 11px;
+}
+
+.config-toggle-item small {
+    display: block;
+
+    max-width: 430px;
+
+    color: #6f7a88;
+
+    font-size: 9px;
+    line-height: 1.45;
+}
+
+.config-toggle-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+
+    accent-color: #ff7317;
+
+    cursor: pointer;
+}
+
+
+/* INFORMAÇÕES TÉCNICAS */
+
+.config-system-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.config-system-list > div {
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    border-bottom: 1px solid #20242a;
+}
+
+.config-system-list > div:last-child {
+    border-bottom: 0;
+}
+
+.config-system-list span {
+    color: #778291;
+
+    font-size: 10px;
+}
+
+.config-system-list strong {
+    color: #ffffff;
+
+    font-size: 10px;
+}
+
+
+/* MENSAGEM */
+
+.config-message {
+    position: fixed;
+
+    right: 22px;
+    bottom: 22px;
+
+    min-width: 260px;
+    min-height: 46px;
+
+    padding: 0 15px;
+
+    display: flex;
+    align-items: center;
+
+    background: #111419;
+
+    border: 1px solid #292e35;
+    border-radius: 10px;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,.30);
+
+    pointer-events: none;
+
+    z-index: 1000;
+}
+
+.config-message:not(.visivel) {
+    visibility: hidden;
+}
+
+
+/* RESPONSIVO */
+
+@media (max-width: 1100px) {
+
+    .config-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .config-classification-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 760px) {
+
+    .config-kpis,
+    .config-fields,
+    .config-classification-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .config-card-wide {
+        grid-column: auto;
+    }
+
+    .config-message {
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+
+        min-width: 0;
+    }
+}
