@@ -1,10 +1,60 @@
+let configuracaoAvaliacao = {
+    pontuacaoMaxima: 100,
+    notaMinima: 70
+};
 document.addEventListener("DOMContentLoaded", async () => {
+    await carregarConfiguracaoAvaliacao();
     await carregarFuncionarios();
     configurarSliders();
     atualizarNota();
     configurarEventos();
 });
+async function carregarConfiguracaoAvaliacao() {
 
+    try {
+
+        const { data, error } = await supabaseClient
+            .from("configuracoes")
+            .select(`
+                pontuacao_maxima,
+                nota_minima
+            `)
+            .limit(1)
+            .maybeSingle();
+
+        if (error) {
+            throw error;
+        }
+
+        if (data) {
+
+            configuracaoAvaliacao = {
+                pontuacaoMaxima:
+                    Number(data.pontuacao_maxima) || 100,
+
+                notaMinima:
+                    Number(data.nota_minima) || 70
+            };
+
+        }
+
+        console.log(
+            "Configuração da avaliação carregada:",
+            configuracaoAvaliacao
+        );
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao carregar configuração da avaliação:",
+            erro
+        );
+
+    }
+
+}
 
 // =====================================================
 // CARREGA FUNCIONÁRIOS ATIVOS
@@ -284,49 +334,50 @@ function atualizarValorVisual(
 // =====================================================
 
 function atualizarClassificacao(nota) {
+
     const classificacao =
-        document.getElementById(
-            "classificacao"
-        );
+        document.getElementById("classificacao");
 
     if (!classificacao) {
         return;
     }
 
-    if (nota >= 90) {
-        classificacao.textContent =
-            "🟢 EXCELENTE";
+    const pontuacaoMaxima =
+        Number(configuracaoAvaliacao.pontuacaoMaxima) || 100;
 
-        classificacao.style.color =
-            "#35c979";
+    const notaMinima =
+        Number(configuracaoAvaliacao.notaMinima) || 70;
 
-    } else if (nota >= 80) {
-        classificacao.textContent =
-            "🔵 MUITO BOM";
+    const limiteExcelente = pontuacaoMaxima * 0.90;
+    const limiteMuitoBom = pontuacaoMaxima * 0.80;
+    const limiteBom = notaMinima;
+    const limiteAtencao = Math.max(0, notaMinima - 10);
 
-        classificacao.style.color =
-            "#5c85ff";
+    if (nota >= limiteExcelente) {
 
-    } else if (nota >= 70) {
-        classificacao.textContent =
-            "🟡 BOM";
+        classificacao.textContent = "🟢 EXCELENTE";
+        classificacao.style.color = "#35c979";
 
-        classificacao.style.color =
-            "#f3c94c";
+    } else if (nota >= limiteMuitoBom) {
 
-    } else if (nota >= 60) {
-        classificacao.textContent =
-            "🟠 ATENÇÃO";
+        classificacao.textContent = "🔵 MUITO BOM";
+        classificacao.style.color = "#5c85ff";
 
-        classificacao.style.color =
-            "#ff7518";
+    } else if (nota >= limiteBom) {
+
+        classificacao.textContent = "🟡 BOM";
+        classificacao.style.color = "#f5c451";
+
+    } else if (nota >= limiteAtencao) {
+
+        classificacao.textContent = "🟠 ATENÇÃO";
+        classificacao.style.color = "#ff7518";
 
     } else {
-        classificacao.textContent =
-            "🔴 CRÍTICO";
 
-        classificacao.style.color =
-            "#ef5350";
+        classificacao.textContent = "🔴 CRÍTICO";
+        classificacao.style.color = "#ef5350";
+
     }
 }
 
