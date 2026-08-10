@@ -1602,9 +1602,25 @@ function atualizarTabelaFechamento() {
                         </td>
 
 
-                        <td>
-                            —
-                        </td>
+                       <td>
+    ${
+        String(item.status || "aberto").toLowerCase() === "fechado"
+            ? `
+                <span class="fechamento-status-finalizado">
+                    Fechado
+                </span>
+            `
+            : `
+                <button
+                    type="button"
+                    class="fechamento-btn-finalizar"
+                    onclick="fecharMesColaborador('${item.id}')"
+                >
+                    Fechar mês
+                </button>
+            `
+    }
+</td>
 
                     </tr>
                 `;
@@ -1762,6 +1778,161 @@ function mostrarErroFechamento() {
 
             </tr>
         `;
+    }
+
+}
+// =====================================================
+// FINALIZA FECHAMENTO MENSAL
+// =====================================================
+
+async function fecharMesColaborador(fechamentoId) {
+
+    if (!fechamentoId) {
+        return;
+    }
+
+    const fechamento =
+        fechamentoMensalBase.find(
+            item => item.id === fechamentoId
+        );
+
+    if (!fechamento) {
+
+        alert(
+            "Fechamento não encontrado."
+        );
+
+        return;
+    }
+
+
+    const statusAtual =
+        String(
+            fechamento.status || ""
+        ).toLowerCase();
+
+
+    if (statusAtual === "fechado") {
+        return;
+    }
+
+
+    const nome =
+        fechamento.funcionario?.nome
+        || "este colaborador";
+
+
+    const periodo =
+        formatarCompetenciaFechamento(
+            fechamento.ano,
+            fechamento.mes
+        );
+
+
+    const confirmar =
+        window.confirm(
+            `Deseja finalizar o fechamento mensal de ${nome} referente a ${periodo}?`
+        );
+
+
+    if (!confirmar) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            data: sessaoData,
+            error: erroSessao
+        } =
+            await supabaseClient.auth.getSession();
+
+
+        if (erroSessao) {
+            throw erroSessao;
+        }
+
+
+        const usuarioId =
+            sessaoData?.session?.user?.id
+            || null;
+
+
+        const atualizacao = {
+
+            status:
+                "fechado",
+
+            fechado_em:
+                new Date().toISOString()
+
+        };
+
+
+        if (usuarioId) {
+
+            atualizacao.fechado_por =
+                usuarioId;
+        }
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+
+                .from(
+                    "fechamentos_mensais"
+                )
+
+                .update(
+                    atualizacao
+                )
+
+                .eq(
+                    "id",
+                    fechamentoId
+                )
+
+                .select(`
+                    id,
+                    status,
+                    fechado_em,
+                    fechado_por
+                `)
+
+                .single();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        console.log(
+            "Fechamento mensal finalizado:",
+            data
+        );
+
+
+        await carregarFechamentoMensal();
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao finalizar fechamento mensal:",
+            erro
+        );
+
+
+        alert(
+            "Não foi possível finalizar o fechamento mensal."
+        );
+
     }
 
 }
