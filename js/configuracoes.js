@@ -1,85 +1,138 @@
 // =====================================================
-// CONFIGURAÇÕES V2
-// Gestão de Desempenho
+// CONFIGURAÇÕES V2 - SUPABASE
 // =====================================================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-    carregarConfiguracoes();
+    await carregarConfiguracoesSupabase();
 
-    configurarEventos();
+    configurarEventosConfiguracoes();
 
 });
 
-
-// =====================================================
-// CHAVE DE ARMAZENAMENTO
-// =====================================================
-
-const CONFIG_STORAGE_KEY =
-    "gestao-desempenho-config-v2";
+let configuracaoId = null;
 
 
 // =====================================================
-// CONFIGURAÇÃO PADRÃO
+// CARREGA CONFIGURAÇÕES DO SUPABASE
 // =====================================================
 
-function configuracaoPadrao() {
-
-    return {
-
-        empresa: {
-            nome: "Gestão de Desempenho",
-            setor: "Recebimento",
-            responsavel: "",
-            email: ""
-        },
-
-        avaliacao: {
-            pontuacaoMaxima: 100,
-            periodicidade: "semanal",
-            semanasMes: 4,
-            notaMinima: 70
-        },
-
-        preferencias: {
-            confirmarExclusao: true,
-            mostrarInativos: false,
-            destacarCriticos: true
-        }
-
-    };
-}
-
-
-// =====================================================
-// OBTÉM CONFIGURAÇÕES SALVAS
-// =====================================================
-
-function obterConfiguracoes() {
+async function carregarConfiguracoesSupabase() {
 
     try {
 
-        const salvo =
-            localStorage.getItem(
-                CONFIG_STORAGE_KEY
-            );
+        const { data, error } = await supabaseClient
+            .from("configuracoes")
+            .select(`
+                id,
+                nome_empresa,
+                setor_principal,
+                responsavel,
+                email,
+                pontuacao_maxima,
+                periodicidade,
+                semanas_mes,
+                nota_minima,
+                confirmar_exclusao,
+                mostrar_inativos,
+                destacar_criticos
+            `)
+            .limit(1)
+            .maybeSingle();
 
 
-        if (!salvo) {
+        if (error) {
 
-            return configuracaoPadrao();
+            throw error;
 
         }
 
 
-        const dados =
-            JSON.parse(salvo);
+        if (!data) {
+
+            mostrarMensagemConfiguracoes(
+                "Nenhuma configuração encontrada no banco.",
+                "erro"
+            );
+
+            return;
+
+        }
 
 
-        return mesclarConfiguracoes(
-            configuracaoPadrao(),
-            dados
+        configuracaoId =
+            data.id;
+
+
+        preencherCampo(
+            "configEmpresa",
+            data.nome_empresa
+        );
+
+
+        preencherCampo(
+            "configSetor",
+            data.setor_principal
+        );
+
+
+        preencherCampo(
+            "configResponsavel",
+            data.responsavel
+        );
+
+
+        preencherCampo(
+            "configEmail",
+            data.email
+        );
+
+
+        preencherCampo(
+            "configPontuacaoMaxima",
+            data.pontuacao_maxima
+        );
+
+
+        preencherCampo(
+            "configPeriodicidade",
+            data.periodicidade
+        );
+
+
+        preencherCampo(
+            "configSemanasMes",
+            data.semanas_mes
+        );
+
+
+        preencherCampo(
+            "configNotaMinima",
+            data.nota_minima
+        );
+
+
+        preencherCheckbox(
+            "configConfirmarExclusao",
+            data.confirmar_exclusao
+        );
+
+
+        preencherCheckbox(
+            "configMostrarInativos",
+            data.mostrar_inativos
+        );
+
+
+        preencherCheckbox(
+            "configDestacarCriticos",
+            data.destacar_criticos
+        );
+
+
+        console.log(
+            "Configurações carregadas do Supabase:",
+            data
         );
 
     }
@@ -92,151 +145,9 @@ function obterConfiguracoes() {
         );
 
 
-        return configuracaoPadrao();
-
-    }
-
-}
-
-
-// =====================================================
-// MESCLA CONFIGURAÇÃO PADRÃO + SALVA
-// =====================================================
-
-function mesclarConfiguracoes(
-    padrao,
-    salvo
-) {
-
-    return {
-
-        empresa: {
-            ...padrao.empresa,
-            ...(salvo?.empresa || {})
-        },
-
-        avaliacao: {
-            ...padrao.avaliacao,
-            ...(salvo?.avaliacao || {})
-        },
-
-        preferencias: {
-            ...padrao.preferencias,
-            ...(salvo?.preferencias || {})
-        }
-
-    };
-
-}
-
-
-// =====================================================
-// CARREGA CONFIGURAÇÕES NA TELA
-// =====================================================
-
-function carregarConfiguracoes() {
-
-    const config =
-        obterConfiguracoes();
-
-
-    // -----------------------------------------
-    // EMPRESA
-    // -----------------------------------------
-
-    definirValor(
-        "configEmpresa",
-        config.empresa.nome
-    );
-
-
-    definirValor(
-        "configSetor",
-        config.empresa.setor
-    );
-
-
-    definirValor(
-        "configResponsavel",
-        config.empresa.responsavel
-    );
-
-
-    definirValor(
-        "configEmail",
-        config.empresa.email
-    );
-
-
-    // -----------------------------------------
-    // AVALIAÇÃO
-    // -----------------------------------------
-
-    definirValor(
-        "configPontuacaoMaxima",
-        config.avaliacao.pontuacaoMaxima
-    );
-
-
-    definirValor(
-        "configPeriodicidade",
-        config.avaliacao.periodicidade
-    );
-
-
-    definirValor(
-        "configSemanasMes",
-        config.avaliacao.semanasMes
-    );
-
-
-    definirValor(
-        "configNotaMinima",
-        config.avaliacao.notaMinima
-    );
-
-
-    // -----------------------------------------
-    // PREFERÊNCIAS
-    // -----------------------------------------
-
-    definirCheckbox(
-        "configConfirmarExclusao",
-        config.preferencias.confirmarExclusao
-    );
-
-
-    definirCheckbox(
-        "configMostrarInativos",
-        config.preferencias.mostrarInativos
-    );
-
-
-    definirCheckbox(
-        "configDestacarCriticos",
-        config.preferencias.destacarCriticos
-    );
-
-}
-
-
-// =====================================================
-// CONFIGURA EVENTOS
-// =====================================================
-
-function configurarEventos() {
-
-    const botaoSalvar =
-        document.getElementById(
-            "btnSalvarConfiguracoes"
-        );
-
-
-    if (botaoSalvar) {
-
-        botaoSalvar.addEventListener(
-            "click",
-            salvarConfiguracoes
+        mostrarMensagemConfiguracoes(
+            "Não foi possível carregar as configurações.",
+            "erro"
         );
 
     }
@@ -245,10 +156,10 @@ function configurarEventos() {
 
 
 // =====================================================
-// SALVA CONFIGURAÇÕES
+// EVENTOS
 // =====================================================
 
-function salvarConfiguracoes() {
+function configurarEventosConfiguracoes() {
 
     const botao =
         document.getElementById(
@@ -256,166 +167,194 @@ function salvarConfiguracoes() {
         );
 
 
-    if (botao) {
+    if (!botao) {
 
-        botao.disabled = true;
+        return;
 
-        botao.textContent =
-            "Salvando...";
+    }
+
+
+    botao.addEventListener(
+        "click",
+        salvarConfiguracoesSupabase
+    );
+
+}
+
+
+// =====================================================
+// SALVA CONFIGURAÇÕES NO SUPABASE
+// =====================================================
+
+async function salvarConfiguracoesSupabase() {
+
+    const botao =
+        document.getElementById(
+            "btnSalvarConfiguracoes"
+        );
+
+
+    if (!configuracaoId) {
+
+        mostrarMensagemConfiguracoes(
+            "Registro de configuração não localizado.",
+            "erro"
+        );
+
+        return;
+
+    }
+
+
+    const dados = {
+
+        nome_empresa:
+            obterCampo(
+                "configEmpresa"
+            )
+            || "Gestão de Desempenho",
+
+        setor_principal:
+            obterCampo(
+                "configSetor"
+            ),
+
+        responsavel:
+            obterCampo(
+                "configResponsavel"
+            )
+            || null,
+
+        email:
+            obterCampo(
+                "configEmail"
+            )
+            || null,
+
+        pontuacao_maxima:
+            Number(
+                obterCampo(
+                    "configPontuacaoMaxima"
+                )
+            ),
+
+        periodicidade:
+            obterCampo(
+                "configPeriodicidade"
+            ),
+
+        semanas_mes:
+            Number(
+                obterCampo(
+                    "configSemanasMes"
+                )
+            ),
+
+        nota_minima:
+            Number(
+                obterCampo(
+                    "configNotaMinima"
+                )
+            ),
+
+        confirmar_exclusao:
+            obterCheckbox(
+                "configConfirmarExclusao"
+            ),
+
+        mostrar_inativos:
+            obterCheckbox(
+                "configMostrarInativos"
+            ),
+
+        destacar_criticos:
+            obterCheckbox(
+                "configDestacarCriticos"
+            ),
+
+        updated_at:
+            new Date().toISOString()
+
+    };
+
+
+    // =================================================
+    // VALIDAÇÕES
+    // =================================================
+
+    if (
+        dados.pontuacao_maxima < 1
+        ||
+        dados.pontuacao_maxima > 100
+    ) {
+
+        mostrarMensagemConfiguracoes(
+            "A pontuação máxima deve estar entre 1 e 100.",
+            "erro"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        dados.nota_minima < 0
+        ||
+        dados.nota_minima >
+        dados.pontuacao_maxima
+    ) {
+
+        mostrarMensagemConfiguracoes(
+            "A nota mínima deve estar entre 0 e a pontuação máxima.",
+            "erro"
+        );
+
+        return;
 
     }
 
 
     try {
 
-        const configuracoes = {
+        if (botao) {
 
-            empresa: {
+            botao.disabled =
+                true;
 
-                nome:
-                    obterValor(
-                        "configEmpresa"
-                    )
-                    ||
-                    "Gestão de Desempenho",
-
-                setor:
-                    obterValor(
-                        "configSetor"
-                    ),
-
-                responsavel:
-                    obterValor(
-                        "configResponsavel"
-                    ),
-
-                email:
-                    obterValor(
-                        "configEmail"
-                    )
-
-            },
-
-
-            avaliacao: {
-
-                pontuacaoMaxima:
-                    Number(
-                        obterValor(
-                            "configPontuacaoMaxima"
-                        )
-                    )
-                    || 100,
-
-                periodicidade:
-                    obterValor(
-                        "configPeriodicidade"
-                    )
-                    || "semanal",
-
-                semanasMes:
-                    Number(
-                        obterValor(
-                            "configSemanasMes"
-                        )
-                    )
-                    || 4,
-
-                notaMinima:
-                    Number(
-                        obterValor(
-                            "configNotaMinima"
-                        )
-                    )
-                    || 70
-
-            },
-
-
-            preferencias: {
-
-                confirmarExclusao:
-                    obterCheckbox(
-                        "configConfirmarExclusao"
-                    ),
-
-                mostrarInativos:
-                    obterCheckbox(
-                        "configMostrarInativos"
-                    ),
-
-                destacarCriticos:
-                    obterCheckbox(
-                        "configDestacarCriticos"
-                    )
-
-            }
-
-        };
-
-
-        // -----------------------------------------
-        // VALIDAÇÕES
-        // -----------------------------------------
-
-        if (
-            configuracoes.avaliacao
-                .pontuacaoMaxima <= 0
-            ||
-            configuracoes.avaliacao
-                .pontuacaoMaxima > 100
-        ) {
-
-            mostrarMensagem(
-                "A pontuação máxima deve estar entre 1 e 100.",
-                "erro"
-            );
-
-            return;
+            botao.textContent =
+                "Salvando...";
 
         }
 
 
-        if (
-            configuracoes.avaliacao
-                .notaMinima < 0
-            ||
-            configuracoes.avaliacao
-                .notaMinima >
-            configuracoes.avaliacao
-                .pontuacaoMaxima
-        ) {
+        const { data, error } =
+            await supabaseClient
+                .from("configuracoes")
+                .update(dados)
+                .eq(
+                    "id",
+                    configuracaoId
+                )
+                .select()
+                .single();
 
-            mostrarMensagem(
-                "A nota mínima deve estar dentro da pontuação máxima.",
-                "erro"
-            );
 
-            return;
+        if (error) {
+
+            throw error;
 
         }
-
-
-        // -----------------------------------------
-        // SALVA
-        // -----------------------------------------
-
-        localStorage.setItem(
-            CONFIG_STORAGE_KEY,
-            JSON.stringify(
-                configuracoes
-            )
-        );
 
 
         console.log(
-            "Configurações salvas:",
-            configuracoes
+            "Configurações atualizadas:",
+            data
         );
 
 
-        mostrarMensagem(
-            "Configurações salvas com sucesso.",
+        mostrarMensagemConfiguracoes(
+            "Configurações salvas na nuvem com sucesso.",
             "sucesso"
         );
 
@@ -429,8 +368,8 @@ function salvarConfiguracoes() {
         );
 
 
-        mostrarMensagem(
-            "Não foi possível salvar as configurações.",
+        mostrarMensagemConfiguracoes(
+            "Não foi possível salvar as configurações no Supabase.",
             "erro"
         );
 
@@ -448,7 +387,7 @@ function salvarConfiguracoes() {
                 botao.textContent =
                     "Salvar alterações";
 
-            }, 500);
+            }, 400);
 
         }
 
@@ -458,10 +397,95 @@ function salvarConfiguracoes() {
 
 
 // =====================================================
-// MENSAGEM
+// CAMPOS
 // =====================================================
 
-function mostrarMensagem(
+function obterCampo(id) {
+
+    const elemento =
+        document.getElementById(id);
+
+
+    if (!elemento) {
+
+        return "";
+
+    }
+
+
+    return String(
+        elemento.value ?? ""
+    ).trim();
+
+}
+
+
+function preencherCampo(
+    id,
+    valor
+) {
+
+    const elemento =
+        document.getElementById(id);
+
+
+    if (!elemento) {
+
+        return;
+
+    }
+
+
+    elemento.value =
+        valor ?? "";
+
+}
+
+
+// =====================================================
+// CHECKBOXES
+// =====================================================
+
+function obterCheckbox(id) {
+
+    const elemento =
+        document.getElementById(id);
+
+
+    return Boolean(
+        elemento?.checked
+    );
+
+}
+
+
+function preencherCheckbox(
+    id,
+    valor
+) {
+
+    const elemento =
+        document.getElementById(id);
+
+
+    if (!elemento) {
+
+        return;
+
+    }
+
+
+    elemento.checked =
+        Boolean(valor);
+
+}
+
+
+// =====================================================
+// MENSAGENS
+// =====================================================
+
+function mostrarMensagemConfiguracoes(
     texto,
     tipo = "sucesso"
 ) {
@@ -505,86 +529,3 @@ function mostrarMensagem(
     }, 3500);
 
 }
-
-
-// =====================================================
-// FUNÇÕES AUXILIARES
-// =====================================================
-
-function obterValor(id) {
-
-    const elemento =
-        document.getElementById(id);
-
-
-    if (!elemento) {
-
-        return "";
-
-    }
-
-
-    return String(
-        elemento.value || ""
-    ).trim();
-
-}
-
-
-function definirValor(
-    id,
-    valor
-) {
-
-    const elemento =
-        document.getElementById(id);
-
-
-    if (elemento) {
-
-        elemento.value =
-            valor ?? "";
-
-    }
-
-}
-
-
-function obterCheckbox(id) {
-
-    const elemento =
-        document.getElementById(id);
-
-
-    return Boolean(
-        elemento?.checked
-    );
-
-}
-
-
-function definirCheckbox(
-    id,
-    valor
-) {
-
-    const elemento =
-        document.getElementById(id);
-
-
-    if (elemento) {
-
-        elemento.checked =
-            Boolean(valor);
-
-    }
-
-}
-
-
-// =====================================================
-// EXPÕE CONFIGURAÇÃO PARA OUTRAS PÁGINAS
-// =====================================================
-
-window.obterConfiguracoesSistema =
-    obterConfiguracoes;
