@@ -1,4 +1,57 @@
+let configuracaoRanking = {
+    pontuacaoMaxima: 100,
+    notaMinima: 70
+};
+
+async function carregarConfiguracaoRanking() {
+
+    try {
+
+        const { data, error } = await supabaseClient
+            .from("configuracoes")
+            .select(`
+                pontuacao_maxima,
+                nota_minima
+            `)
+            .limit(1)
+            .maybeSingle();
+
+        if (error) {
+            throw error;
+        }
+
+        if (data) {
+
+            configuracaoRanking = {
+                pontuacaoMaxima:
+                    Number(data.pontuacao_maxima) || 100,
+
+                notaMinima:
+                    Number(data.nota_minima) || 70
+            };
+
+        }
+
+        console.log(
+            "Configuração do ranking carregada:",
+            configuracaoRanking
+        );
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao carregar configuração do ranking:",
+            erro
+        );
+
+    }
+
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+    await carregarConfiguracaoRanking();
     await carregarRanking();
     configurarFiltrosRanking();
 });
@@ -853,37 +906,54 @@ function atualizarQuantidadeResultados(
 // CLASSIFICAÇÃO
 // =====================================================
 
-function obterClassificacaoPorNota(
-    nota
-) {
+function obterClassificacaoPorNota(nota) {
 
     const valor =
         Number(nota || 0);
 
+    const pontuacaoMaxima =
+        Number(
+            configuracaoRanking.pontuacaoMaxima
+        ) || 100;
 
-    if (valor >= 90) {
+    const notaMinima =
+        Number(
+            configuracaoRanking.notaMinima
+        ) || 70;
+
+    const limiteExcelente =
+        pontuacaoMaxima * 0.90;
+
+    const limiteMuitoBom =
+        pontuacaoMaxima * 0.80;
+
+    const limiteBom =
+        notaMinima;
+
+    const limiteAtencao =
+        Math.max(
+            0,
+            notaMinima - 10
+        );
+
+    if (valor >= limiteExcelente) {
         return "EXCELENTE";
     }
 
-
-    if (valor >= 80) {
+    if (valor >= limiteMuitoBom) {
         return "MUITO BOM";
     }
 
-
-    if (valor >= 70) {
+    if (valor >= limiteBom) {
         return "BOM";
     }
 
-
-    if (valor >= 60) {
+    if (valor >= limiteAtencao) {
         return "ATENÇÃO";
     }
 
-
     return "CRÍTICO";
 }
-
 
 // =====================================================
 // CLASSE VISUAL DA CLASSIFICAÇÃO
