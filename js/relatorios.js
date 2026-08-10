@@ -51,11 +51,16 @@ async function carregarConfiguracaoRelatorios() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+
     await carregarConfiguracaoRelatorios();
     await carregarRelatorios();
+
     configurarFiltrosRelatorio();
     configurarImpressao();
     configurarAbasRelatorio();
+
+    await configurarFechamentoMensal();
+
 });
 
 function configurarAbasRelatorio() {
@@ -1101,4 +1106,662 @@ function mostrarErroRelatorio() {
             </tr>
         `;
     }
+}
+// =====================================================
+// FECHAMENTO MENSAL
+// =====================================================
+
+let fechamentoMensalBase = [];
+
+
+// =====================================================
+// CONFIGURA FECHAMENTO MENSAL
+// =====================================================
+
+async function configurarFechamentoMensal() {
+
+    const campoCompetencia =
+        document.getElementById(
+            "fechamentoCompetencia"
+        );
+
+    if (!campoCompetencia) {
+        return;
+    }
+
+
+    // Define automaticamente o mês atual
+    if (!campoCompetencia.value) {
+
+        const hoje =
+            new Date();
+
+        const ano =
+            hoje.getFullYear();
+
+        const mes =
+            String(
+                hoje.getMonth() + 1
+            ).padStart(2, "0");
+
+        campoCompetencia.value =
+            `${ano}-${mes}`;
+    }
+
+
+    campoCompetencia.addEventListener(
+        "change",
+        carregarFechamentoMensal
+    );
+
+
+    await carregarFechamentoMensal();
+}
+
+
+// =====================================================
+// CARREGA FECHAMENTOS DO SUPABASE
+// =====================================================
+
+async function carregarFechamentoMensal() {
+
+    const campoCompetencia =
+        document.getElementById(
+            "fechamentoCompetencia"
+        );
+
+    if (!campoCompetencia) {
+        return;
+    }
+
+
+    const competencia =
+        campoCompetencia.value;
+
+
+    if (!competencia) {
+
+        fechamentoMensalBase = [];
+
+        atualizarFechamentoMensal();
+
+        return;
+    }
+
+
+    const partes =
+        competencia.split("-");
+
+
+    const ano =
+        Number(partes[0]);
+
+    const mes =
+        Number(partes[1]);
+
+
+    mostrarCarregandoFechamento();
+
+
+    try {
+
+        // =============================================
+        // BUSCA OS FECHAMENTOS
+        // =============================================
+
+        const {
+            data: fechamentos,
+            error: erroFechamentos
+        } = await supabaseClient
+
+            .from("fechamentos_mensais")
+
+            .select(`
+                id,
+                funcionario_id,
+                ano,
+                mes,
+                media_tecnica,
+                nota_final_gestor,
+                classificacao,
+                parecer_final,
+                fechado_por,
+                fechado_em,
+                status,
+                created_at,
+                updated_at
+            `)
+
+            .eq("ano", ano)
+
+            .eq("mes", mes)
+
+            .order(
+                "media_tecnica",
+                {
+                    ascending: false
+                }
+            );
+
+
+        if (erroFechamentos) {
+            throw erroFechamentos;
+        }
+
+
+        const lista =
+            fechamentos || [];
+
+
+        // =============================================
+        // BUSCA OS FUNCIONÁRIOS
+        // =============================================
+
+        const idsFuncionarios =
+            [
+                ...new Set(
+                    lista
+                        .map(item =>
+                            item.funcionario_id
+                        )
+                        .filter(Boolean)
+                )
+            ];
+
+
+        let mapaFuncionarios = {};
+
+
+        if (idsFuncionarios.length > 0) {
+
+            const {
+                data: funcionarios,
+                error: erroFuncionarios
+            } = await supabaseClient
+
+                .from("funcionarios")
+
+                .select(`
+                    id,
+                    nome,
+                    matricula
+                `)
+
+                .in(
+                    "id",
+                    idsFuncionarios
+                );
+
+
+            if (erroFuncionarios) {
+                throw erroFuncionarios;
+            }
+
+
+            (funcionarios || [])
+                .forEach(funcionario => {
+
+                    mapaFuncionarios[
+                        funcionario.id
+                    ] = funcionario;
+
+                });
+        }
+
+
+        // =============================================
+        // JUNTA FECHAMENTO + FUNCIONÁRIO
+        // =============================================
+
+        fechamentoMensalBase =
+            lista.map(item => ({
+
+                ...item,
+
+                funcionario:
+                    mapaFuncionarios[
+                        item.funcionario_id
+                    ]
+                    || null
+
+            }));
+
+
+        console.log(
+            "Fechamento mensal carregado:",
+            fechamentoMensalBase
+        );
+
+
+        atualizarFechamentoMensal();
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao carregar fechamento mensal:",
+            erro
+        );
+
+        fechamentoMensalBase = [];
+
+        mostrarErroFechamento();
+
+    }
+
+}
+
+
+// =====================================================
+// ATUALIZA PAINEL COMPLETO
+// =====================================================
+
+function atualizarFechamentoMensal() {
+
+    atualizarKPIsFechamento();
+
+    atualizarTabelaFechamento();
+
+    atualizarQuantidadeFechamento();
+
+}
+
+
+// =====================================================
+// KPIs DO FECHAMENTO
+// =====================================================
+
+function atualizarKPIsFechamento() {
+
+    const quantidade =
+        fechamentoMensalBase.length;
+
+
+    definirTextoRelatorio(
+        "fechamentoKpiColaboradores",
+        quantidade
+    );
+
+
+    if (quantidade === 0) {
+
+        definirTextoRelatorio(
+            "fechamentoKpiMedia",
+            "0.0"
+        );
+
+        definirTextoRelatorio(
+            "fechamentoKpiMelhor",
+            "0.0"
+        );
+
+        definirTextoRelatorio(
+            "fechamentoKpiFechados",
+            "0"
+        );
+
+        return;
+    }
+
+
+    const medias =
+        fechamentoMensalBase
+            .map(item =>
+                Number(
+                    item.media_tecnica
+                    || 0
+                )
+            );
+
+
+    const soma =
+        medias.reduce(
+            (total, valor) =>
+                total + valor,
+            0
+        );
+
+
+    const mediaGeral =
+        soma / medias.length;
+
+
+    const melhorMedia =
+        Math.max(
+            ...medias
+        );
+
+
+    const fechados =
+        fechamentoMensalBase
+            .filter(item =>
+                String(
+                    item.status || ""
+                ).toLowerCase()
+                === "fechado"
+            )
+            .length;
+
+
+    definirTextoRelatorio(
+        "fechamentoKpiMedia",
+        mediaGeral.toFixed(1)
+    );
+
+
+    definirTextoRelatorio(
+        "fechamentoKpiMelhor",
+        melhorMedia.toFixed(1)
+    );
+
+
+    definirTextoRelatorio(
+        "fechamentoKpiFechados",
+        fechados
+    );
+
+}
+
+
+// =====================================================
+// TABELA DO FECHAMENTO
+// =====================================================
+
+function atualizarTabelaFechamento() {
+
+    const tbody =
+        document.getElementById(
+            "fechamentoTabelaCorpo"
+        );
+
+    if (!tbody) {
+        return;
+    }
+
+
+    if (
+        fechamentoMensalBase.length === 0
+    ) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td
+                    colspan="6"
+                    class="fechamento-empty-row"
+                >
+                    Nenhum fechamento encontrado
+                    para esta competência.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    tbody.innerHTML =
+        fechamentoMensalBase
+            .map(item => {
+
+                const nome =
+                    item.funcionario?.nome
+                    || "Funcionário";
+
+
+                const matricula =
+                    item.funcionario?.matricula
+                    || "-";
+
+
+                const media =
+                    Number(
+                        item.media_tecnica
+                        || 0
+                    );
+
+
+                const classificacao =
+                    item.classificacao
+                    ||
+                    obterClassificacaoRelatorio(
+                        media
+                    );
+
+
+                const status =
+                    String(
+                        item.status
+                        || "aberto"
+                    ).toUpperCase();
+
+
+                const periodo =
+                    formatarCompetenciaFechamento(
+                        item.ano,
+                        item.mes
+                    );
+
+
+                return `
+                    <tr>
+
+                        <td>
+
+                            <div
+                                class="ranking-table-person"
+                            >
+
+                                <strong>
+                                    ${nome}
+                                </strong>
+
+                                <small>
+                                    Matrícula:
+                                    ${matricula}
+                                </small>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+                            ${periodo}
+                        </td>
+
+
+                        <td>
+
+                            <strong
+                                class="ranking-table-score"
+                            >
+                                ${media.toFixed(1)}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="
+                                    ${classeRelatorio(
+                                        classificacao
+                                    )}
+                                "
+                            >
+                                ${classificacao}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+                            ${status}
+                        </td>
+
+
+                        <td>
+                            —
+                        </td>
+
+                    </tr>
+                `;
+            })
+            .join("");
+
+}
+
+
+// =====================================================
+// QUANTIDADE DE FECHAMENTOS
+// =====================================================
+
+function atualizarQuantidadeFechamento() {
+
+    const elemento =
+        document.getElementById(
+            "fechamentoTotalRegistros"
+        );
+
+    if (!elemento) {
+        return;
+    }
+
+
+    const quantidade =
+        fechamentoMensalBase.length;
+
+
+    elemento.textContent =
+        quantidade === 1
+            ? "1 registro"
+            : `${quantidade} registros`;
+
+}
+
+
+// =====================================================
+// FORMATA COMPETÊNCIA
+// =====================================================
+
+function formatarCompetenciaFechamento(
+    ano,
+    mes
+) {
+
+    if (!ano || !mes) {
+        return "-";
+    }
+
+
+    const data =
+        new Date(
+            Number(ano),
+            Number(mes) - 1,
+            1
+        );
+
+
+    const texto =
+        data.toLocaleDateString(
+            "pt-BR",
+            {
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+
+    return (
+        texto.charAt(0).toUpperCase()
+        +
+        texto.slice(1)
+    );
+
+}
+
+
+// =====================================================
+// CARREGANDO
+// =====================================================
+
+function mostrarCarregandoFechamento() {
+
+    const tbody =
+        document.getElementById(
+            "fechamentoTabelaCorpo"
+        );
+
+
+    if (tbody) {
+
+        tbody.innerHTML = `
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="fechamento-empty-row"
+                >
+                    Carregando fechamento mensal...
+                </td>
+
+            </tr>
+        `;
+    }
+
+}
+
+
+// =====================================================
+// ERRO
+// =====================================================
+
+function mostrarErroFechamento() {
+
+    definirTextoRelatorio(
+        "fechamentoKpiColaboradores",
+        "0"
+    );
+
+    definirTextoRelatorio(
+        "fechamentoKpiMedia",
+        "0.0"
+    );
+
+    definirTextoRelatorio(
+        "fechamentoKpiMelhor",
+        "0.0"
+    );
+
+    definirTextoRelatorio(
+        "fechamentoKpiFechados",
+        "0"
+    );
+
+
+    const tbody =
+        document.getElementById(
+            "fechamentoTabelaCorpo"
+        );
+
+
+    if (tbody) {
+
+        tbody.innerHTML = `
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="fechamento-empty-row"
+                >
+                    Não foi possível carregar
+                    o fechamento mensal.
+                </td>
+
+            </tr>
+        `;
+    }
+
 }
