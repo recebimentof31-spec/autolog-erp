@@ -312,6 +312,10 @@ function atualizarRelatorio() {
     atualizarQuantidadeResultadosRelatorio(
         avaliacoes
     );
+
+    atualizarResumoIndividual(
+        avaliacoes
+    );
 }
 
 
@@ -3005,6 +3009,524 @@ async function salvarParecerGestor() {
             botao.textContent =
                 "Salvar parecer";
         }
+    }
+
+}
+// =====================================================
+// RESUMO INDIVIDUAL DO COLABORADOR
+// =====================================================
+
+function atualizarResumoIndividual(avaliacoes) {
+
+    const funcionarioSelecionado =
+        document.getElementById(
+            "relatorioFuncionario"
+        )?.value
+        || "todos";
+
+
+    const nomeElemento =
+        document.getElementById(
+            "individualNome"
+        );
+
+    const matriculaElemento =
+        document.getElementById(
+            "individualMatricula"
+        );
+
+    const mediaElemento =
+        document.getElementById(
+            "individualMedia"
+        );
+
+    const evolucaoElemento =
+        document.getElementById(
+            "individualEvolucao"
+        );
+
+    const melhorElemento =
+        document.getElementById(
+            "individualMelhor"
+        );
+
+    const melhorSemanaElemento =
+        document.getElementById(
+            "individualMelhorSemana"
+        );
+
+    const menorElemento =
+        document.getElementById(
+            "individualMenor"
+        );
+
+    const menorSemanaElemento =
+        document.getElementById(
+            "individualMenorSemana"
+        );
+
+    const classificacaoElemento =
+        document.getElementById(
+            "individualClassificacao"
+        );
+
+
+    if (
+        !nomeElemento
+        ||
+        !mediaElemento
+        ||
+        !evolucaoElemento
+    ) {
+        return;
+    }
+
+
+    // =============================================
+    // TODOS OS COLABORADORES
+    // =============================================
+
+    if (
+        funcionarioSelecionado === "todos"
+    ) {
+
+        nomeElemento.textContent =
+            "Todos os colaboradores";
+
+
+        if (matriculaElemento) {
+
+            matriculaElemento.textContent =
+                "Selecione um colaborador";
+        }
+
+
+        mediaElemento.textContent =
+            "0.0";
+
+
+        evolucaoElemento.textContent =
+            "0.0";
+
+
+        evolucaoElemento.classList.remove(
+            "relatorio-individual-positivo",
+            "relatorio-individual-negativo",
+            "relatorio-individual-neutro"
+        );
+
+
+        evolucaoElemento.classList.add(
+            "relatorio-individual-neutro"
+        );
+
+
+        if (melhorElemento) {
+            melhorElemento.textContent =
+                "0";
+        }
+
+
+        if (melhorSemanaElemento) {
+
+            melhorSemanaElemento.textContent =
+                "-";
+        }
+
+
+        if (menorElemento) {
+            menorElemento.textContent =
+                "0";
+        }
+
+
+        if (menorSemanaElemento) {
+
+            menorSemanaElemento.textContent =
+                "-";
+        }
+
+
+        if (classificacaoElemento) {
+
+            classificacaoElemento.textContent =
+                "-";
+        }
+
+
+        return;
+    }
+
+
+    // =============================================
+    // SEM AVALIAÇÕES
+    // =============================================
+
+    if (
+        !avaliacoes
+        ||
+        avaliacoes.length === 0
+    ) {
+
+        const select =
+            document.getElementById(
+                "relatorioFuncionario"
+            );
+
+
+        const textoSelecionado =
+            select?.options[
+                select.selectedIndex
+            ]?.textContent
+            || "Colaborador";
+
+
+        nomeElemento.textContent =
+            textoSelecionado;
+
+
+        if (matriculaElemento) {
+
+            matriculaElemento.textContent =
+                "Sem avaliações no período";
+        }
+
+
+        mediaElemento.textContent =
+            "0.0";
+
+
+        evolucaoElemento.textContent =
+            "0.0";
+
+
+        if (melhorElemento) {
+            melhorElemento.textContent =
+                "0";
+        }
+
+
+        if (melhorSemanaElemento) {
+
+            melhorSemanaElemento.textContent =
+                "-";
+        }
+
+
+        if (menorElemento) {
+            menorElemento.textContent =
+                "0";
+        }
+
+
+        if (menorSemanaElemento) {
+
+            menorSemanaElemento.textContent =
+                "-";
+        }
+
+
+        if (classificacaoElemento) {
+
+            classificacaoElemento.textContent =
+                "-";
+        }
+
+
+        return;
+    }
+
+
+    // =============================================
+    // DADOS DO COLABORADOR
+    // =============================================
+
+    const primeira =
+        avaliacoes[0];
+
+
+    const nome =
+        primeira.funcionarios?.nome
+        || "Colaborador";
+
+
+    const matricula =
+        primeira.funcionarios?.matricula
+        || "-";
+
+
+    nomeElemento.textContent =
+        nome;
+
+
+    if (matriculaElemento) {
+
+        matriculaElemento.textContent =
+            `Matrícula: ${matricula}`;
+    }
+
+
+    // =============================================
+    // ORDENA DA MAIS ANTIGA PARA A MAIS NOVA
+    // =============================================
+
+    const ordenadas =
+        [...avaliacoes]
+            .sort((a, b) => {
+
+                const dataA =
+                    new Date(
+                        a.created_at
+                        ||
+                        a.periodo_fim
+                        ||
+                        0
+                    );
+
+
+                const dataB =
+                    new Date(
+                        b.created_at
+                        ||
+                        b.periodo_fim
+                        ||
+                        0
+                    );
+
+
+                return (
+                    dataA - dataB
+                );
+            });
+
+
+    const notas =
+        ordenadas.map(
+            avaliacao =>
+                Number(
+                    avaliacao.nota_final
+                    || 0
+                )
+        );
+
+
+    // =============================================
+    // MÉDIA
+    // =============================================
+
+    const soma =
+        notas.reduce(
+            (total, nota) =>
+                total + nota,
+            0
+        );
+
+
+    const media =
+        soma / notas.length;
+
+
+    mediaElemento.textContent =
+        media.toFixed(1);
+
+
+    // =============================================
+    // MELHOR RESULTADO
+    // =============================================
+
+    let melhorAvaliacao =
+        ordenadas[0];
+
+
+    ordenadas.forEach(
+        avaliacao => {
+
+            if (
+                Number(
+                    avaliacao.nota_final
+                    || 0
+                )
+                >
+                Number(
+                    melhorAvaliacao.nota_final
+                    || 0
+                )
+            ) {
+
+                melhorAvaliacao =
+                    avaliacao;
+            }
+        }
+    );
+
+
+    if (melhorElemento) {
+
+        melhorElemento.textContent =
+            Number(
+                melhorAvaliacao.nota_final
+                || 0
+            ).toFixed(1);
+    }
+
+
+    if (melhorSemanaElemento) {
+
+        melhorSemanaElemento.textContent =
+            `Semana ${
+                melhorAvaliacao.semana
+                || "-"
+            }`;
+    }
+
+
+    // =============================================
+    // MENOR RESULTADO
+    // =============================================
+
+    let menorAvaliacao =
+        ordenadas[0];
+
+
+    ordenadas.forEach(
+        avaliacao => {
+
+            if (
+                Number(
+                    avaliacao.nota_final
+                    || 0
+                )
+                <
+                Number(
+                    menorAvaliacao.nota_final
+                    || 0
+                )
+            ) {
+
+                menorAvaliacao =
+                    avaliacao;
+            }
+        }
+    );
+
+
+    if (menorElemento) {
+
+        menorElemento.textContent =
+            Number(
+                menorAvaliacao.nota_final
+                || 0
+            ).toFixed(1);
+    }
+
+
+    if (menorSemanaElemento) {
+
+        menorSemanaElemento.textContent =
+            `Semana ${
+                menorAvaliacao.semana
+                || "-"
+            }`;
+    }
+
+
+    // =============================================
+    // EVOLUÇÃO
+    // =============================================
+
+    let evolucao =
+        0;
+
+
+    if (
+        ordenadas.length >= 2
+    ) {
+
+        const primeiraNota =
+            Number(
+                ordenadas[0].nota_final
+                || 0
+            );
+
+
+        const ultimaNota =
+            Number(
+                ordenadas[
+                    ordenadas.length - 1
+                ].nota_final
+                || 0
+            );
+
+
+        evolucao =
+            ultimaNota
+            -
+            primeiraNota;
+    }
+
+
+    evolucaoElemento.textContent =
+        evolucao > 0
+            ? `+${evolucao.toFixed(1)}`
+            : evolucao.toFixed(1);
+
+
+    evolucaoElemento.classList.remove(
+        "relatorio-individual-positivo",
+        "relatorio-individual-negativo",
+        "relatorio-individual-neutro"
+    );
+
+
+    if (evolucao > 0) {
+
+        evolucaoElemento.classList.add(
+            "relatorio-individual-positivo"
+        );
+
+    }
+
+    else if (evolucao < 0) {
+
+        evolucaoElemento.classList.add(
+            "relatorio-individual-negativo"
+        );
+
+    }
+
+    else {
+
+        evolucaoElemento.classList.add(
+            "relatorio-individual-neutro"
+        );
+    }
+
+
+    // =============================================
+    // CLASSIFICAÇÃO ATUAL
+    // =============================================
+
+    const ultimaAvaliacao =
+        ordenadas[
+            ordenadas.length - 1
+        ];
+
+
+    const classificacaoAtual =
+        ultimaAvaliacao.classificacao
+        ||
+        obterClassificacaoRelatorio(
+            Number(
+                ultimaAvaliacao.nota_final
+                || 0
+            )
+        );
+
+
+    if (classificacaoElemento) {
+
+        classificacaoElemento.textContent =
+            classificacaoAtual;
     }
 
 }
