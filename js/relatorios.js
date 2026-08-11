@@ -1606,9 +1606,13 @@ function atualizarTabelaFechamento() {
     ${
         String(item.status || "aberto").toLowerCase() === "fechado"
             ? `
-                <span class="fechamento-status-finalizado">
-                    Fechado
-                </span>
+               <button
+    type="button"
+    class="fechamento-btn-detalhes"
+    onclick="abrirDetalhesFechamento('${item.id}')"
+>
+    Ver detalhes
+</button>
             `
             : `
                 <button
@@ -1967,4 +1971,101 @@ if (perfilUsuarioId) {
 
     }
 
+}
+async function abrirDetalhesFechamento(fechamentoId) {
+
+    const fechamento =
+        fechamentoMensalBase.find(
+            item => String(item.id) === String(fechamentoId)
+        );
+
+    if (!fechamento) {
+        alert("Não foi possível localizar este fechamento.");
+        return;
+    }
+
+    const funcionarioId =
+        fechamento.funcionario_id;
+
+    const ano =
+        Number(fechamento.ano);
+
+    const mes =
+        Number(fechamento.mes);
+
+
+    const {
+        data: avaliacoes,
+        error
+    } = await supabaseClient
+
+        .from("avaliacoes_semanais")
+
+        .select(`
+            id,
+            semana,
+            nota_final,
+            classificacao,
+            status,
+            created_at
+        `)
+
+        .eq(
+            "funcionario_id",
+            funcionarioId
+        )
+
+        .eq(
+            "status",
+            "enviada"
+        )
+
+        .gte(
+            "competencia",
+            `${ano}-${String(mes).padStart(2, "0")}-01`
+        )
+
+        .lt(
+            "competencia",
+            mes === 12
+                ? `${ano + 1}-01-01`
+                : `${ano}-${String(mes + 1).padStart(2, "0")}-01`
+        )
+
+        .order(
+            "semana",
+            { ascending: true }
+        );
+
+
+    if (error) {
+
+        console.error(
+            "Erro ao carregar detalhes:",
+            error
+        );
+
+        alert(
+            "Não foi possível carregar os detalhes do fechamento."
+        );
+
+        return;
+    }
+
+
+    console.log(
+        "Detalhes do fechamento:",
+        fechamento
+    );
+
+    console.log(
+        "Avaliações do período:",
+        avaliacoes
+    );
+
+
+    alert(
+        `Detalhes carregados com sucesso.\n\n` +
+        `${avaliacoes?.length || 0} avaliação(ões) encontrada(s).`
+    );
 }
