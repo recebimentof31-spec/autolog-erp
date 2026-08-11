@@ -2993,3 +2993,146 @@ body.app-v2 {
     }
 
 }
+/* =====================================================
+   PARECER FINAL DO GESTOR
+===================================================== */
+
+.parecer-gestor-section {
+    margin-top: 20px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.parecer-gestor-header {
+    margin-bottom: 18px;
+}
+
+.parecer-gestor-header h3 {
+    margin: 5px 0 5px;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.parecer-gestor-header p {
+    margin: 0;
+    font-size: 12px;
+    opacity: .65;
+}
+
+.detalhes-label-destaque {
+    color: #ff7417;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+.parecer-gestor-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.parecer-nota-box,
+.parecer-texto-box {
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 10px;
+    background: rgba(0,0,0,.12);
+}
+
+.parecer-nota-box label,
+.parecer-texto-box label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+#detalhesNotaGestor {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    color: #fff;
+    background: #0b0e11;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    outline: none;
+}
+
+#detalhesNotaGestor:focus {
+    border-color: #ff7417;
+}
+
+.parecer-nota-box small {
+    display: block;
+    margin-top: 9px;
+    font-size: 10px;
+    line-height: 1.4;
+    opacity: .55;
+}
+
+#detalhesParecerFinal {
+    width: 100%;
+    min-height: 105px;
+    box-sizing: border-box;
+    resize: vertical;
+    padding: 11px 12px;
+    color: #fff;
+    font-family: inherit;
+    line-height: 1.5;
+    background: #0b0e11;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    outline: none;
+}
+
+#detalhesParecerFinal:focus {
+    border-color: #ff7417;
+}
+
+.parecer-contador {
+    margin-top: 5px;
+    text-align: right;
+    font-size: 10px;
+    opacity: .5;
+}
+
+.parecer-acoes {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.parecer-status-salvo {
+    margin-right: auto;
+    font-size: 11px;
+    opacity: .7;
+}
+
+.btn-salvar-parecer {
+    padding: 10px 17px;
+    border: 0;
+    border-radius: 8px;
+    background: #ff7417;
+    color: #050505;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.btn-salvar-parecer:hover {
+    filter: brightness(1.08);
+}
+
+.btn-salvar-parecer:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+@media (max-width: 760px) {
+    .parecer-gestor-grid {
+        grid-template-columns: 1fr;
+    }
+}

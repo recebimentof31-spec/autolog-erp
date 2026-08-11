@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     configurarFiltrosRelatorio();
     configurarImpressao();
     configurarAbasRelatorio();
+    configurarParecerGestor();
 
     await configurarFechamentoMensal();
 
@@ -1223,8 +1224,10 @@ async function carregarFechamentoMensal() {
                 mes,
                 media_tecnica,
                 nota_final_gestor,
+                nota_gestor,
                 classificacao,
                 parecer_final,
+                parecer_atualizado_em,
                 fechado_por,
                 fechado_em,
                 status,
@@ -1973,12 +1976,16 @@ if (perfilUsuarioId) {
 
 }
 
+let fechamentoDetalhesAtualId
+
 // =====================================================
 // DETALHES DO FECHAMENTO MENSAL
 // =====================================================
 
 async function abrirDetalhesFechamento(fechamentoId) {
 
+    fechamentoDetalhesAtualId =
+        fechamentoId;
     const fechamento =
         fechamentoMensalBase.find(
             item =>
@@ -2274,6 +2281,54 @@ async function abrirDetalhesFechamento(fechamentoId) {
                     fechamento.fechado_em
                 )
                 : "-";
+
+                const campoNotaGestor =
+    document.getElementById(
+        "detalhesNotaGestor"
+    );
+
+const campoParecer =
+    document.getElementById(
+        "detalhesParecerFinal"
+    );
+
+const contadorParecer =
+    document.getElementById(
+        "contadorParecer"
+    );
+
+const statusParecer =
+    document.getElementById(
+        "parecerStatusSalvo"
+    );
+
+if (campoNotaGestor) {
+    campoNotaGestor.value =
+        fechamento.nota_gestor ?? "";
+}
+
+if (campoParecer) {
+    campoParecer.value =
+        fechamento.parecer_final || "";
+}
+
+if (contadorParecer) {
+    contadorParecer.textContent =
+        String(
+            fechamento.parecer_final || ""
+        ).length;
+}
+
+if (statusParecer) {
+    statusParecer.textContent =
+        fechamento.parecer_atualizado_em
+            ? `Última atualização: ${
+                formatarDataHoraFechamento(
+                    fechamento.parecer_atualizado_em
+                )
+            }`
+            : "";
+}
 
 
         // =============================================
@@ -2678,5 +2733,278 @@ function escaparHTMLDetalhes(
             "'",
             "&#039;"
         );
+
+}
+// =====================================================
+// CONFIGURA PARECER FINAL DO GESTOR
+// =====================================================
+
+function configurarParecerGestor() {
+
+    const botao =
+        document.getElementById(
+            "btnSalvarParecer"
+        );
+
+    const campoParecer =
+        document.getElementById(
+            "detalhesParecerFinal"
+        );
+
+    const contador =
+        document.getElementById(
+            "contadorParecer"
+        );
+
+
+    if (campoParecer && contador) {
+
+        campoParecer.addEventListener(
+            "input",
+            () => {
+
+                contador.textContent =
+                    campoParecer.value.length;
+            }
+        );
+    }
+
+
+    if (botao) {
+
+        botao.addEventListener(
+            "click",
+            salvarParecerGestor
+        );
+    }
+
+}
+
+
+// =====================================================
+// SALVA PARECER FINAL
+// =====================================================
+
+async function salvarParecerGestor() {
+
+    if (!fechamentoDetalhesAtualId) {
+
+        alert(
+            "Nenhum fechamento selecionado."
+        );
+
+        return;
+    }
+
+
+    const campoNota =
+        document.getElementById(
+            "detalhesNotaGestor"
+        );
+
+    const campoParecer =
+        document.getElementById(
+            "detalhesParecerFinal"
+        );
+
+    const botao =
+        document.getElementById(
+            "btnSalvarParecer"
+        );
+
+    const status =
+        document.getElementById(
+            "parecerStatusSalvo"
+        );
+
+
+    const parecer =
+        campoParecer?.value.trim()
+        || "";
+
+
+    let notaGestor =
+        null;
+
+
+    if (
+        campoNota
+        &&
+        campoNota.value !== ""
+    ) {
+
+        notaGestor =
+            Number(
+                campoNota.value
+            );
+
+
+        if (
+            Number.isNaN(notaGestor)
+            ||
+            notaGestor < 0
+            ||
+            notaGestor > 100
+        ) {
+
+            alert(
+                "A nota do gestor deve estar entre 0 e 100."
+            );
+
+            return;
+        }
+    }
+
+
+    if (parecer.length > 2000) {
+
+        alert(
+            "O parecer deve ter no máximo 2000 caracteres."
+        );
+
+        return;
+    }
+
+
+    if (botao) {
+
+        botao.disabled =
+            true;
+
+        botao.textContent =
+            "Salvando...";
+    }
+
+
+    if (status) {
+
+        status.textContent =
+            "Salvando parecer...";
+    }
+
+
+    try {
+
+        const agora =
+            new Date().toISOString();
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+
+                .from(
+                    "fechamentos_mensais"
+                )
+
+                .update({
+
+                    nota_gestor:
+                        notaGestor,
+
+                    parecer_final:
+                        parecer || null,
+
+                    parecer_atualizado_em:
+                        agora
+
+                })
+
+                .eq(
+                    "id",
+                    fechamentoDetalhesAtualId
+                )
+
+                .select(`
+                    id,
+                    nota_gestor,
+                    parecer_final,
+                    parecer_atualizado_em
+                `)
+
+                .single();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        const fechamento =
+            fechamentoMensalBase.find(
+                item =>
+                    String(item.id)
+                    ===
+                    String(
+                        fechamentoDetalhesAtualId
+                    )
+            );
+
+
+        if (fechamento) {
+
+            fechamento.nota_gestor =
+                data.nota_gestor;
+
+            fechamento.parecer_final =
+                data.parecer_final;
+
+            fechamento.parecer_atualizado_em =
+                data.parecer_atualizado_em;
+        }
+
+
+        if (status) {
+
+            status.textContent =
+                `Parecer salvo em ${
+                    formatarDataHoraFechamento(
+                        data.parecer_atualizado_em
+                    )
+                }`;
+        }
+
+
+        console.log(
+            "Parecer final salvo:",
+            data
+        );
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao salvar parecer final:",
+            erro
+        );
+
+
+        if (status) {
+
+            status.textContent =
+                "Erro ao salvar parecer.";
+        }
+
+
+        alert(
+            "Não foi possível salvar o parecer final."
+        );
+
+    }
+
+    finally {
+
+        if (botao) {
+
+            botao.disabled =
+                false;
+
+            botao.textContent =
+                "Salvar parecer";
+        }
+    }
 
 }
