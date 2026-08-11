@@ -601,6 +601,12 @@
              TABELA
         ================================== -->
 
+        <!-- =====================================================
+     FECHAMENTO MENSAL / PARECER DO GESTOR
+===================================================== -->
+
+</section>
+
         <section class="v2-card ranking-table-card">
 
             <div class="ranking-table-header">
@@ -671,7 +677,7 @@
                         <tr>
 
                             <td
-                                colspan="6"
+                                colspan="7"
                                 class="ranking-empty-row"
                             >
                                 Carregando dados...
@@ -849,6 +855,8 @@
 
                         <th>Período</th>
 
+                        <th>Semanas</th>
+
                         <th>Média</th>
 
                         <th>Classificação</th>
@@ -867,7 +875,7 @@
                     <tr>
 
                         <td
-                            colspan="6"
+                            colspan="7"
                             class="fechamento-empty-row"
                         >
                             Selecione uma competência para carregar os dados.
@@ -888,125 +896,6 @@
 <!-- =========================================
      MODAL FECHAMENTO MENSAL
 ========================================== -->
-
-<div
-    id="modalFechamentoMensal"
-    class="fechamento-modal-overlay"
->
-
-    <div class="fechamento-modal">
-
-        <div class="fechamento-modal-header">
-
-            <div>
-
-                <span class="v2-label">
-                    FECHAMENTO GERENCIAL
-                </span>
-
-                <h2>
-                    Fechar mês
-                </h2>
-
-            </div>
-
-            <button
-                type="button"
-                id="btnFecharModalFechamento"
-                class="fechamento-modal-close"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="fechamento-modal-info">
-
-            <div>
-                <small>Colaborador</small>
-                <strong id="modalFechamentoNome">-</strong>
-            </div>
-
-            <div>
-                <small>Competência</small>
-                <strong id="modalFechamentoPeriodo">-</strong>
-            </div>
-
-            <div>
-                <small>Média técnica</small>
-                <strong id="modalFechamentoMedia">0.0</strong>
-            </div>
-
-            <div>
-                <small>Classificação</small>
-                <strong id="modalFechamentoClassificacao">-</strong>
-            </div>
-
-        </div>
-
-
-        <div class="fechamento-modal-field">
-
-            <label for="modalNotaGestor">
-                Nota final do gestor
-            </label>
-
-            <input
-                id="modalNotaGestor"
-                type="number"
-                min="0"
-                max="100"
-                step="0.1"
-                class="v2-input"
-            >
-
-            <small>
-                Por padrão, será usada a média técnica.
-            </small>
-
-        </div>
-
-
-        <div class="fechamento-modal-field">
-
-            <label for="modalParecerFinal">
-                Parecer final
-            </label>
-
-            <textarea
-                id="modalParecerFinal"
-                rows="5"
-                class="v2-input"
-                placeholder="Registre observações sobre o desempenho do colaborador no mês."
-            ></textarea>
-
-        </div>
-
-
-        <div class="fechamento-modal-actions">
-
-            <button
-                type="button"
-                id="btnCancelarFechamento"
-                class="v2-btn"
-            >
-                Cancelar
-            </button>
-
-            <button
-                type="button"
-                id="btnConfirmarFechamento"
-                class="v2-btn v2-btn-primary"
-            >
-                Confirmar fechamento
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
 
 
 </main>
