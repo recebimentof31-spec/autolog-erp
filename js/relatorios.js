@@ -1854,28 +1854,60 @@ async function fecharMesColaborador(fechamentoId) {
         }
 
 
-        const usuarioId =
-            sessaoData?.session?.user?.id
-            || null;
+       const authUserId =
+    sessaoData?.session?.user?.id
+    || null;
 
 
-        const atualizacao = {
-
-            status:
-                "fechado",
-
-            fechado_em:
-                new Date().toISOString()
-
-        };
+let perfilUsuarioId = null;
 
 
-        if (usuarioId) {
+if (authUserId) {
 
-            atualizacao.fechado_por =
-                usuarioId;
-        }
+    const {
+        data: perfilUsuario,
+        error: erroPerfil
+    } = await supabaseClient
 
+        .from("perfis_usuario")
+
+        .select("id")
+
+        .eq(
+            "auth_user_id",
+            authUserId
+        )
+
+        .maybeSingle();
+
+
+    if (erroPerfil) {
+        throw erroPerfil;
+    }
+
+
+    perfilUsuarioId =
+        perfilUsuario?.id
+        || null;
+}
+
+
+const atualizacao = {
+
+    status:
+        "fechado",
+
+    fechado_em:
+        new Date().toISOString()
+
+};
+
+
+if (perfilUsuarioId) {
+
+    atualizacao.fechado_por =
+        perfilUsuarioId;
+}
 
         const {
             data,
