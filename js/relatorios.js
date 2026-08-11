@@ -316,6 +316,12 @@ function atualizarRelatorio() {
     atualizarResumoIndividual(
         avaliacoes
     );
+
+    atualizarDesempenhoCriterios(
+        avaliacoes
+    );
+
+
 }
 
 
@@ -3529,4 +3535,393 @@ function atualizarResumoIndividual(avaliacoes) {
             classificacaoAtual;
     }
 
+}
+// =====================================================
+// DESEMPENHO POR CRITÉRIO
+// =====================================================
+
+async function atualizarDesempenhoCriterios(avaliacoes) {
+
+    const ids = [
+        "criterioProdutividade",
+        "criterioPrazo",
+        "criterioQualidade",
+        "criterioConhecimentoTecnico",
+        "criterioProatividade",
+        "criterioTrabalhoEquipe",
+        "criterioAdaptabilidade",
+        "criterioResponsabilidade"
+    ];
+
+    function limparCriterios() {
+
+        ids.forEach(id => {
+
+            const elemento =
+                document.getElementById(id);
+
+            if (elemento) {
+                elemento.textContent = "0.0";
+            }
+        });
+
+
+        const forteNome =
+            document.getElementById(
+                "criterioPontoForteNome"
+            );
+
+        const forteNota =
+            document.getElementById(
+                "criterioPontoForteNota"
+            );
+
+        const atencaoNome =
+            document.getElementById(
+                "criterioPontoAtencaoNome"
+            );
+
+        const atencaoNota =
+            document.getElementById(
+                "criterioPontoAtencaoNota"
+            );
+
+
+        if (forteNome) {
+            forteNome.textContent = "-";
+        }
+
+        if (forteNota) {
+            forteNota.textContent = "0.0";
+        }
+
+        if (atencaoNome) {
+            atencaoNome.textContent = "-";
+        }
+
+        if (atencaoNota) {
+            atencaoNota.textContent = "0.0";
+        }
+    }
+
+
+    if (
+        !avaliacoes
+        ||
+        avaliacoes.length === 0
+    ) {
+
+        limparCriterios();
+        return;
+    }
+
+
+    const avaliacaoIds =
+        avaliacoes
+
+            .map(item => item.id)
+
+            .filter(Boolean);
+
+
+    if (avaliacaoIds.length === 0) {
+
+        limparCriterios();
+        return;
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+
+                .from("notas_avaliacao")
+
+                .select(`
+                    avaliacao_id,
+                    nota,
+                    criterio_id,
+                    criterios_avaliacao (
+                        nome
+                    )
+                `)
+
+                .in(
+                    "avaliacao_id",
+                    avaliacaoIds
+                );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        const notas =
+            data || [];
+
+
+        if (notas.length === 0) {
+
+            limparCriterios();
+            return;
+        }
+
+
+        const grupos = {};
+
+
+        notas.forEach(item => {
+
+            const nome =
+                item.criterios_avaliacao?.nome;
+
+            if (!nome) {
+                return;
+            }
+
+            const chave =
+                normalizarCriterioRelatorio(
+                    nome
+                );
+
+
+            if (!grupos[chave]) {
+
+                grupos[chave] = {
+                    nome,
+                    soma: 0,
+                    quantidade: 0
+                };
+            }
+
+
+            grupos[chave].soma +=
+                Number(
+                    item.nota || 0
+                );
+
+
+            grupos[chave].quantidade += 1;
+        });
+
+
+        const medias = {};
+
+
+        Object.entries(grupos)
+            .forEach(([chave, grupo]) => {
+
+                medias[chave] =
+                    grupo.quantidade > 0
+                        ? grupo.soma /
+                          grupo.quantidade
+                        : 0;
+            });
+
+
+        const mapa = {
+
+            produtividade:
+                "criterioProdutividade",
+
+            prazo:
+                "criterioPrazo",
+
+            qualidade:
+                "criterioQualidade",
+
+            conhecimentotecnico:
+                "criterioConhecimentoTecnico",
+
+            proatividade:
+                "criterioProatividade",
+
+            trabalhoemequipe:
+                "criterioTrabalhoEquipe",
+
+            adaptabilidade:
+                "criterioAdaptabilidade",
+
+            responsabilidade:
+                "criterioResponsabilidade"
+        };
+
+
+        Object.entries(mapa)
+            .forEach(([chave, id]) => {
+
+                const elemento =
+                    document.getElementById(id);
+
+                if (!elemento) {
+                    return;
+                }
+
+
+                const valor =
+                    Number(
+                        medias[chave] || 0
+                    );
+
+
+                elemento.textContent =
+                    valor.toFixed(1);
+            });
+
+
+        const listaMedias =
+            Object.entries(grupos)
+
+                .map(([chave, grupo]) => {
+
+                    return {
+
+                        chave,
+
+                        nome:
+                            grupo.nome,
+
+                        media:
+                            medias[chave] || 0
+                    };
+                })
+
+                .filter(
+                    item =>
+                        Number(item.media) > 0
+                );
+
+
+        if (listaMedias.length === 0) {
+
+            limparCriterios();
+            return;
+        }
+
+
+        const ordenadas =
+            [...listaMedias]
+
+                .sort(
+                    (a, b) =>
+                        b.media - a.media
+                );
+
+
+        const pontoForte =
+            ordenadas[0];
+
+
+        const pontoAtencao =
+            ordenadas[
+                ordenadas.length - 1
+            ];
+
+
+        const forteNome =
+            document.getElementById(
+                "criterioPontoForteNome"
+            );
+
+        const forteNota =
+            document.getElementById(
+                "criterioPontoForteNota"
+            );
+
+        const atencaoNome =
+            document.getElementById(
+                "criterioPontoAtencaoNome"
+            );
+
+        const atencaoNota =
+            document.getElementById(
+                "criterioPontoAtencaoNota"
+            );
+
+
+        if (forteNome) {
+
+            forteNome.textContent =
+                pontoForte.nome;
+        }
+
+
+        if (forteNota) {
+
+            forteNota.textContent =
+                Number(
+                    pontoForte.media
+                ).toFixed(1);
+        }
+
+
+        if (atencaoNome) {
+
+            atencaoNome.textContent =
+                pontoAtencao.nome;
+        }
+
+
+        if (atencaoNota) {
+
+            atencaoNota.textContent =
+                Number(
+                    pontoAtencao.media
+                ).toFixed(1);
+        }
+
+
+        console.log(
+            "Desempenho por critério:",
+            {
+                notas,
+                medias,
+                pontoForte,
+                pontoAtencao
+            }
+        );
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao carregar desempenho por critério:",
+            erro
+        );
+
+        limparCriterios();
+    }
+
+}
+
+
+// =====================================================
+// NORMALIZA NOME DO CRITÉRIO
+// =====================================================
+
+function normalizarCriterioRelatorio(valor) {
+
+    return String(
+        valor || ""
+    )
+
+        .normalize("NFD")
+
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+
+        .toLowerCase()
+
+        .replace(
+            /[^a-z0-9]/g,
+            ""
+        );
 }
