@@ -776,6 +776,108 @@
         carregarLayout("relatorios");
     </script>
 
+    <!-- =========================================
+     MODAL - DETALHES DO FECHAMENTO MENSAL
+========================================= -->
+
+<div id="modalDetalhesFechamento" class="fechamento-modal-overlay">
+
+    <div class="fechamento-modal">
+
+        <div class="fechamento-modal-header">
+
+            <div>
+                <span class="v2-label">FECHAMENTO MENSAL</span>
+
+                <h2>Detalhes do fechamento</h2>
+
+                <p>
+                    Resultado consolidado das avaliações do colaborador.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="fechamento-modal-close"
+                onclick="fecharModalDetalhes()"
+                aria-label="Fechar"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div id="fechamentoDetalhesResumo">
+            <!-- preenchido pelo JavaScript -->
+        </div>
+
+
+        <div class="fechamento-modal-section">
+
+            <div class="fechamento-modal-section-header">
+
+                <div>
+                    <span class="v2-label">AVALIAÇÕES</span>
+                    <h3>Avaliações consideradas</h3>
+                </div>
+
+                <span
+                    id="detalhesTotalAvaliacoes"
+                    class="fechamento-modal-count"
+                >
+                    0 avaliações
+                </span>
+
+            </div>
+
+
+            <div class="fechamento-modal-table-wrapper">
+
+                <table class="fechamento-modal-table">
+
+                    <thead>
+                        <tr>
+                            <th>SEMANA</th>
+                            <th>NOTA</th>
+                            <th>CLASSIFICAÇÃO</th>
+                            <th>DATA</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="detalhesAvaliacoesCorpo">
+
+                        <tr>
+                            <td colspan="4">
+                                Carregando avaliações...
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <div class="fechamento-modal-footer">
+
+            <button
+                type="button"
+                class="fechamento-modal-btn-secundario"
+                onclick="fecharModalDetalhes()"
+            >
+                Fechar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
 </body>
 
 </html>

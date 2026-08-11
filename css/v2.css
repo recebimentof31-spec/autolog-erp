@@ -2720,3 +2720,276 @@ body.app-v2 {
     }
 
 }
+/* =========================================================
+   MODAL - DETALHES DO FECHAMENTO
+========================================================= */
+
+#modalDetalhesFechamento {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(4px);
+}
+
+#modalDetalhesFechamento.active {
+    display: flex;
+}
+
+#modalDetalhesFechamento .fechamento-modal {
+    width: min(860px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+
+    background: #101317;
+    border: 1px solid #2a2f36;
+    border-radius: 16px;
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.55);
+}
+
+#modalDetalhesFechamento .fechamento-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+
+    padding: 24px 24px 18px;
+
+    border-bottom: 1px solid #23282f;
+}
+
+#modalDetalhesFechamento .fechamento-modal-header h2 {
+    margin: 6px 0 5px;
+
+    color: #ffffff;
+    font-size: 24px;
+}
+
+#modalDetalhesFechamento .fechamento-modal-header p {
+    margin: 0;
+
+    color: #7d8895;
+    font-size: 11px;
+}
+
+#modalDetalhesFechamento .fechamento-modal-close {
+    width: 38px;
+    height: 38px;
+
+    border: 1px solid #2b3037;
+    border-radius: 9px;
+
+    background: #0b0e11;
+    color: #8e99a6;
+
+    font-size: 24px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+#modalDetalhesFechamento .fechamento-modal-close:hover {
+    color: #ffffff;
+    border-color: #444b55;
+}
+
+#fechamentoDetalhesResumo {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+
+    padding: 22px 24px;
+}
+
+.detalhe-resumo-card {
+    padding: 14px;
+
+    background: #0b0e11;
+    border: 1px solid #23282f;
+    border-radius: 10px;
+}
+
+.detalhe-resumo-card small {
+    display: block;
+    margin-bottom: 7px;
+
+    color: #778291;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.detalhe-resumo-card strong {
+    display: block;
+
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.detalhe-resumo-card .detalhe-destaque {
+    color: #ff7317;
+    font-size: 20px;
+}
+
+.fechamento-modal-section {
+    padding: 0 24px 22px;
+}
+
+.fechamento-modal-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    margin-bottom: 14px;
+}
+
+.fechamento-modal-section-header h3 {
+    margin: 5px 0 0;
+
+    color: #ffffff;
+    font-size: 17px;
+}
+
+.fechamento-modal-count {
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    background: rgba(255, 115, 23, 0.12);
+    border: 1px solid rgba(255, 115, 23, 0.18);
+
+    color: #ff7317;
+
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.fechamento-modal-table-wrapper {
+    overflow-x: auto;
+
+    border: 1px solid #23282f;
+    border-radius: 10px;
+}
+
+.fechamento-modal-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: #0b0e11;
+}
+
+.fechamento-modal-table th {
+    padding: 12px 14px;
+
+    text-align: left;
+
+    color: #778291;
+    font-size: 9px;
+    font-weight: 800;
+
+    border-bottom: 1px solid #252a31;
+}
+
+.fechamento-modal-table td {
+    padding: 14px;
+
+    color: #dce1e7;
+    font-size: 11px;
+
+    border-bottom: 1px solid #1c2025;
+}
+
+.fechamento-modal-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.fechamento-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+
+    padding: 18px 24px 24px;
+
+    border-top: 1px solid #23282f;
+}
+
+.fechamento-modal-btn-secundario {
+    min-height: 38px;
+
+    padding: 0 18px;
+
+    border: 1px solid #343a43;
+    border-radius: 8px;
+
+    background: #15191e;
+    color: #d6dce4;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.fechamento-modal-btn-secundario:hover {
+    background: #1b2026;
+}
+
+.fechamento-btn-detalhes {
+    padding: 7px 12px;
+
+    border: 1px solid rgba(255, 115, 23, 0.28);
+    border-radius: 7px;
+
+    background: rgba(255, 115, 23, 0.10);
+    color: #ff7317;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.fechamento-btn-detalhes:hover {
+    background: rgba(255, 115, 23, 0.18);
+}
+
+@media (max-width: 900px) {
+
+    #fechamentoDetalhesResumo {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    #fechamentoDetalhesResumo {
+        grid-template-columns: 1fr;
+    }
+
+    #modalDetalhesFechamento {
+        padding: 12px;
+    }
+
+    #modalDetalhesFechamento .fechamento-modal-header {
+        padding: 18px;
+    }
+
+    .fechamento-modal-section,
+    #fechamentoDetalhesResumo,
+    .fechamento-modal-footer {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+}

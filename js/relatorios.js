@@ -1972,7 +1972,7 @@ if (perfilUsuarioId) {
     }
 
 }
-async function abrirDetalhesFechamento(fechamentoId) {
+(fechamentoId) {
 
     const fechamento =
         fechamentoMensalBase.find(
@@ -1998,74 +1998,710 @@ async function abrirDetalhesFechamento(fechamentoId) {
         data: avaliacoes,
         error
     } = await supabaseClient
+// =====================================================
+// DETALHES DO FECHAMENTO MENSAL
+// =====================================================
 
-        .from("avaliacoes_semanais")
+async function abrirDetalhesFechamento(fechamentoId) {
 
-        .select(`
-            id,
-            semana,
-            nota_final,
-            classificacao,
-            status,
-            created_at
-        `)
-
-        .eq(
-            "funcionario_id",
-            funcionarioId
-        )
-
-        .eq(
-            "status",
-            "enviada"
-        )
-
-        .gte(
-            "competencia",
-            `${ano}-${String(mes).padStart(2, "0")}-01`
-        )
-
-        .lt(
-            "competencia",
-            mes === 12
-                ? `${ano + 1}-01-01`
-                : `${ano}-${String(mes + 1).padStart(2, "0")}-01`
-        )
-
-        .order(
-            "semana",
-            { ascending: true }
+    const fechamento =
+        fechamentoMensalBase.find(
+            item =>
+                String(item.id) ===
+                String(fechamentoId)
         );
 
-
-    if (error) {
-
-        console.error(
-            "Erro ao carregar detalhes:",
-            error
-        );
+    if (!fechamento) {
 
         alert(
-            "Não foi possível carregar os detalhes do fechamento."
+            "Não foi possível localizar este fechamento."
         );
 
         return;
     }
 
 
-    console.log(
-        "Detalhes do fechamento:",
-        fechamento
+    const modal =
+        document.getElementById(
+            "modalDetalhesFechamento"
+        );
+
+    const resumo =
+        document.getElementById(
+            "fechamentoDetalhesResumo"
+        );
+
+    const tbody =
+        document.getElementById(
+            "detalhesAvaliacoesCorpo"
+        );
+
+    const contador =
+        document.getElementById(
+            "detalhesTotalAvaliacoes"
+        );
+
+
+    if (
+        !modal
+        ||
+        !resumo
+        ||
+        !tbody
+    ) {
+
+        console.error(
+            "Estrutura do modal de detalhes não encontrada."
+        );
+
+        return;
+    }
+
+
+    // Abre o modal já em estado de carregamento
+    modal.classList.add("active");
+
+
+    resumo.innerHTML = `
+        <div class="detalhe-resumo-card">
+            <small>Colaborador</small>
+            <strong>Carregando...</strong>
+        </div>
+    `;
+
+
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="4">
+                Carregando avaliações...
+            </td>
+        </tr>
+    `;
+
+
+    if (contador) {
+        contador.textContent =
+            "Carregando...";
+    }
+
+
+    try {
+
+        const funcionarioId =
+            fechamento.funcionario_id;
+
+
+        const ano =
+            Number(
+                fechamento.ano
+            );
+
+
+        const mes =
+            Number(
+                fechamento.mes
+            );
+
+
+        const inicioCompetencia =
+            `${ano}-${String(mes)
+                .padStart(2, "0")}-01`;
+
+
+        let proximoAno =
+            ano;
+
+        let proximoMes =
+            mes + 1;
+
+
+        if (proximoMes === 13) {
+
+            proximoMes = 1;
+
+            proximoAno =
+                ano + 1;
+        }
+
+
+        const fimCompetencia =
+            `${proximoAno}-${String(proximoMes)
+                .padStart(2, "0")}-01`;
+
+
+        // =============================================
+        // BUSCA AS AVALIAÇÕES QUE FORMARAM O MÊS
+        // =============================================
+
+        const {
+            data: avaliacoes,
+            error: erroAvaliacoes
+        } =
+            await supabaseClient
+
+                .from(
+                    "avaliacoes_semanais"
+                )
+
+                .select(`
+                    id,
+                    semana,
+                    nota_final,
+                    classificacao,
+                    status,
+                    competencia,
+                    periodo_inicio,
+                    periodo_fim,
+                    created_at
+                `)
+
+                .eq(
+                    "funcionario_id",
+                    funcionarioId
+                )
+
+                .eq(
+                    "status",
+                    "enviada"
+                )
+
+                .gte(
+                    "competencia",
+                    inicioCompetencia
+                )
+
+                .lt(
+                    "competencia",
+                    fimCompetencia
+                )
+
+                .order(
+                    "semana",
+                    {
+                        ascending: true
+                    }
+                );
+
+
+        if (erroAvaliacoes) {
+            throw erroAvaliacoes;
+        }
+
+
+        const listaAvaliacoes =
+            avaliacoes || [];
+
+
+        // =============================================
+        // TENTA IDENTIFICAR QUEM FECHOU
+        // =============================================
+
+        let responsavelFechamento =
+            "Não informado";
+
+
+        if (fechamento.fechado_por) {
+
+            const {
+                data: perfil,
+                error: erroPerfil
+            } =
+                await supabaseClient
+
+                    .from(
+                        "perfis_usuario"
+                    )
+
+                    .select(`
+                        id,
+                        nome_exibicao
+                    `)
+
+                    .eq(
+                        "id",
+                        fechamento.fechado_por
+                    )
+
+                    .maybeSingle();
+
+
+            // Não interrompe o modal caso
+            // a leitura do perfil seja bloqueada.
+            if (!erroPerfil && perfil) {
+
+                responsavelFechamento =
+                    perfil.nome_exibicao
+                    || "Usuário do sistema";
+            }
+
+            else {
+
+                responsavelFechamento =
+                    "Usuário do sistema";
+
+                if (erroPerfil) {
+
+                    console.warn(
+                        "Não foi possível identificar o responsável pelo fechamento:",
+                        erroPerfil
+                    );
+                }
+            }
+        }
+
+
+        // =============================================
+        // DADOS PRINCIPAIS
+        // =============================================
+
+        const nome =
+            fechamento.funcionario?.nome
+            || "Funcionário";
+
+
+        const matricula =
+            fechamento.funcionario?.matricula
+            || "-";
+
+
+        const media =
+            Number(
+                fechamento.media_tecnica
+                || 0
+            );
+
+
+        const classificacao =
+            fechamento.classificacao
+            ||
+            obterClassificacaoRelatorio(
+                media
+            );
+
+
+        const status =
+            String(
+                fechamento.status
+                || "aberto"
+            ).toUpperCase();
+
+
+        const periodo =
+            formatarCompetenciaFechamento(
+                fechamento.ano,
+                fechamento.mes
+            );
+
+
+        const fechadoEm =
+            fechamento.fechado_em
+                ? formatarDataHoraFechamento(
+                    fechamento.fechado_em
+                )
+                : "-";
+
+
+        // =============================================
+        // RESUMO
+        // =============================================
+
+        resumo.innerHTML = `
+
+            <div class="detalhe-resumo-card">
+
+                <small>
+                    Colaborador
+                </small>
+
+                <strong>
+                    ${escaparHTMLDetalhes(nome)}
+                </strong>
+
+            </div>
+
+
+            <div class="detalhe-resumo-card">
+
+                <small>
+                    Matrícula
+                </small>
+
+                <strong>
+                    ${escaparHTMLDetalhes(matricula)}
+                </strong>
+
+            </div>
+
+
+            <div class="detalhe-resumo-card">
+
+                <small>
+                    Competência
+                </small>
+
+                <strong>
+                    ${escaparHTMLDetalhes(periodo)}
+                </strong>
+
+            </div>
+
+
+            <div class="detalhe-resumo-card">
+
+                <small>
+                    Média mensal
+                </small>
+
+                <strong class="detalhe-destaque">
+                    ${media.toFixed(1)}
+                </strong>
+
+            </div>
+
+
+            <div class="detalhe-resumo-card">
+
+                <small>
+                    Classificação
+                </small>
+
+                <strong>
+                    ${escaparHTMLDetalhes(
+                        classificacao
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="detalhe-resumo-card">
+
+                <small>
+                    Status
+                </small>
+
+                <strong>
+                    ${escaparHTMLDetalhes(
+                        status
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="detalhe-resumo-card">
+
+                <small>
+                    Fechado por
+                </small>
+
+                <strong>
+                    ${escaparHTMLDetalhes(
+                        responsavelFechamento
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="detalhe-resumo-card">
+
+                <small>
+                    Fechado em
+                </small>
+
+                <strong>
+                    ${escaparHTMLDetalhes(
+                        fechadoEm
+                    )}
+                </strong>
+
+            </div>
+
+        `;
+
+
+        // =============================================
+        // CONTADOR
+        // =============================================
+
+        if (contador) {
+
+            const quantidade =
+                listaAvaliacoes.length;
+
+
+            contador.textContent =
+                quantidade === 1
+                    ? "1 avaliação"
+                    : `${quantidade} avaliações`;
+        }
+
+
+        // =============================================
+        // TABELA SEMANAL
+        // =============================================
+
+        if (
+            listaAvaliacoes.length === 0
+        ) {
+
+            tbody.innerHTML = `
+                <tr>
+
+                    <td colspan="4">
+                        Nenhuma avaliação encontrada
+                        para esta competência.
+                    </td>
+
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        tbody.innerHTML =
+            listaAvaliacoes
+
+                .map(avaliacao => {
+
+                    const nota =
+                        Number(
+                            avaliacao.nota_final
+                            || 0
+                        );
+
+
+                    const classe =
+                        avaliacao.classificacao
+                        ||
+                        obterClassificacaoRelatorio(
+                            nota
+                        );
+
+
+                    const data =
+                        avaliacao.created_at
+                        ||
+                        avaliacao.periodo_fim
+                        ||
+                        avaliacao.competencia;
+
+
+                    return `
+
+                        <tr>
+
+                            <td>
+                                Semana
+                                ${avaliacao.semana || "-"}
+                            </td>
+
+
+                            <td>
+
+                                <strong
+                                    class="ranking-table-score"
+                                >
+                                    ${nota.toFixed(1)}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                <span
+                                    class="
+                                        ${classeRelatorio(
+                                            classe
+                                        )}
+                                    "
+                                >
+                                    ${escaparHTMLDetalhes(
+                                        classe
+                                    )}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+                                ${formatarDataRelatorio(
+                                    data
+                                )}
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                })
+
+                .join("");
+
+
+        console.log(
+            "Detalhes do fechamento carregados:",
+            {
+                fechamento,
+                avaliacoes:
+                    listaAvaliacoes
+            }
+        );
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao carregar detalhes do fechamento:",
+            erro
+        );
+
+
+        resumo.innerHTML = `
+            <div class="detalhe-resumo-card">
+                <small>Erro</small>
+                <strong>
+                    Não foi possível carregar os detalhes.
+                </strong>
+            </div>
+        `;
+
+
+        tbody.innerHTML = `
+            <tr>
+
+                <td colspan="4">
+                    Não foi possível carregar
+                    as avaliações.
+                </td>
+
+            </tr>
+        `;
+
+
+        if (contador) {
+            contador.textContent =
+                "0 avaliações";
+        }
+
+    }
+
+}
+
+
+// =====================================================
+// FECHA MODAL DE DETALHES
+// =====================================================
+
+function fecharModalDetalhes() {
+
+    const modal =
+        document.getElementById(
+            "modalDetalhesFechamento"
+        );
+
+
+    if (modal) {
+
+        modal.classList.remove(
+            "active"
+        );
+    }
+
+}
+
+
+// =====================================================
+// FORMATA DATA E HORA DO FECHAMENTO
+// =====================================================
+
+function formatarDataHoraFechamento(
+    dataISO
+) {
+
+    if (!dataISO) {
+        return "-";
+    }
+
+
+    const data =
+        new Date(
+            dataISO
+        );
+
+
+    if (
+        Number.isNaN(
+            data.getTime()
+        )
+    ) {
+
+        return "-";
+    }
+
+
+    return data.toLocaleString(
+        "pt-BR",
+        {
+            day:
+                "2-digit",
+
+            month:
+                "2-digit",
+
+            year:
+                "numeric",
+
+            hour:
+                "2-digit",
+
+            minute:
+                "2-digit"
+        }
     );
 
-    console.log(
-        "Avaliações do período:",
-        avaliacoes
-    );
+}
 
 
-    alert(
-        `Detalhes carregados com sucesso.\n\n` +
-        `${avaliacoes?.length || 0} avaliação(ões) encontrada(s).`
-    );
+// =====================================================
+// PROTEGE TEXTO USADO NO HTML
+// =====================================================
+
+function escaparHTMLDetalhes(
+    valor
+) {
+
+    return String(
+        valor ?? ""
+    )
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
 }
