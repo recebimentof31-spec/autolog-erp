@@ -1972,32 +1972,7 @@ if (perfilUsuarioId) {
     }
 
 }
-(fechamentoId) {
 
-    const fechamento =
-        fechamentoMensalBase.find(
-            item => String(item.id) === String(fechamentoId)
-        );
-
-    if (!fechamento) {
-        alert("Não foi possível localizar este fechamento.");
-        return;
-    }
-
-    const funcionarioId =
-        fechamento.funcionario_id;
-
-    const ano =
-        Number(fechamento.ano);
-
-    const mes =
-        Number(fechamento.mes);
-
-
-    const {
-        data: avaliacoes,
-        error
-    } = await supabaseClient
 // =====================================================
 // DETALHES DO FECHAMENTO MENSAL
 // =====================================================
