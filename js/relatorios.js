@@ -119,6 +119,16 @@ async function carregarRelatorios() {
             funcionario_id,
             avaliador_id,
             nota_final,
+
+            produtividade,
+            prazo,
+            qualidade,
+            conhecimento_tecnico,
+            proatividade,
+            trabalho_equipe,
+            adaptabilidade,
+            responsabilidade,
+
             classificacao,
             semana,
             competencia,
@@ -3540,29 +3550,78 @@ function atualizarResumoIndividual(avaliacoes) {
 // DESEMPENHO POR CRITÉRIO
 // =====================================================
 
-async function atualizarDesempenhoCriterios(avaliacoes) {
+// =====================================================
+// DESEMPENHO POR CRITÉRIO
+// =====================================================
 
-    const ids = [
-        "criterioProdutividade",
-        "criterioPrazo",
-        "criterioQualidade",
-        "criterioConhecimentoTecnico",
-        "criterioProatividade",
-        "criterioTrabalhoEquipe",
-        "criterioAdaptabilidade",
-        "criterioResponsabilidade"
+function atualizarDesempenhoCriterios(avaliacoes) {
+
+    const criterios = [
+
+        {
+            campo: "produtividade",
+            nome: "Produtividade",
+            elemento: "criterioProdutividade"
+        },
+
+        {
+            campo: "prazo",
+            nome: "Prazo",
+            elemento: "criterioPrazo"
+        },
+
+        {
+            campo: "qualidade",
+            nome: "Qualidade",
+            elemento: "criterioQualidade"
+        },
+
+        {
+            campo: "conhecimento_tecnico",
+            nome: "Conhecimento técnico",
+            elemento: "criterioConhecimentoTecnico"
+        },
+
+        {
+            campo: "proatividade",
+            nome: "Proatividade",
+            elemento: "criterioProatividade"
+        },
+
+        {
+            campo: "trabalho_equipe",
+            nome: "Trabalho em equipe",
+            elemento: "criterioTrabalhoEquipe"
+        },
+
+        {
+            campo: "adaptabilidade",
+            nome: "Adaptabilidade",
+            elemento: "criterioAdaptabilidade"
+        },
+
+        {
+            campo: "responsabilidade",
+            nome: "Responsabilidade",
+            elemento: "criterioResponsabilidade"
+        }
+
     ];
 
-    function limparCriterios() {
 
-        ids.forEach(id => {
+    function limpar() {
+
+        criterios.forEach(criterio => {
 
             const elemento =
-                document.getElementById(id);
+                document.getElementById(
+                    criterio.elemento
+                );
 
             if (elemento) {
                 elemento.textContent = "0.0";
             }
+
         });
 
 
@@ -3587,316 +3646,163 @@ async function atualizarDesempenhoCriterios(avaliacoes) {
             );
 
 
-        if (forteNome) {
-            forteNome.textContent = "-";
-        }
-
-        if (forteNota) {
-            forteNota.textContent = "0.0";
-        }
-
-        if (atencaoNome) {
-            atencaoNome.textContent = "-";
-        }
-
-        if (atencaoNota) {
-            atencaoNota.textContent = "0.0";
-        }
+        if (forteNome) forteNome.textContent = "-";
+        if (forteNota) forteNota.textContent = "0.0";
+        if (atencaoNome) atencaoNome.textContent = "-";
+        if (atencaoNota) atencaoNota.textContent = "0.0";
     }
 
 
     if (
-        !avaliacoes
+        !Array.isArray(avaliacoes)
         ||
         avaliacoes.length === 0
     ) {
 
-        limparCriterios();
+        limpar();
         return;
     }
 
 
-    const avaliacaoIds =
-        avaliacoes
+    const resultados =
+        criterios.map(criterio => {
 
-            .map(item => item.id)
+            const valores =
+                avaliacoes
 
-            .filter(Boolean);
-
-
-    if (avaliacaoIds.length === 0) {
-
-        limparCriterios();
-        return;
-    }
-
-
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
-
-                .from("notas_avaliacao")
-
-                .select(`
-                    avaliacao_id,
-                    nota,
-                    criterio_id,
-                    criterios_avaliacao (
-                        nome
+                    .map(avaliacao =>
+                        Number(
+                            avaliacao[
+                                criterio.campo
+                            ]
+                        )
                     )
-                `)
 
-                .in(
-                    "avaliacao_id",
-                    avaliacaoIds
-                );
-
-
-        if (error) {
-            throw error;
-        }
-
-
-        const notas =
-            data || [];
-
-
-        if (notas.length === 0) {
-
-            limparCriterios();
-            return;
-        }
-
-
-        const grupos = {};
-
-
-        notas.forEach(item => {
-
-            const nome =
-                item.criterios_avaliacao?.nome;
-
-            if (!nome) {
-                return;
-            }
-
-            const chave =
-                normalizarCriterioRelatorio(
-                    nome
-                );
-
-
-            if (!grupos[chave]) {
-
-                grupos[chave] = {
-                    nome,
-                    soma: 0,
-                    quantidade: 0
-                };
-            }
-
-
-            grupos[chave].soma +=
-                Number(
-                    item.nota || 0
-                );
-
-
-            grupos[chave].quantidade += 1;
-        });
-
-
-        const medias = {};
-
-
-        Object.entries(grupos)
-            .forEach(([chave, grupo]) => {
-
-                medias[chave] =
-                    grupo.quantidade > 0
-                        ? grupo.soma /
-                          grupo.quantidade
-                        : 0;
-            });
-
-
-        const mapa = {
-
-            produtividade:
-                "criterioProdutividade",
-
-            prazo:
-                "criterioPrazo",
-
-            qualidade:
-                "criterioQualidade",
-
-            conhecimentotecnico:
-                "criterioConhecimentoTecnico",
-
-            proatividade:
-                "criterioProatividade",
-
-            trabalhoemequipe:
-                "criterioTrabalhoEquipe",
-
-            adaptabilidade:
-                "criterioAdaptabilidade",
-
-            responsabilidade:
-                "criterioResponsabilidade"
-        };
-
-
-        Object.entries(mapa)
-            .forEach(([chave, id]) => {
-
-                const elemento =
-                    document.getElementById(id);
-
-                if (!elemento) {
-                    return;
-                }
-
-
-                const valor =
-                    Number(
-                        medias[chave] || 0
+                    .filter(valor =>
+                        Number.isFinite(valor)
                     );
 
 
+            const media =
+                valores.length > 0
+                    ? valores.reduce(
+                        (total, valor) =>
+                            total + valor,
+                        0
+                    ) / valores.length
+                    : 0;
+
+
+            const elemento =
+                document.getElementById(
+                    criterio.elemento
+                );
+
+
+            if (elemento) {
+
                 elemento.textContent =
-                    valor.toFixed(1);
-            });
-
-
-        const listaMedias =
-            Object.entries(grupos)
-
-                .map(([chave, grupo]) => {
-
-                    return {
-
-                        chave,
-
-                        nome:
-                            grupo.nome,
-
-                        media:
-                            medias[chave] || 0
-                    };
-                })
-
-                .filter(
-                    item =>
-                        Number(item.media) > 0
-                );
-
-
-        if (listaMedias.length === 0) {
-
-            limparCriterios();
-            return;
-        }
-
-
-        const ordenadas =
-            [...listaMedias]
-
-                .sort(
-                    (a, b) =>
-                        b.media - a.media
-                );
-
-
-        const pontoForte =
-            ordenadas[0];
-
-
-        const pontoAtencao =
-            ordenadas[
-                ordenadas.length - 1
-            ];
-
-
-        const forteNome =
-            document.getElementById(
-                "criterioPontoForteNome"
-            );
-
-        const forteNota =
-            document.getElementById(
-                "criterioPontoForteNota"
-            );
-
-        const atencaoNome =
-            document.getElementById(
-                "criterioPontoAtencaoNome"
-            );
-
-        const atencaoNota =
-            document.getElementById(
-                "criterioPontoAtencaoNota"
-            );
-
-
-        if (forteNome) {
-
-            forteNome.textContent =
-                pontoForte.nome;
-        }
-
-
-        if (forteNota) {
-
-            forteNota.textContent =
-                Number(
-                    pontoForte.media
-                ).toFixed(1);
-        }
-
-
-        if (atencaoNome) {
-
-            atencaoNome.textContent =
-                pontoAtencao.nome;
-        }
-
-
-        if (atencaoNota) {
-
-            atencaoNota.textContent =
-                Number(
-                    pontoAtencao.media
-                ).toFixed(1);
-        }
-
-
-        console.log(
-            "Desempenho por critério:",
-            {
-                notas,
-                medias,
-                pontoForte,
-                pontoAtencao
+                    media.toFixed(1);
             }
+
+
+            return {
+
+                nome:
+                    criterio.nome,
+
+                media:
+                    media
+
+            };
+
+        });
+
+
+    const validos =
+        resultados.filter(
+            item =>
+                item.media > 0
         );
 
+
+    if (validos.length === 0) {
+
+        limpar();
+        return;
     }
 
-    catch (erro) {
 
-        console.error(
-            "Erro ao carregar desempenho por critério:",
-            erro
+    const ordenados =
+        [...validos].sort(
+            (a, b) =>
+                b.media - a.media
         );
 
-        limparCriterios();
+
+    const pontoForte =
+        ordenados[0];
+
+
+    const pontoAtencao =
+        ordenados[
+            ordenados.length - 1
+        ];
+
+
+    const forteNome =
+        document.getElementById(
+            "criterioPontoForteNome"
+        );
+
+    const forteNota =
+        document.getElementById(
+            "criterioPontoForteNota"
+        );
+
+    const atencaoNome =
+        document.getElementById(
+            "criterioPontoAtencaoNome"
+        );
+
+    const atencaoNota =
+        document.getElementById(
+            "criterioPontoAtencaoNota"
+        );
+
+
+    if (forteNome) {
+
+        forteNome.textContent =
+            pontoForte.nome;
     }
+
+
+    if (forteNota) {
+
+        forteNota.textContent =
+            pontoForte.media.toFixed(1);
+    }
+
+
+    if (atencaoNome) {
+
+        atencaoNome.textContent =
+            pontoAtencao.nome;
+    }
+
+
+    if (atencaoNota) {
+
+        atencaoNota.textContent =
+            pontoAtencao.media.toFixed(1);
+    }
+
+
+    console.log(
+        "Critérios calculados:",
+        resultados
+    );
 
 }
 
