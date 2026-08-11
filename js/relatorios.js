@@ -1571,20 +1571,6 @@ function atualizarTabelaFechamento() {
                         item.mes
                     ).padStart(2, "0")}`;
 
-                    console.log(
-    "TESTE SEMANAS:",
-    {
-        funcionarioFechamento: item.funcionario_id,
-        competenciaEsperada: competenciaMes,
-        avaliacoes: relatorioBase.map(avaliacao => ({
-            funcionario_id: avaliacao.funcionario_id,
-            competencia: avaliacao.competencia,
-            semana: avaliacao.semana,
-            status: avaliacao.status
-        }))
-    }
-);
-
 
                 const quantidadeSemanas =
                     relatorioBase.filter(
@@ -1859,7 +1845,7 @@ function mostrarErroFechamento() {
             <tr>
 
                 <td
-                    colspan="6"
+                    colspan="7"
                     class="fechamento-empty-row"
                 >
                     Não foi possível carregar
