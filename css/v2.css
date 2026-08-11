@@ -3248,3 +3248,136 @@ body.app-v2 {
     }
 
 }
+/* =========================================================
+   RELATÓRIOS - DESEMPENHO POR CRITÉRIO
+========================================================= */
+
+.relatorio-criterios-card {
+    margin-top: 18px;
+    padding: 22px;
+}
+
+.relatorio-criterios-card .ranking-table-header {
+    margin-bottom: 20px;
+}
+
+.relatorio-criterios-card .ranking-table-header h2 {
+    margin: 5px 0 4px;
+}
+
+.relatorio-criterios-card .ranking-table-header p {
+    margin: 0;
+    color: #8b96a8;
+    font-size: 13px;
+}
+
+
+/* GRID DOS 8 CRITÉRIOS */
+
+.criterios-resumo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.criterio-resumo-card {
+    min-height: 100px;
+    padding: 16px;
+    border: 1px solid #262d36;
+    border-radius: 12px;
+    background: #0c1116;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.criterio-resumo-card span {
+    color: #8996a8;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.criterio-resumo-card strong {
+    color: #ffffff;
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 800;
+}
+
+
+/* PONTO FORTE / PONTO DE ATENÇÃO */
+
+.criterios-destaques-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.criterio-destaque-card {
+    min-height: 95px;
+    padding: 16px;
+    border: 1px solid #262d36;
+    border-radius: 12px;
+    background: #0c1116;
+
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+        "label nota"
+        "nome nota";
+    align-items: center;
+    column-gap: 16px;
+}
+
+.criterio-destaque-card > span {
+    grid-area: label;
+    color: #8996a8;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+}
+
+.criterio-destaque-card > strong {
+    grid-area: nome;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.criterio-destaque-card > small {
+    grid-area: nota;
+    font-size: 26px;
+    font-weight: 900;
+}
+
+.criterio-destaque-positivo > small {
+    color: #35d07f;
+}
+
+.criterio-destaque-atencao > small {
+    color: #ff7a1a;
+}
+
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 1200px) {
+
+    .criterios-resumo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .criterios-resumo-grid,
+    .criterios-destaques-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
