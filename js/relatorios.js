@@ -3554,6 +3554,10 @@ function atualizarResumoIndividual(avaliacoes) {
 // DESEMPENHO POR CRITÉRIO
 // =====================================================
 
+// =====================================================
+// DESEMPENHO POR CRITÉRIO - PERCENTUAL
+// =====================================================
+
 function atualizarDesempenhoCriterios(avaliacoes) {
 
     const criterios = [
@@ -3561,49 +3565,57 @@ function atualizarDesempenhoCriterios(avaliacoes) {
         {
             campo: "produtividade",
             nome: "Produtividade",
-            elemento: "criterioProdutividade"
+            elemento: "criterioProdutividade",
+            maximo: 15
         },
 
         {
             campo: "prazo",
             nome: "Prazo",
-            elemento: "criterioPrazo"
+            elemento: "criterioPrazo",
+            maximo: 10
         },
 
         {
             campo: "qualidade",
             nome: "Qualidade",
-            elemento: "criterioQualidade"
+            elemento: "criterioQualidade",
+            maximo: 15
         },
 
         {
             campo: "conhecimento_tecnico",
             nome: "Conhecimento técnico",
-            elemento: "criterioConhecimentoTecnico"
+            elemento: "criterioConhecimentoTecnico",
+            maximo: 15
         },
 
         {
             campo: "proatividade",
             nome: "Proatividade",
-            elemento: "criterioProatividade"
+            elemento: "criterioProatividade",
+            maximo: 10
         },
 
         {
             campo: "trabalho_equipe",
             nome: "Trabalho em equipe",
-            elemento: "criterioTrabalhoEquipe"
+            elemento: "criterioTrabalhoEquipe",
+            maximo: 15
         },
 
         {
             campo: "adaptabilidade",
             nome: "Adaptabilidade",
-            elemento: "criterioAdaptabilidade"
+            elemento: "criterioAdaptabilidade",
+            maximo: 10
         },
 
         {
             campo: "responsabilidade",
             nome: "Responsabilidade",
-            elemento: "criterioResponsabilidade"
+            elemento: "criterioResponsabilidade",
+            maximo: 10
         }
 
     ];
@@ -3619,7 +3631,7 @@ function atualizarDesempenhoCriterios(avaliacoes) {
                 );
 
             if (elemento) {
-                elemento.textContent = "0.0";
+                elemento.textContent = "0.0%";
             }
 
         });
@@ -3646,10 +3658,22 @@ function atualizarDesempenhoCriterios(avaliacoes) {
             );
 
 
-        if (forteNome) forteNome.textContent = "-";
-        if (forteNota) forteNota.textContent = "0.0";
-        if (atencaoNome) atencaoNome.textContent = "-";
-        if (atencaoNota) atencaoNota.textContent = "0.0";
+        if (forteNome) {
+            forteNome.textContent = "-";
+        }
+
+        if (forteNota) {
+            forteNota.textContent = "0.0%";
+        }
+
+        if (atencaoNome) {
+            atencaoNome.textContent = "-";
+        }
+
+        if (atencaoNota) {
+            atencaoNota.textContent = "0.0%";
+        }
+
     }
 
 
@@ -3683,7 +3707,7 @@ function atualizarDesempenhoCriterios(avaliacoes) {
                     );
 
 
-            const media =
+            const mediaPontos =
                 valores.length > 0
                     ? valores.reduce(
                         (total, valor) =>
@@ -3691,6 +3715,25 @@ function atualizarDesempenhoCriterios(avaliacoes) {
                         0
                     ) / valores.length
                     : 0;
+
+
+            const percentual =
+                criterio.maximo > 0
+                    ? (
+                        mediaPontos /
+                        criterio.maximo
+                    ) * 100
+                    : 0;
+
+
+            const percentualLimitado =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        percentual
+                    )
+                );
 
 
             const elemento =
@@ -3702,7 +3745,7 @@ function atualizarDesempenhoCriterios(avaliacoes) {
             if (elemento) {
 
                 elemento.textContent =
-                    media.toFixed(1);
+                    `${percentualLimitado.toFixed(1)}%`;
             }
 
 
@@ -3711,8 +3754,14 @@ function atualizarDesempenhoCriterios(avaliacoes) {
                 nome:
                     criterio.nome,
 
-                media:
-                    media
+                mediaPontos:
+                    mediaPontos,
+
+                maximo:
+                    criterio.maximo,
+
+                percentual:
+                    percentualLimitado
 
             };
 
@@ -3722,7 +3771,9 @@ function atualizarDesempenhoCriterios(avaliacoes) {
     const validos =
         resultados.filter(
             item =>
-                item.media > 0
+                Number.isFinite(
+                    item.percentual
+                )
         );
 
 
@@ -3736,7 +3787,8 @@ function atualizarDesempenhoCriterios(avaliacoes) {
     const ordenados =
         [...validos].sort(
             (a, b) =>
-                b.media - a.media
+                b.percentual -
+                a.percentual
         );
 
 
@@ -3781,7 +3833,7 @@ function atualizarDesempenhoCriterios(avaliacoes) {
     if (forteNota) {
 
         forteNota.textContent =
-            pontoForte.media.toFixed(1);
+            `${pontoForte.percentual.toFixed(1)}%`;
     }
 
 
@@ -3795,17 +3847,16 @@ function atualizarDesempenhoCriterios(avaliacoes) {
     if (atencaoNota) {
 
         atencaoNota.textContent =
-            pontoAtencao.media.toFixed(1);
+            `${pontoAtencao.percentual.toFixed(1)}%`;
     }
 
 
     console.log(
-        "Critérios calculados:",
+        "Desempenho percentual por critério:",
         resultados
     );
 
 }
-
 
 // =====================================================
 // NORMALIZA NOME DO CRITÉRIO
