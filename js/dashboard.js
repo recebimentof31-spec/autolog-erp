@@ -1,16 +1,99 @@
-document.addEventListener("DOMContentLoaded", async () => {
-    await carregarDashboard();
-});
+// =====================================================
+// CONFIGURAÇÃO DO DASHBOARD
+// =====================================================
 
-async function carregarDashboard() {
-    try {
+let configuracaoDashboard = {
+    pontuacaoMaxima: 100,
+    notaMinima: 70
+};
+
+let dashboardAvaliacoesBase = [];
+
+let graficoEvolucaoInstance = null;
+
+
+// =====================================================
+// INICIALIZAÇÃO
+// =====================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        configurarFiltroPeriodoDashboard();
+
+        await carregarConfiguracaoDashboard();
+
         await Promise.all([
             carregarFuncionariosAtivos(),
-            carregarAvaliacoesDashboard()
+            carregarAvaliacoesDashboard(),
+            carregarDestaqueDoMes()
         ]);
-    } catch (erro) {
-        console.error("Erro ao carregar dashboard:", erro);
+
     }
+);
+
+
+// =====================================================
+// CONFIGURAÇÃO DO SISTEMA
+// =====================================================
+
+async function carregarConfiguracaoDashboard() {
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+
+                .from("configuracoes")
+
+                .select(`
+                    pontuacao_maxima,
+                    nota_minima
+                `)
+
+                .limit(1)
+
+                .maybeSingle();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (data) {
+
+            configuracaoDashboard = {
+
+                pontuacaoMaxima:
+                    Number(
+                        data.pontuacao_maxima
+                    ) || 100,
+
+                notaMinima:
+                    Number(
+                        data.nota_minima
+                    ) || 70
+
+            };
+
+        }
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao carregar configuração do dashboard:",
+            erro
+        );
+
+    }
+
 }
 
 
@@ -19,89 +102,289 @@ async function carregarDashboard() {
 // =====================================================
 
 async function carregarFuncionariosAtivos() {
-    const { count, error } = await supabaseClient
-        .from("funcionarios")
-        .select("*", {
-            count: "exact",
-            head: true
-        })
-        .eq("status", "Ativo");
+
+    const {
+        count,
+        error
+    } =
+        await supabaseClient
+
+            .from("funcionarios")
+
+            .select(
+                "*",
+                {
+                    count: "exact",
+                    head: true
+                }
+            )
+
+            .eq(
+                "status",
+                "Ativo"
+            );
+
 
     if (error) {
+
         console.error(
             "Erro ao contar funcionários:",
             error
         );
+
         return;
     }
 
-    const elemento =
-        document.getElementById("kpiFuncionarios");
 
-    if (elemento) {
-        elemento.textContent = count || 0;
-    }
+    definirTextoDashboard(
+        "kpiFuncionarios",
+        count || 0
+    );
+
 }
 
 
 // =====================================================
-// AVALIAÇÕES
+// CARREGA AVALIAÇÕES
 // =====================================================
 
 async function carregarAvaliacoesDashboard() {
-    const { data, error } = await supabaseClient
-        .from("avaliacoes_semanais")
-        .select(`
-            id,
-            funcionario_id,
-            nota_final,
-            classificacao,
-            semana,
-            competencia,
-            periodo_inicio,
-            periodo_fim,
-            created_at,
-            funcionarios (
-                nome,
-                matricula
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+
+            .from("avaliacoes_semanais")
+
+            .select(`
+                id,
+                funcionario_id,
+                nota_final,
+                classificacao,
+                semana,
+                competencia,
+                periodo_inicio,
+                periodo_fim,
+                created_at,
+                status,
+                funcionarios (
+                    nome,
+                    matricula
+                )
+            `)
+
+            .eq(
+                "status",
+                "enviada"
             )
-        `)
-        .eq("status", "enviada")
-        .order("created_at", {
-            ascending: false
-        });
+
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
 
     if (error) {
+
         console.error(
-            "Erro ao carregar avaliações:",
+            "Erro ao carregar avaliações do dashboard:",
             error
         );
+
         return;
     }
 
-    const avaliacoes = data || [];
 
-    atualizarQuantidadeAvaliacoes(avaliacoes);
-    atualizarMediaGeral(avaliacoes);
-    atualizarMelhorDesempenho(avaliacoes);
-    atualizarClassificacoes(avaliacoes);
-    atualizarRanking(avaliacoes);
-    atualizarUltimasAvaliacoes(avaliacoes);
-    atualizarGraficoEvolucao(avaliacoes);
+    dashboardAvaliacoesBase =
+        data || [];
+
+
+    atualizarDashboardPorPeriodo();
+
 }
+
+
+// =====================================================
+// FILTRO DE PERÍODO
+// =====================================================
+
+function configurarFiltroPeriodoDashboard() {
+
+    const campo =
+        document.getElementById(
+            "dashboardPeriodo"
+        );
+
+
+    if (!campo) {
+        return;
+    }
+
+
+    campo.addEventListener(
+        "change",
+        atualizarDashboardPorPeriodo
+    );
+
+}
+
+
+// =====================================================
+// APLICA FILTRO E ATUALIZA DASHBOARD
+// =====================================================
+
+function atualizarDashboardPorPeriodo() {
+
+    const avaliacoes =
+        filtrarAvaliacoesDashboard(
+            dashboardAvaliacoesBase
+        );
+
+
+    atualizarQuantidadeAvaliacoes(
+        avaliacoes
+    );
+
+    atualizarMediaGeral(
+        avaliacoes
+    );
+
+    atualizarClassificacoes(
+        avaliacoes
+    );
+
+    atualizarRankingDashboard(
+        avaliacoes
+    );
+
+    atualizarUltimasAvaliacoes(
+        avaliacoes
+    );
+
+    atualizarGraficoEvolucao(
+        avaliacoes
+    );
+
+}
+
+
+// =====================================================
+// FILTRA AVALIAÇÕES PELO PERÍODO
+// =====================================================
+
+function filtrarAvaliacoesDashboard(
+    avaliacoes
+) {
+
+    const campo =
+        document.getElementById(
+            "dashboardPeriodo"
+        );
+
+
+    if (!campo) {
+        return avaliacoes;
+    }
+
+
+    const texto =
+        String(
+            campo.value
+            ||
+            campo.options[
+                campo.selectedIndex
+            ]?.text
+            ||
+            ""
+        );
+
+
+    const correspondencia =
+        texto.match(/\d+/);
+
+
+    if (!correspondencia) {
+        return avaliacoes;
+    }
+
+
+    const dias =
+        Number(
+            correspondencia[0]
+        );
+
+
+    if (!dias) {
+        return avaliacoes;
+    }
+
+
+    const agora =
+        new Date();
+
+
+    const limite =
+        new Date();
+
+
+    limite.setDate(
+        agora.getDate()
+        -
+        dias
+    );
+
+
+    return avaliacoes.filter(
+        avaliacao => {
+
+            const dataISO =
+                avaliacao.created_at
+                ||
+                avaliacao.periodo_fim
+                ||
+                avaliacao.periodo_inicio;
+
+
+            if (!dataISO) {
+                return false;
+            }
+
+
+            const data =
+                new Date(
+                    dataISO
+                );
+
+
+            return (
+                data >= limite
+                &&
+                data <= agora
+            );
+
+        }
+    );
+
+}
+
 
 // =====================================================
 // QUANTIDADE DE AVALIAÇÕES
 // =====================================================
 
-function atualizarQuantidadeAvaliacoes(avaliacoes) {
-    const elemento =
-        document.getElementById("kpiAvaliacoes");
+function atualizarQuantidadeAvaliacoes(
+    avaliacoes
+) {
 
-    if (elemento) {
-        elemento.textContent =
-            avaliacoes.length;
-    }
+    definirTextoDashboard(
+        "kpiAvaliacoes",
+        avaliacoes.length
+    );
+
 }
 
 
@@ -109,73 +392,145 @@ function atualizarQuantidadeAvaliacoes(avaliacoes) {
 // MÉDIA GERAL
 // =====================================================
 
-function atualizarMediaGeral(avaliacoes) {
-    let media = 0;
+function atualizarMediaGeral(
+    avaliacoes
+) {
 
-    if (avaliacoes.length > 0) {
+    let media =
+        0;
+
+
+    if (
+        avaliacoes.length > 0
+    ) {
+
         const soma =
             avaliacoes.reduce(
-                (total, avaliacao) =>
-                    total +
-                    Number(avaliacao.nota_final || 0),
+                (
+                    total,
+                    avaliacao
+                ) =>
+                    total
+                    +
+                    Number(
+                        avaliacao.nota_final
+                        || 0
+                    ),
                 0
             );
 
+
         media =
-            soma / avaliacoes.length;
+            soma
+            /
+            avaliacoes.length;
+
     }
 
-    const mediaFormatada =
+
+    const valor =
         media.toFixed(1);
 
-    const kpiMedia =
-        document.getElementById("kpiMedia");
 
-    const dashboardNotaMedia =
-        document.getElementById(
-            "dashboardNotaMedia"
-        );
+    definirTextoDashboard(
+        "kpiMedia",
+        valor
+    );
 
-    if (kpiMedia) {
-        kpiMedia.textContent =
-            mediaFormatada;
-    }
 
-    if (dashboardNotaMedia) {
-        dashboardNotaMedia.textContent =
-            mediaFormatada;
-    }
+    definirTextoDashboard(
+        "dashboardNotaMedia",
+        valor
+    );
+
 }
 
 
 // =====================================================
-// MELHOR DESEMPENHO
+// CLASSIFICAÇÃO OFICIAL
 // =====================================================
 
-function atualizarMelhorDesempenho(avaliacoes) {
-    const elemento =
-        document.getElementById("kpiMelhor");
+function obterClassificacaoDashboard(
+    nota
+) {
 
-    if (!elemento) return;
+    const valor =
+        Number(
+            nota || 0
+        );
 
-    if (avaliacoes.length === 0) {
-        elemento.textContent = "-";
-        return;
+
+    const pontuacaoMaxima =
+        Number(
+            configuracaoDashboard
+                .pontuacaoMaxima
+        ) || 100;
+
+
+    const notaMinima =
+        Number(
+            configuracaoDashboard
+                .notaMinima
+        ) || 70;
+
+
+    const limiteExcelente =
+        pontuacaoMaxima
+        *
+        0.90;
+
+
+    const limiteMuitoBom =
+        pontuacaoMaxima
+        *
+        0.80;
+
+
+    const limiteBom =
+        notaMinima;
+
+
+    const limiteAtencao =
+        Math.max(
+            0,
+            notaMinima - 10
+        );
+
+
+    if (
+        valor >=
+        limiteExcelente
+    ) {
+        return "EXCELENTE";
     }
 
-    const melhor =
-        [...avaliacoes].sort(
-            (a, b) =>
-                Number(b.nota_final) -
-                Number(a.nota_final)
-        )[0];
 
-    const nome =
-        melhor.funcionarios?.nome ||
-        "Funcionário";
+    if (
+        valor >=
+        limiteMuitoBom
+    ) {
+        return "MUITO BOM";
+    }
 
-    elemento.textContent =
-        `${nome} · ${melhor.nota_final}`;
+
+    if (
+        valor >=
+        limiteBom
+    ) {
+        return "BOM";
+    }
+
+
+    if (
+        valor >=
+        limiteAtencao
+    ) {
+        return "ATENÇÃO";
+    }
+
+
+    return "CRÍTICO";
+
 }
 
 
@@ -183,132 +538,438 @@ function atualizarMelhorDesempenho(avaliacoes) {
 // CONTAGEM POR CLASSIFICAÇÃO
 // =====================================================
 
-function atualizarClassificacoes(avaliacoes) {
+function atualizarClassificacoes(
+    avaliacoes
+) {
+
     let excelente = 0;
+    let muitoBom = 0;
     let bom = 0;
     let atencao = 0;
     let critico = 0;
 
-    avaliacoes.forEach(avaliacao => {
-        const nota =
-            Number(avaliacao.nota_final || 0);
 
-        if (nota >= 90) {
-            excelente++;
-        } else if (nota >= 70) {
-            bom++;
-        } else if (nota >= 60) {
-            atencao++;
-        } else {
-            critico++;
+    avaliacoes.forEach(
+        avaliacao => {
+
+            const classificacao =
+                obterClassificacaoDashboard(
+                    avaliacao.nota_final
+                );
+
+
+            switch (
+                classificacao
+            ) {
+
+                case "EXCELENTE":
+
+                    excelente++;
+
+                    break;
+
+
+                case "MUITO BOM":
+
+                    muitoBom++;
+
+                    break;
+
+
+                case "BOM":
+
+                    bom++;
+
+                    break;
+
+
+                case "ATENÇÃO":
+
+                    atencao++;
+
+                    break;
+
+
+                default:
+
+                    critico++;
+
+                    break;
+
+            }
+
         }
-    });
+    );
 
-    definirTexto(
+
+    definirTextoDashboard(
         "statusExcelente",
         excelente
     );
 
-    definirTexto(
+
+    definirTextoDashboard(
+        "statusMuitoBom",
+        muitoBom
+    );
+
+
+    definirTextoDashboard(
         "statusBom",
         bom
     );
 
-    definirTexto(
+
+    definirTextoDashboard(
         "statusAtencao",
         atencao
     );
 
-    definirTexto(
+
+    definirTextoDashboard(
         "statusCritico",
         critico
     );
+
 }
 
 
 // =====================================================
-// RANKING
+// DESTAQUE DO MÊS
 // =====================================================
 
-function atualizarRanking(avaliacoes) {
+async function carregarDestaqueDoMes() {
+
+    const elemento =
+        document.getElementById(
+            "kpiMelhor"
+        );
+
+
+    if (!elemento) {
+        return;
+    }
+
+
+    const hoje =
+        new Date();
+
+
+    const ano =
+        hoje.getFullYear();
+
+
+    const mes =
+        hoje.getMonth() + 1;
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+
+                .from(
+                    "fechamentos_mensais"
+                )
+
+                .select(`
+                    id,
+                    funcionario_id,
+                    media_tecnica,
+                    classificacao,
+                    status
+                `)
+
+                .eq(
+                    "ano",
+                    ano
+                )
+
+                .eq(
+                    "mes",
+                    mes
+                )
+
+                .eq(
+                    "status",
+                    "fechado"
+                )
+
+                .order(
+                    "media_tecnica",
+                    {
+                        ascending:
+                            false
+                    }
+                )
+
+                .limit(1);
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        const fechamento =
+            data?.[0];
+
+
+        if (!fechamento) {
+
+            elemento.textContent =
+                "Sem fechamento";
+
+            return;
+
+        }
+
+
+        const {
+            data: funcionario,
+            error: erroFuncionario
+        } =
+            await supabaseClient
+
+                .from(
+                    "funcionarios"
+                )
+
+                .select(`
+                    nome,
+                    matricula
+                `)
+
+                .eq(
+                    "id",
+                    fechamento.funcionario_id
+                )
+
+                .maybeSingle();
+
+
+        if (erroFuncionario) {
+            throw erroFuncionario;
+        }
+
+
+        const nome =
+            funcionario?.nome
+            ||
+            "Funcionário";
+
+
+        const media =
+            Number(
+                fechamento.media_tecnica
+                || 0
+            );
+
+
+        elemento.textContent =
+            `${nome} · ${media.toFixed(1)}`;
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao carregar destaque do mês:",
+            erro
+        );
+
+
+        elemento.textContent =
+            "-";
+
+    }
+
+}
+
+
+// =====================================================
+// TOP COLABORADORES
+// =====================================================
+
+function atualizarRankingDashboard(
+    avaliacoes
+) {
+
     const container =
         document.getElementById(
             "dashboardRanking"
         );
 
-    if (!container) return;
 
-    if (avaliacoes.length === 0) {
+    if (!container) {
+        return;
+    }
+
+
+    if (
+        avaliacoes.length === 0
+    ) {
+
         container.innerHTML = `
             <div class="ranking-empty">
                 Nenhum dado disponível.
             </div>
         `;
+
         return;
     }
 
-    const agrupado = {};
 
-    avaliacoes.forEach(avaliacao => {
-        const funcionarioId =
-            avaliacao.funcionario_id;
+    const agrupado =
+        {};
 
-        if (!agrupado[funcionarioId]) {
-            agrupado[funcionarioId] = {
-                nome:
-                    avaliacao.funcionarios?.nome ||
-                    "Funcionário",
-                total: 0,
-                quantidade: 0
-            };
+
+    avaliacoes.forEach(
+        avaliacao => {
+
+            const funcionarioId =
+                avaliacao.funcionario_id;
+
+
+            if (
+                !agrupado[
+                    funcionarioId
+                ]
+            ) {
+
+                agrupado[
+                    funcionarioId
+                ] = {
+
+                    nome:
+                        avaliacao
+                            .funcionarios
+                            ?.nome
+                        ||
+                        "Funcionário",
+
+                    total:
+                        0,
+
+                    quantidade:
+                        0
+
+                };
+
+            }
+
+
+            agrupado[
+                funcionarioId
+            ].total +=
+                Number(
+                    avaliacao.nota_final
+                    || 0
+                );
+
+
+            agrupado[
+                funcionarioId
+            ].quantidade++;
+
         }
+    );
 
-        agrupado[funcionarioId].total +=
-            Number(
-                avaliacao.nota_final || 0
-            );
-
-        agrupado[funcionarioId].quantidade++;
-    });
 
     const ranking =
-        Object.values(agrupado)
-            .map(item => ({
-                nome: item.nome,
-                media:
-                    item.total /
-                    item.quantidade
-            }))
-            .sort(
-                (a, b) =>
-                    b.media - a.media
+        Object.values(
+            agrupado
+        )
+
+            .map(
+                item => ({
+
+                    nome:
+                        item.nome,
+
+                    media:
+                        item.quantidade
+
+                            ? item.total
+                              /
+                              item.quantidade
+
+                            : 0
+
+                })
             )
-            .slice(0, 5);
+
+            .sort(
+                (
+                    a,
+                    b
+                ) =>
+                    b.media
+                    -
+                    a.media
+            )
+
+            .slice(
+                0,
+                5
+            );
+
 
     container.innerHTML =
         ranking
-            .map((item, indice) => `
-                <div class="dashboard-ranking-item">
-                    <span class="ranking-position">
-                        ${indice + 1}
-                    </span>
 
-                    <div class="ranking-person">
-                        <strong>
-                            ${item.nome}
+            .map(
+                (
+                    item,
+                    indice
+                ) => `
+                    <div
+                        class="
+                            dashboard-ranking-item
+                        "
+                    >
+
+                        <span
+                            class="
+                                ranking-position
+                            "
+                        >
+                            ${indice + 1}
+                        </span>
+
+                        <div
+                            class="
+                                ranking-person
+                            "
+                        >
+
+                            <strong>
+                                ${item.nome}
+                            </strong>
+
+                            <small>
+                                Média de desempenho
+                            </small>
+
+                        </div>
+
+                        <strong
+                            class="
+                                ranking-score
+                            "
+                        >
+                            ${item.media.toFixed(1)}
                         </strong>
 
-                        <small>
-                            Média de desempenho
-                        </small>
                     </div>
+                `
+            )
 
-                    <strong class="ranking-score">
-                        ${item.media.toFixed(1)}
-                    </strong>
-                </div>
-            `)
             .join("");
+
 }
 
 
@@ -316,198 +977,333 @@ function atualizarRanking(avaliacoes) {
 // ÚLTIMAS AVALIAÇÕES
 // =====================================================
 
-function atualizarUltimasAvaliacoes(avaliacoes) {
+function atualizarUltimasAvaliacoes(
+    avaliacoes
+) {
+
     const container =
         document.getElementById(
             "dashboardAvaliacoes"
         );
 
-    if (!container) return;
 
-    if (avaliacoes.length === 0) {
+    if (!container) {
+        return;
+    }
+
+
+    if (
+        avaliacoes.length === 0
+    ) {
+
         container.innerHTML = `
             <div class="ranking-empty">
                 Nenhuma avaliação registrada.
             </div>
         `;
+
         return;
     }
 
+
     const ultimas =
-        avaliacoes.slice(0, 5);
+        [...avaliacoes]
+
+            .sort(
+                (
+                    a,
+                    b
+                ) => {
+
+                    const dataA =
+                        new Date(
+                            a.created_at
+                            ||
+                            a.periodo_fim
+                            ||
+                            0
+                        );
+
+
+                    const dataB =
+                        new Date(
+                            b.created_at
+                            ||
+                            b.periodo_fim
+                            ||
+                            0
+                        );
+
+
+                    return (
+                        dataB
+                        -
+                        dataA
+                    );
+
+                }
+            )
+
+            .slice(
+                0,
+                5
+            );
+
 
     container.innerHTML =
         ultimas
-            .map(avaliacao => {
-                const nome =
-                    avaliacao.funcionarios?.nome ||
-                    "Funcionário";
 
-                const nota =
-                    Number(
-                        avaliacao.nota_final || 0
-                    );
+            .map(
+                avaliacao => {
 
-                const data =
-                    formatarData(
-                        avaliacao.created_at
-                    );
+                    const nome =
+                        avaliacao
+                            .funcionarios
+                            ?.nome
+                        ||
+                        "Funcionário";
 
-                return `
-                    <div class="dashboard-activity-item">
 
-                        <div>
-                            <strong>
-                                ${nome}
-                            </strong>
+                    const nota =
+                        Number(
+                            avaliacao.nota_final
+                            || 0
+                        );
 
-                            <small>
-                                ${data}
-                            </small>
+
+                    const data =
+                        formatarDataDashboard(
+                            avaliacao.created_at
+                            ||
+                            avaliacao.periodo_fim
+                        );
+
+
+                    return `
+                        <div
+                            class="
+                                dashboard-activity-item
+                            "
+                        >
+
+                            <div>
+
+                                <strong>
+                                    ${nome}
+                                </strong>
+
+                                <small>
+                                    ${data}
+                                </small>
+
+                            </div>
+
+                            <span
+                                class="
+                                    activity-score
+                                "
+                            >
+                                ${nota}
+                            </span>
+
                         </div>
+                    `;
 
-                        <span class="activity-score">
-                            ${nota}
-                        </span>
+                }
+            )
 
-                    </div>
-                `;
-            })
             .join("");
+
 }
 
 
 // =====================================================
-// UTILITÁRIOS
+// GRÁFICO DE EVOLUÇÃO
 // =====================================================
 
-function definirTexto(id, valor) {
-    const elemento =
-        document.getElementById(id);
-
-    if (elemento) {
-        elemento.textContent = valor;
-    }
-}
-
-
-function formatarData(dataISO) {
-    if (!dataISO) {
-        return "-";
-    }
-
-    return new Date(
-        dataISO
-    ).toLocaleDateString(
-        "pt-BR",
-        {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
-        }
-    );
-}
-let graficoEvolucao = null;
-
-function atualizarGraficoEvolucao(avaliacoes) {
+function atualizarGraficoEvolucao(
+    avaliacoes
+) {
 
     const canvas =
-        document.getElementById("graficoEvolucao");
+        document.getElementById(
+            "graficoEvolucao"
+        );
+
 
     if (!canvas) {
+
         console.warn(
             "Canvas graficoEvolucao não encontrado."
         );
+
         return;
     }
 
 
-    if (graficoEvolucao) {
-        graficoEvolucao.destroy();
+    if (
+        graficoEvolucaoInstance
+    ) {
+
+        graficoEvolucaoInstance
+            .destroy();
+
+
+        graficoEvolucaoInstance =
+            null;
+
     }
 
 
-    const agrupado = {};
+    if (
+        !avaliacoes
+        ||
+        avaliacoes.length === 0
+    ) {
+
+        return;
+
+    }
 
 
-    avaliacoes.forEach(avaliacao => {
+    const avaliacoesOrdenadas =
+        [...avaliacoes]
 
-        const data =
-            avaliacao.competencia ||
-            avaliacao.created_at;
+            .sort(
+                (
+                    a,
+                    b
+                ) => {
 
-        if (!data) return;
-
-
-        const chave =
-            new Date(data)
-                .toLocaleDateString(
-                    "pt-BR",
-                    {
-                        month: "short",
-                        year: "2-digit"
-                    }
-                );
-
-
-        if (!agrupado[chave]) {
-            agrupado[chave] = {
-                soma: 0,
-                quantidade: 0
-            };
-        }
+                    const dataA =
+                        new Date(
+                            a.created_at
+                            ||
+                            a.periodo_fim
+                            ||
+                            0
+                        );
 
 
-        agrupado[chave].soma +=
-            Number(
-                avaliacao.nota_final || 0
+                    const dataB =
+                        new Date(
+                            b.created_at
+                            ||
+                            b.periodo_fim
+                            ||
+                            0
+                        );
+
+
+                    return (
+                        dataA
+                        -
+                        dataB
+                    );
+
+                }
             );
-
-        agrupado[chave].quantidade++;
-    });
 
 
     const labels =
-        Object.keys(agrupado);
+        avaliacoesOrdenadas.map(
+            avaliacao => {
+
+                const data =
+                    avaliacao.created_at
+                    ||
+                    avaliacao.periodo_fim;
 
 
-    const valores =
-        labels.map(label => {
+                if (!data) {
 
-            const item =
-                agrupado[label];
+                    return (
+                        `Semana ${
+                            avaliacao.semana
+                            ||
+                            "-"
+                        }`
+                    );
 
-            return Number(
-                (
-                    item.soma /
-                    item.quantidade
-                ).toFixed(1)
-            );
-        });
+                }
 
 
-    graficoEvolucao =
+                return new Date(
+                    data
+                ).toLocaleDateString(
+                    "pt-BR",
+                    {
+                        day:
+                            "2-digit",
+
+                        month:
+                            "2-digit",
+
+                        year:
+                            "2-digit"
+                    }
+                );
+
+            }
+        );
+
+
+    const notas =
+        avaliacoesOrdenadas.map(
+            avaliacao =>
+                Number(
+                    avaliacao.nota_final
+                    || 0
+                )
+        );
+
+
+    const contexto =
+        canvas.getContext(
+            "2d"
+        );
+
+
+    graficoEvolucaoInstance =
         new Chart(
-            canvas,
+            contexto,
             {
-                type: "line",
+
+                type:
+                    "line",
 
                 data: {
-                    labels: labels,
+
+                    labels:
+                        labels,
 
                     datasets: [
+
                         {
+
                             label:
-                                "Média de desempenho",
+                                "Nota Final",
 
                             data:
-                                valores,
+                                notas,
 
                             borderColor:
-                                "#ff7518",
+                                "#ff7a1a",
 
                             backgroundColor:
-                                "rgba(255,117,24,0.12)",
+                                "rgba(255, 122, 26, 0.12)",
+
+                            pointBackgroundColor:
+                                "#ff7a1a",
+
+                            pointBorderColor:
+                                "#ff7a1a",
+
+                            pointRadius:
+                                5,
+
+                            pointHoverRadius:
+                                7,
 
                             borderWidth:
                                 3,
@@ -516,16 +1312,14 @@ function atualizarGraficoEvolucao(avaliacoes) {
                                 0.35,
 
                             fill:
-                                true,
+                                true
 
-                            pointRadius:
-                                5,
-
-                            pointHoverRadius:
-                                7
                         }
+
                     ]
+
                 },
+
 
                 options: {
 
@@ -535,14 +1329,51 @@ function atualizarGraficoEvolucao(avaliacoes) {
                     maintainAspectRatio:
                         false,
 
+
+                    interaction: {
+
+                        intersect:
+                            false,
+
+                        mode:
+                            "index"
+
+                    },
+
+
                     plugins: {
 
                         legend: {
                             display:
                                 false
+                        },
+
+
+                        tooltip: {
+
+                            callbacks: {
+
+                                label:
+                                    function (
+                                        context
+                                    ) {
+
+                                        return (
+                                            `Nota: ${
+                                                context
+                                                    .parsed
+                                                    .y
+                                            }`
+                                        );
+
+                                    }
+
+                            }
+
                         }
 
                     },
+
 
                     scales: {
 
@@ -551,27 +1382,28 @@ function atualizarGraficoEvolucao(avaliacoes) {
                             beginAtZero:
                                 true,
 
+                            min:
+                                0,
+
                             max:
                                 100,
 
                             ticks: {
-                                color:
-                                    "#717b86"
+                                stepSize:
+                                    10
                             },
 
                             grid: {
+
                                 color:
-                                    "rgba(255,255,255,0.05)"
+                                    "rgba(255,255,255,0.06)"
+
                             }
 
                         },
 
-                        x: {
 
-                            ticks: {
-                                color:
-                                    "#717b86"
-                            },
+                        x: {
 
                             grid: {
                                 display:
@@ -581,160 +1413,63 @@ function atualizarGraficoEvolucao(avaliacoes) {
                         }
 
                     }
+
                 }
+
             }
         );
+
 }
 
-// ==========================================
-// GRÁFICO DE EVOLUÇÃO DAS AVALIAÇÕES
-// ==========================================
 
-let graficoEvolucaoInstance = null;
+// =====================================================
+// UTILITÁRIOS
+// =====================================================
 
-function atualizarGraficoEvolucao(avaliacoes) {
+function definirTextoDashboard(
+    id,
+    valor
+) {
 
-    const canvas = document.getElementById("graficoEvolucao");
+    const elemento =
+        document.getElementById(
+            id
+        );
 
-    if (!canvas) {
-        console.warn("Canvas graficoEvolucao não encontrado.");
-        return;
+
+    if (elemento) {
+
+        elemento.textContent =
+            valor;
+
     }
 
-    if (!avaliacoes || avaliacoes.length === 0) {
-        console.warn("Nenhuma avaliação encontrada para o gráfico.");
+}
 
-        if (graficoEvolucaoInstance) {
-            graficoEvolucaoInstance.destroy();
-            graficoEvolucaoInstance = null;
-        }
 
-        return;
+function formatarDataDashboard(
+    dataISO
+) {
+
+    if (!dataISO) {
+        return "-";
     }
 
-    // Ordena as avaliações da mais antiga para a mais recente
-    const avaliacoesOrdenadas = [...avaliacoes].sort((a, b) => {
-        const dataA = new Date(a.created_at || a.periodo_fim || 0);
-        const dataB = new Date(b.created_at || b.periodo_fim || 0);
 
-        return dataA - dataB;
-    });
+    return new Date(
+        dataISO
+    ).toLocaleDateString(
+        "pt-BR",
+        {
+            day:
+                "2-digit",
 
-    // Datas que aparecerão embaixo do gráfico
-    const labels = avaliacoesOrdenadas.map((avaliacao) => {
+            month:
+                "2-digit",
 
-        const data = avaliacao.created_at || avaliacao.periodo_fim;
-
-        if (!data) {
-            return `Semana ${avaliacao.semana || "-"}`;
+            year:
+                "numeric"
         }
+    );
 
-        return new Date(data).toLocaleDateString("pt-BR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "2-digit"
-        });
-    });
-
-    // Notas das avaliações
-    const notas = avaliacoesOrdenadas.map((avaliacao) => {
-        return Number(avaliacao.nota_final) || 0;
-    });
-
-    // Remove gráfico anterior antes de desenhar novamente
-    if (graficoEvolucaoInstance) {
-        graficoEvolucaoInstance.destroy();
-    }
-
-    const contexto = canvas.getContext("2d");
-
-    graficoEvolucaoInstance = new Chart(contexto, {
-
-        type: "line",
-
-        data: {
-
-            labels: labels,
-
-            datasets: [
-                {
-                    label: "Nota Final",
-
-                    data: notas,
-
-                    borderColor: "#ff7a1a",
-
-                    backgroundColor: "rgba(255, 122, 26, 0.12)",
-
-                    pointBackgroundColor: "#ff7a1a",
-
-                    pointBorderColor: "#ff7a1a",
-
-                    pointRadius: 5,
-
-                    pointHoverRadius: 7,
-
-                    borderWidth: 3,
-
-                    tension: 0.35,
-
-                    fill: true
-                }
-            ]
-        },
-
-        options: {
-
-            responsive: true,
-
-            maintainAspectRatio: false,
-
-            interaction: {
-                intersect: false,
-                mode: "index"
-            },
-
-            plugins: {
-
-                legend: {
-                    display: false
-                },
-
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `Nota: ${context.parsed.y}`;
-                        }
-                    }
-                }
-            },
-
-            scales: {
-
-                y: {
-
-                    beginAtZero: true,
-
-                    min: 0,
-
-                    max: 100,
-
-                    ticks: {
-                        stepSize: 10
-                    },
-
-                    grid: {
-                        color: "rgba(255,255,255,0.06)"
-                    }
-                },
-
-                x: {
-
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
 }

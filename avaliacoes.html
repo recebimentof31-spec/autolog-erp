@@ -11,229 +11,171 @@
 
     <title>Gestão de Desempenho - Avaliações</title>
 
-
-<link
-    rel="stylesheet"
-    href="css/style.css">
-
-<link
-    rel="stylesheet"
-    href="css/theme-pro.css">
-    
-
+    <link rel="stylesheet" href="css/v2.css">
 </head>
 
-<body class="theme-pro avaliacoes-page">
 
-    <div class="container">
+<body class="app-v2">
 
-        <!-- =========================================
-             MENU LATERAL
-        ========================================== -->
+    <!-- SIDEBAR -->
+    <aside
+        id="appSidebar"
+        class="v2-sidebar"
+    ></aside>
 
-        <aside class="sidebar">
 
-            <div class="brand">
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="v2-main">
 
-                <h2>
-                    📊 Gestão de<br>
-                    Desempenho
-                </h2>
+        <!-- CABEÇALHO -->
+        <section class="page-header">
+
+            <div>
+
+                <span class="v2-label">
+                    GESTÃO DE DESEMPENHO
+                </span>
+
+                <h1>
+                    Avaliação Semanal
+                </h1>
+
+                <p>
+                    Avalie o desempenho do colaborador com base nos critérios definidos.
+                </p>
 
             </div>
 
-            <nav>
-
-                <a href="dashboard.html">
-                    🏠 Dashboard
-                </a>
-
-                <a href="funcionarios.html">
-                    👥 Funcionários
-                </a>
-
-                <a
-                    href="avaliacoes.html"
-                    class="active"
-                >
-                    📝 Avaliações
-                </a>
-
-                <a href="ranking.html">
-                    🏆 Ranking
-                </a>
-
-                <a href="relatorios.html">
-                    📈 Relatórios
-                </a>
-
-                <a href="configuracoes.html">
-                    ⚙ Configurações
-                </a>
-
-            </nav>
-
-        </aside>
+        </section>
 
 
-        <!-- =========================================
-             CONTEÚDO
-        ========================================== -->
+        <!-- DADOS DA AVALIAÇÃO -->
+        <section class="v2-card avaliacao-dados-card">
 
-        <main class="content">
+            <div class="avaliacao-section-header">
 
-            <!-- CABEÇALHO -->
+                <span class="v2-label">
+                    AVALIAÇÃO
+                </span>
 
-            <header class="page-header">
+                <h2>
+                    Dados da avaliação
+                </h2>
 
-                <div>
+                <p>
+                    Selecione o colaborador e a semana que será avaliada.
+                </p>
 
-                    <span class="eyebrow">
-                        GESTÃO DE DESEMPENHO
-                    </span>
+            </div>
 
-                    <h1>
-                        Avaliação Semanal
-                    </h1>
 
-                    <p>
-                        Avalie o desempenho do colaborador
-                        com base nos critérios definidos.
-                    </p>
+            <div class="avaliacao-dados-grid">
+
+                <!-- FUNCIONÁRIO -->
+                <div class="avaliacao-field">
+
+                    <label for="funcionario">
+                        Funcionário
+                    </label>
+
+                    <select id="funcionario">
+
+                        <option value="">
+                            Carregando funcionários...
+                        </option>
+
+                    </select>
 
                 </div>
 
-            </header>
+
+                <!-- SEMANA -->
+                <div class="avaliacao-field">
+
+                    <label for="semana">
+                        Semana
+                    </label>
+
+                    <select id="semana">
+
+                        <option value="1">
+                            Semana 1
+                        </option>
+
+                        <option value="2">
+                            Semana 2
+                        </option>
+
+                        <option value="3">
+                            Semana 3
+                        </option>
+
+                        <option value="4">
+                            Semana 4
+                        </option>
+
+                        <option value="5">
+                            Semana 5
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </section>
 
 
-            <!-- =====================================
-                 FUNCIONÁRIO / SEMANA
-            ====================================== -->
+        <!-- ÁREA DA AVALIAÇÃO -->
+        <section class="avaliacao-main-grid">
 
-            <section class="card avaliacao-identificacao">
+            <!-- CRITÉRIOS -->
+            <article class="v2-card avaliacao-criterios-card">
 
-                <div class="section-title">
+                <div class="avaliacao-criterios-header">
 
                     <div>
 
-                        <span class="section-label">
-                            AVALIAÇÃO
+                        <span class="v2-label">
+                            PONTUAÇÃO
                         </span>
 
                         <h2>
-                            Dados da avaliação
+                            Critérios de Avaliação
                         </h2>
 
+                        <p>
+                            Ajuste a pontuação de cada critério utilizando os controles abaixo.
+                        </p>
+
                     </div>
+
+
+                    <span class="avaliacao-total-badge">
+                        Total: 100 pontos
+                    </span>
 
                 </div>
 
 
-                <div class="form-grid">
+                <!-- PRODUTIVIDADE -->
+                <div class="avaliacao-criterio">
 
-                    <div class="field">
+                    <div class="avaliacao-criterio-info">
 
-                        <label for="funcionario">
-                            Funcionário
-                        </label>
+                        <strong>
+                            Produtividade
+                        </strong>
 
-                        <select id="funcionario">
-
-                            <option value="">
-                                Carregando...
-                            </option>
-
-                        </select>
+                        <span>
+                            Capacidade de produzir com eficiência e manter bom ritmo de trabalho.
+                        </span>
 
                     </div>
 
 
-                    <div class="field">
-
-                        <label for="semana">
-                            Semana
-                        </label>
-
-                        <select id="semana">
-
-                            <option value="Semana 1">
-                                Semana 1
-                            </option>
-
-                            <option value="Semana 2">
-                                Semana 2
-                            </option>
-
-                            <option value="Semana 3">
-                                Semana 3
-                            </option>
-
-                            <option value="Semana 4">
-                                Semana 4
-                            </option>
-
-                            <option value="Semana 5">
-                                Semana 5
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =====================================
-                 ÁREA PRINCIPAL
-            ====================================== -->
-
-            <div class="avaliacao-grid">
-
-                <!-- ================================
-                     CRITÉRIOS
-                ================================= -->
-
-                <section class="card criterios-card">
-
-                    <div class="section-title">
-
-                        <div>
-
-                            <span class="section-label">
-                                PONTUAÇÃO
-                            </span>
-
-                            <h2>
-                                Critérios de Avaliação
-                            </h2>
-
-                        </div>
-
-                        <div class="peso-total">
-                            Total: 100 pontos
-                        </div>
-
-                    </div>
-
-
-                    <!-- PRODUTIVIDADE -->
-
-                    <div class="criterio">
-
-                        <div class="criterio-info">
-
-                            <label for="produtividade">
-                                Produtividade
-                            </label>
-
-                            <small>
-                                Capacidade de produzir com eficiência
-                                e manter bom ritmo de trabalho.
-                            </small>
-
-                        </div>
+                    <div class="avaliacao-slider-area">
 
                         <input
                             type="range"
@@ -241,34 +183,39 @@
                             min="0"
                             max="15"
                             value="15"
+                            step="1"
+                            class="avaliacao-slider"
                         >
 
                         <span
-                            class="criterio-valor"
-                            id="produtividadeValor"
+                            class="avaliacao-valor"
+                            id="valorProdutividade"
                         >
                             15
                         </span>
 
                     </div>
 
+                </div>
 
-                    <!-- PRAZO -->
 
-                    <div class="criterio">
+                <!-- PRAZO -->
+                <div class="avaliacao-criterio">
 
-                        <div class="criterio-info">
+                    <div class="avaliacao-criterio-info">
 
-                            <label for="prazo">
-                                Prazo
-                            </label>
+                        <strong>
+                            Prazo
+                        </strong>
 
-                            <small>
-                                Cumprimento das tarefas dentro
-                                dos prazos estabelecidos.
-                            </small>
+                        <span>
+                            Cumprimento das tarefas dentro dos prazos estabelecidos.
+                        </span>
 
-                        </div>
+                    </div>
+
+
+                    <div class="avaliacao-slider-area">
 
                         <input
                             type="range"
@@ -276,34 +223,39 @@
                             min="0"
                             max="10"
                             value="10"
+                            step="1"
+                            class="avaliacao-slider"
                         >
 
                         <span
-                            class="criterio-valor"
-                            id="prazoValor"
+                            class="avaliacao-valor"
+                            id="valorPrazo"
                         >
                             10
                         </span>
 
                     </div>
 
+                </div>
 
-                    <!-- QUALIDADE -->
 
-                    <div class="criterio">
+                <!-- QUALIDADE -->
+                <div class="avaliacao-criterio">
 
-                        <div class="criterio-info">
+                    <div class="avaliacao-criterio-info">
 
-                            <label for="qualidade">
-                                Qualidade
-                            </label>
+                        <strong>
+                            Qualidade
+                        </strong>
 
-                            <small>
-                                Precisão, atenção e qualidade
-                                na execução das atividades.
-                            </small>
+                        <span>
+                            Precisão, atenção e qualidade na execução das atividades.
+                        </span>
 
-                        </div>
+                    </div>
+
+
+                    <div class="avaliacao-slider-area">
 
                         <input
                             type="range"
@@ -311,69 +263,79 @@
                             min="0"
                             max="15"
                             value="15"
+                            step="1"
+                            class="avaliacao-slider"
                         >
 
                         <span
-                            class="criterio-valor"
-                            id="qualidadeValor"
+                            class="avaliacao-valor"
+                            id="valorQualidade"
                         >
                             15
                         </span>
 
                     </div>
 
+                </div>
 
-                    <!-- CONHECIMENTO TÉCNICO -->
 
-                    <div class="criterio">
+                <!-- CONHECIMENTO TÉCNICO -->
+                <div class="avaliacao-criterio">
 
-                        <div class="criterio-info">
+                    <div class="avaliacao-criterio-info">
 
-                            <label for="conhecimentoTecnico">
-                                Conhecimento técnico
-                            </label>
+                        <strong>
+                            Conhecimento técnico
+                        </strong>
 
-                            <small>
-                                Domínio dos processos, procedimentos
-                                e atividades da função.
-                            </small>
+                        <span>
+                            Domínio dos processos, procedimentos e atividades da função.
+                        </span>
 
-                        </div>
+                    </div>
+
+
+                    <div class="avaliacao-slider-area">
 
                         <input
                             type="range"
-                            id="conhecimentoTecnico"
+                            id="conhecimento"
                             min="0"
                             max="15"
                             value="15"
+                            step="1"
+                            class="avaliacao-slider"
                         >
 
                         <span
-                            class="criterio-valor"
-                            id="conhecimentoTecnicoValor"
+                            class="avaliacao-valor"
+                            id="valorConhecimento"
                         >
                             15
                         </span>
 
                     </div>
 
+                </div>
 
-                    <!-- PROATIVIDADE -->
 
-                    <div class="criterio">
+                <!-- PROATIVIDADE -->
+                <div class="avaliacao-criterio">
 
-                        <div class="criterio-info">
+                    <div class="avaliacao-criterio-info">
 
-                            <label for="proatividade">
-                                Proatividade
-                            </label>
+                        <strong>
+                            Proatividade
+                        </strong>
 
-                            <small>
-                                Iniciativa para identificar
-                                e solucionar situações do dia a dia.
-                            </small>
+                        <span>
+                            Iniciativa para identificar e solucionar situações do dia a dia.
+                        </span>
 
-                        </div>
+                    </div>
+
+
+                    <div class="avaliacao-slider-area">
 
                         <input
                             type="range"
@@ -381,34 +343,39 @@
                             min="0"
                             max="10"
                             value="10"
+                            step="1"
+                            class="avaliacao-slider"
                         >
 
                         <span
-                            class="criterio-valor"
-                            id="proatividadeValor"
+                            class="avaliacao-valor"
+                            id="valorProatividade"
                         >
                             10
                         </span>
 
                     </div>
 
+                </div>
 
-                    <!-- TRABALHO EM EQUIPE -->
 
-                    <div class="criterio">
+                <!-- TRABALHO EM EQUIPE -->
+                <div class="avaliacao-criterio">
 
-                        <div class="criterio-info">
+                    <div class="avaliacao-criterio-info">
 
-                            <label for="trabalhoEquipe">
-                                Trabalho em equipe
-                            </label>
+                        <strong>
+                            Trabalho em equipe
+                        </strong>
 
-                            <small>
-                                Colaboração, comunicação e contribuição
-                                para o desempenho coletivo.
-                            </small>
+                        <span>
+                            Cooperação, comunicação e contribuição com os demais colaboradores.
+                        </span>
 
-                        </div>
+                    </div>
+
+
+                    <div class="avaliacao-slider-area">
 
                         <input
                             type="range"
@@ -416,34 +383,39 @@
                             min="0"
                             max="15"
                             value="15"
+                            step="1"
+                            class="avaliacao-slider"
                         >
 
                         <span
-                            class="criterio-valor"
-                            id="trabalhoEquipeValor"
+                            class="avaliacao-valor"
+                            id="valorTrabalhoEquipe"
                         >
                             15
                         </span>
 
                     </div>
 
+                </div>
 
-                    <!-- ADAPTABILIDADE -->
 
-                    <div class="criterio">
+                <!-- ADAPTABILIDADE -->
+                <div class="avaliacao-criterio">
 
-                        <div class="criterio-info">
+                    <div class="avaliacao-criterio-info">
 
-                            <label for="adaptabilidade">
-                                Adaptabilidade
-                            </label>
+                        <strong>
+                            Adaptabilidade
+                        </strong>
 
-                            <small>
-                                Capacidade de se adaptar às mudanças,
-                                prioridades e novas demandas.
-                            </small>
+                        <span>
+                            Capacidade de adaptação a mudanças, demandas e novas situações.
+                        </span>
 
-                        </div>
+                    </div>
+
+
+                    <div class="avaliacao-slider-area">
 
                         <input
                             type="range"
@@ -451,34 +423,39 @@
                             min="0"
                             max="10"
                             value="10"
+                            step="1"
+                            class="avaliacao-slider"
                         >
 
                         <span
-                            class="criterio-valor"
-                            id="adaptabilidadeValor"
+                            class="avaliacao-valor"
+                            id="valorAdaptabilidade"
                         >
                             10
                         </span>
 
                     </div>
 
+                </div>
 
-                    <!-- RESPONSABILIDADE -->
 
-                    <div class="criterio">
+                <!-- RESPONSABILIDADE -->
+                <div class="avaliacao-criterio">
 
-                        <div class="criterio-info">
+                    <div class="avaliacao-criterio-info">
 
-                            <label for="responsabilidade">
-                                Responsabilidade
-                            </label>
+                        <strong>
+                            Responsabilidade
+                        </strong>
 
-                            <small>
-                                Compromisso, postura profissional
-                                e responsabilidade com as atividades.
-                            </small>
+                        <span>
+                            Comprometimento, disciplina e responsabilidade com suas atribuições.
+                        </span>
 
-                        </div>
+                    </div>
+
+
+                    <div class="avaliacao-slider-area">
 
                         <input
                             type="range"
@@ -486,115 +463,125 @@
                             min="0"
                             max="10"
                             value="10"
+                            step="1"
+                            class="avaliacao-slider"
                         >
 
                         <span
-                            class="criterio-valor"
-                            id="responsabilidadeValor"
+                            class="avaliacao-valor"
+                            id="valorResponsabilidade"
                         >
                             10
                         </span>
 
                     </div>
 
-                </section>
+                </div>
+
+            </article>
 
 
-                <!-- ================================
-                     RESULTADO
-                ================================= -->
+            <!-- RESULTADO -->
+            <aside class="v2-card avaliacao-resultado-card">
 
-                <aside class="card resultado-card">
+                <span class="v2-label">
+                    RESULTADO
+                </span>
 
-                    <span class="section-label">
-                        RESULTADO
+                <h2>
+                    Nota Final
+                </h2>
+
+
+                <div class="avaliacao-nota">
+
+                    <strong id="notaFinal">
+                        100
+                    </strong>
+
+                    <span>
+                        / 100
                     </span>
 
-                    <h2>
-                        Nota Final
-                    </h2>
+                </div>
 
 
-                    <div class="resultado-nota">
+                <!-- CLASSIFICAÇÃO -->
+                <div
+                    id="classificacaoFinal"
+                    class="avaliacao-classificacao excelente"
+                >
+                    EXCELENTE
+                </div>
 
-                        <strong id="notaFinal">
+
+                <div class="avaliacao-resultado-divider"></div>
+
+
+                <!-- INFORMAÇÕES -->
+                <div class="avaliacao-resultado-info">
+
+                    <div>
+
+                        <span>
+                            Semana
+                        </span>
+
+                        <strong id="semanaResumo">
+                            Semana 1
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Pontuação máxima
+                        </span>
+
+                        <strong>
                             100
                         </strong>
 
-                        <span>
-                            / 100
-                        </span>
-
                     </div>
 
-
-                    <div
-                        id="classificacao"
-                        class="resultado-status"
-                    >
-                        🟢 EXCELENTE
-                    </div>
+                </div>
 
 
-                    <div class="resultado-divider"></div>
+                <!-- BOTÃO SALVAR -->
+                <button
+                    type="button"
+                    id="salvarAvaliacao"
+                    class="v2-btn-primary avaliacao-salvar-btn"
+                >
+                    Salvar Avaliação
+                </button>
+
+            </aside>
+
+        </section>
+
+    </main>
 
 
-                    <div class="resultado-info">
-
-                        <div>
-
-                            <span>
-                                Semana
-                            </span>
-
-                            <strong id="resultadoSemana">
-                                Semana 1
-                            </strong>
-
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Pontuação máxima
-                            </span>
-
-                            <strong>
-                                100
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <button
-                        id="salvar"
-                        type="button"
-                    >
-                        Salvar Avaliação
-                    </button>
-
-                </aside>
-
-            </div>
-
-        </main>
-
-    </div>
-
-
-    <!-- =========================================
-         SCRIPTS
-    ========================================== -->
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    ></script>
+    <!-- SUPABASE -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script src="js/supabase.js"></script>
 
+
+    <!-- LAYOUT V2 -->
+    <script src="js/layout.js"></script>
+
+
+    <!-- AVALIAÇÕES -->
     <script src="js/avaliacoes.js"></script>
+
+
+    <script>
+        carregarLayout("avaliacoes");
+    </script>
 
 </body>
 

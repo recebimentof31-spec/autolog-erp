@@ -1181,7 +1181,7 @@ async function configurarFechamentoMensal() {
 
 
 // =====================================================
-// CARREGA FECHAMENTOS DO SUPABASE
+// CARREGA + SINCRONIZA FECHAMENTO MENSAL
 // =====================================================
 
 async function carregarFechamentoMensal() {
@@ -1190,6 +1190,7 @@ async function carregarFechamentoMensal() {
         document.getElementById(
             "fechamentoCompetencia"
         );
+
 
     if (!campoCompetencia) {
         return;
@@ -1215,10 +1216,29 @@ async function carregarFechamentoMensal() {
 
 
     const ano =
-        Number(partes[0]);
+        Number(
+            partes[0]
+        );
+
 
     const mes =
-        Number(partes[1]);
+        Number(
+            partes[1]
+        );
+
+
+    if (
+        !ano
+        ||
+        !mes
+    ) {
+
+        fechamentoMensalBase = [];
+
+        atualizarFechamentoMensal();
+
+        return;
+    }
 
 
     mostrarCarregandoFechamento();
@@ -1226,45 +1246,140 @@ async function carregarFechamentoMensal() {
 
     try {
 
-        // =============================================
-        // BUSCA OS FECHAMENTOS
-        // =============================================
+        // =================================================
+        // INTERVALO DA COMPETÊNCIA
+        // =================================================
+
+        const inicioCompetencia =
+            `${ano}-${String(
+                mes
+            ).padStart(2, "0")}-01`;
+
+
+        let proximoAno =
+            ano;
+
+
+        let proximoMes =
+            mes + 1;
+
+
+        if (proximoMes === 13) {
+
+            proximoMes = 1;
+
+            proximoAno =
+                ano + 1;
+
+        }
+
+
+        const fimCompetencia =
+            `${proximoAno}-${String(
+                proximoMes
+            ).padStart(2, "0")}-01`;
+
+
+        // =================================================
+        // 1. BUSCA AS AVALIAÇÕES ATUAIS DA COMPETÊNCIA
+        // =================================================
 
         const {
-            data: fechamentos,
+            data: avaliacoesCompetencia,
+            error: erroAvaliacoes
+        } =
+            await supabaseClient
+
+                .from(
+                    "avaliacoes_semanais"
+                )
+
+                .select(`
+                    id,
+                    funcionario_id,
+                    avaliador_id,
+                    nota_final,
+                    classificacao,
+                    semana,
+                    competencia,
+                    periodo_inicio,
+                    periodo_fim,
+                    status
+                `)
+
+                .eq(
+                    "status",
+                    "enviada"
+                )
+
+                .gte(
+                    "competencia",
+                    inicioCompetencia
+                )
+
+                .lt(
+                    "competencia",
+                    fimCompetencia
+                );
+
+
+        if (erroAvaliacoes) {
+            throw erroAvaliacoes;
+        }
+
+
+        const avaliacoesMes =
+            avaliacoesCompetencia
+            || [];
+
+
+        console.log(
+            "Avaliações consideradas no fechamento:",
+            avaliacoesMes
+        );
+
+
+        // =================================================
+        // 2. BUSCA FECHAMENTOS JÁ EXISTENTES
+        // =================================================
+
+        const {
+            data: fechamentosExistentes,
             error: erroFechamentos
-        } = await supabaseClient
+        } =
+            await supabaseClient
 
-            .from("fechamentos_mensais")
+                .from(
+                    "fechamentos_mensais"
+                )
 
-            .select(`
-                id,
-                funcionario_id,
-                ano,
-                mes,
-                media_tecnica,
-                nota_final_gestor,
-                nota_gestor,
-                classificacao,
-                parecer_final,
-                parecer_atualizado_em,
-                fechado_por,
-                fechado_em,
-                status,
-                created_at,
-                updated_at
-            `)
+                .select(`
+                    id,
+                    funcionario_id,
+                    ano,
+                    mes,
+                    media_tecnica,
+                    nota_final_gestor,
+                    nota_gestor,
+                    classificacao,
+                    parecer_final,
+                    parecer_atualizado_em,
+                    fechado_por,
+                    fechado_em,
+                    status,
+                    created_at,
+                    updated_at
+                `)
 
-            .eq("ano", ano)
+                .eq(
+                    "ano",
+                    ano
+                )
 
-            .eq("mes", mes)
-
-            .order(
-                "media_tecnica",
-                {
-                    ascending: false
-                }
-            );
+                .eq(
+                    "mes",
+                    mes
+                );
 
 
         if (erroFechamentos) {
@@ -1272,48 +1387,404 @@ async function carregarFechamentoMensal() {
         }
 
 
+        const fechamentosAtuais =
+            fechamentosExistentes
+            || [];
+
+
+        // =================================================
+        // 3. AGRUPA AS AVALIAÇÕES POR FUNCIONÁRIO
+        // =================================================
+
+        const avaliacoesPorFuncionario =
+            {};
+
+
+        avaliacoesMes.forEach(
+            avaliacao => {
+
+                const funcionarioId =
+                    avaliacao.funcionario_id;
+
+
+                if (!funcionarioId) {
+                    return;
+                }
+
+
+                if (
+                    !avaliacoesPorFuncionario[
+                        funcionarioId
+                    ]
+                ) {
+
+                    avaliacoesPorFuncionario[
+                        funcionarioId
+                    ] = [];
+
+                }
+
+
+                avaliacoesPorFuncionario[
+                    funcionarioId
+                ].push(
+                    avaliacao
+                );
+
+            }
+        );
+
+
+        // =================================================
+        // 4. SINCRONIZA CADA COLABORADOR
+        // =================================================
+
+        for (
+            const funcionarioId
+            of Object.keys(
+                avaliacoesPorFuncionario
+            )
+        ) {
+
+            const listaAvaliacoes =
+                avaliacoesPorFuncionario[
+                    funcionarioId
+                ];
+
+
+            if (
+                !listaAvaliacoes
+                ||
+                listaAvaliacoes.length === 0
+            ) {
+
+                continue;
+            }
+
+
+            // =============================================
+            // CALCULA MÉDIA ATUAL
+            // =============================================
+
+            const somaNotas =
+                listaAvaliacoes.reduce(
+                    (
+                        total,
+                        avaliacao
+                    ) => {
+
+                        return (
+                            total
+                            +
+                            Number(
+                                avaliacao.nota_final
+                                || 0
+                            )
+                        );
+
+                    },
+                    0
+                );
+
+
+            const mediaTecnica =
+                somaNotas
+                /
+                listaAvaliacoes.length;
+
+
+            const mediaArredondada =
+                Number(
+                    mediaTecnica.toFixed(1)
+                );
+
+
+            const classificacaoAtual =
+                obterClassificacaoRelatorio(
+                    mediaArredondada
+                );
+
+
+            // =============================================
+            // PROCURA FECHAMENTO EXISTENTE
+            // =============================================
+
+            const fechamentoExistente =
+                fechamentosAtuais.find(
+                    item => {
+
+                        return (
+                            String(
+                                item.funcionario_id
+                            )
+                            ===
+                            String(
+                                funcionarioId
+                            )
+                        );
+
+                    }
+                );
+
+
+            // =============================================
+            // FECHADO = HISTÓRICO PROTEGIDO
+            // NÃO RECALCULA
+            // =============================================
+
+            if (
+                fechamentoExistente
+                &&
+                String(
+                    fechamentoExistente.status
+                    || ""
+                ).toLowerCase()
+                === "fechado"
+            ) {
+
+                console.log(
+                    "Fechamento protegido:",
+                    {
+                        funcionarioId,
+                        media:
+                            fechamentoExistente
+                                .media_tecnica
+                    }
+                );
+
+
+                continue;
+            }
+
+
+            // =============================================
+            // ATUALIZA FECHAMENTO ABERTO
+            // =============================================
+
+            if (fechamentoExistente) {
+
+                const {
+                    error: erroAtualizacao
+                } =
+                    await supabaseClient
+
+                        .from(
+                            "fechamentos_mensais"
+                        )
+
+                        .update({
+
+                            media_tecnica:
+                                mediaArredondada,
+
+                            classificacao:
+                                classificacaoAtual,
+
+                            updated_at:
+                                new Date()
+                                    .toISOString()
+
+                        })
+
+                        .eq(
+                            "id",
+                            fechamentoExistente.id
+                        );
+
+
+                if (erroAtualizacao) {
+                    throw erroAtualizacao;
+                }
+
+
+                console.log(
+                    "Fechamento aberto recalculado:",
+                    {
+                        funcionarioId,
+                        media:
+                            mediaArredondada,
+                        classificacao:
+                            classificacaoAtual,
+                        avaliacoes:
+                            listaAvaliacoes.length
+                    }
+                );
+
+            }
+
+
+            // =============================================
+            // CRIA FECHAMENTO ABERTO
+            // =============================================
+
+            else {
+
+                const {
+                    error: erroCriacao
+                } =
+                    await supabaseClient
+
+                        .from(
+                            "fechamentos_mensais"
+                        )
+
+                        .insert([{
+
+                            funcionario_id:
+                                funcionarioId,
+
+                            ano:
+                                ano,
+
+                            mes:
+                                mes,
+
+                            media_tecnica:
+                                mediaArredondada,
+
+                            classificacao:
+                                classificacaoAtual,
+
+                            status:
+                                "aberto"
+
+                        }]);
+
+
+                if (erroCriacao) {
+                    throw erroCriacao;
+                }
+
+
+                console.log(
+                    "Novo fechamento mensal criado:",
+                    {
+                        funcionarioId,
+                        media:
+                            mediaArredondada,
+                        classificacao:
+                            classificacaoAtual,
+                        avaliacoes:
+                            listaAvaliacoes.length
+                    }
+                );
+
+            }
+
+        }
+
+
+        // =================================================
+        // 5. RECARREGA FECHAMENTOS DEPOIS DA SINCRONIZAÇÃO
+        // =================================================
+
+        const {
+            data: fechamentosSincronizados,
+            error: erroSincronizados
+        } =
+            await supabaseClient
+
+                .from(
+                    "fechamentos_mensais"
+                )
+
+                .select(`
+                    id,
+                    funcionario_id,
+                    ano,
+                    mes,
+                    media_tecnica,
+                    nota_final_gestor,
+                    nota_gestor,
+                    classificacao,
+                    parecer_final,
+                    parecer_atualizado_em,
+                    fechado_por,
+                    fechado_em,
+                    status,
+                    created_at,
+                    updated_at
+                `)
+
+                .eq(
+                    "ano",
+                    ano
+                )
+
+                .eq(
+                    "mes",
+                    mes
+                )
+
+                .order(
+                    "media_tecnica",
+                    {
+                        ascending: false
+                    }
+                );
+
+
+        if (erroSincronizados) {
+            throw erroSincronizados;
+        }
+
+
         const lista =
-            fechamentos || [];
+            fechamentosSincronizados
+            || [];
 
 
-        // =============================================
-        // BUSCA OS FUNCIONÁRIOS
-        // =============================================
+        // =================================================
+        // 6. BUSCA DADOS DOS FUNCIONÁRIOS
+        // =================================================
 
         const idsFuncionarios =
             [
                 ...new Set(
+
                     lista
-                        .map(item =>
-                            item.funcionario_id
+
+                        .map(
+                            item =>
+                                item.funcionario_id
                         )
-                        .filter(Boolean)
+
+                        .filter(
+                            Boolean
+                        )
+
                 )
             ];
 
 
-        let mapaFuncionarios = {};
+        let mapaFuncionarios =
+            {};
 
 
-        if (idsFuncionarios.length > 0) {
+        if (
+            idsFuncionarios.length > 0
+        ) {
 
             const {
                 data: funcionarios,
                 error: erroFuncionarios
-            } = await supabaseClient
+            } =
+                await supabaseClient
 
-                .from("funcionarios")
+                    .from(
+                        "funcionarios"
+                    )
 
-                .select(`
-                    id,
-                    nome,
-                    matricula
-                `)
+                    .select(`
+                        id,
+                        nome,
+                        matricula
+                    `)
 
-                .in(
-                    "id",
-                    idsFuncionarios
-                );
+                    .in(
+                        "id",
+                        idsFuncionarios
+                    );
 
 
             if (erroFuncionarios) {
@@ -1321,60 +1792,75 @@ async function carregarFechamentoMensal() {
             }
 
 
-            (funcionarios || [])
-                .forEach(funcionario => {
+            (
+                funcionarios
+                || []
+            ).forEach(
+                funcionario => {
 
                     mapaFuncionarios[
                         funcionario.id
-                    ] = funcionario;
+                    ] =
+                        funcionario;
 
-                });
+                }
+            );
+
         }
 
 
-        // =============================================
-        // JUNTA FECHAMENTO + FUNCIONÁRIO
-        // =============================================
+        // =================================================
+        // 7. JUNTA FECHAMENTO + FUNCIONÁRIO
+        // =================================================
 
         fechamentoMensalBase =
-            lista.map(item => ({
+            lista.map(
+                item => ({
 
-                ...item,
+                    ...item,
 
-                funcionario:
-                    mapaFuncionarios[
-                        item.funcionario_id
-                    ]
-                    || null
+                    funcionario:
+                        mapaFuncionarios[
+                            item.funcionario_id
+                        ]
+                        || null
 
-            }));
+                })
+            );
 
 
         console.log(
-            "Fechamento mensal carregado:",
+            "Fechamento mensal sincronizado:",
             fechamentoMensalBase
         );
 
+
+        // =================================================
+        // 8. ATUALIZA A TELA
+        // =================================================
 
         atualizarFechamentoMensal();
 
     }
 
+
     catch (erro) {
 
         console.error(
-            "Erro ao carregar fechamento mensal:",
+            "Erro ao carregar/sincronizar fechamento mensal:",
             erro
         );
 
-        fechamentoMensalBase = [];
+
+        fechamentoMensalBase =
+            [];
+
 
         mostrarErroFechamento();
 
     }
 
 }
-
 
 // =====================================================
 // ATUALIZA PAINEL COMPLETO

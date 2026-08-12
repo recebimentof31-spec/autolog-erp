@@ -17,7 +17,7 @@
 
 <body class="app-v2">
 
-    <!-- SIDEBAR -->
+    <!-- SIaDEBAR -->
     <aside
         id="appSidebar"
         class="v2-sidebar"
@@ -47,9 +47,12 @@
             </div>
 
 
-            <button class="v2-btn-primary">
-                Nova Avaliação
-            </button>
+          <a
+    href="avaliacoes.html"
+    class="v2-btn v2-btn-primary"
+>
+    Nova Avaliação
+</a>
 
         </header>
 
@@ -60,8 +63,8 @@
             <article class="v2-card dashboard-kpi">
 
                 <span class="dashboard-kpi-label">
-                    Funcionários ativos
-                </span>
+    Destaque do mês
+</span>
 
                 <strong
                     class="dashboard-kpi-value"
@@ -71,8 +74,8 @@
                 </strong>
 
                 <small class="dashboard-kpi-info">
-                    Colaboradores cadastrados
-                </small>
+    Melhor fechamento mensal
+</small>
 
             </article>
 
@@ -159,7 +162,10 @@
 
                     </div>
 
-                    <select class="dashboard-filter">
+                    <select
+    id="dashboardPeriodo"
+    class="dashboard-filter"
+>
 
                         <option>
                             Últimos 30 dias
@@ -235,6 +241,20 @@
                         </strong>
 
                     </div>
+
+                    <div>
+
+    <span class="status-dot very-good"></span>
+
+    <span>
+        Muito Bom
+    </span>
+
+    <strong id="statusMuitoBom">
+        0
+    </strong>
+
+</div>
 
 
                     <div>

@@ -1,140 +1,519 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Funcionários | AutoLog ERP</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
-    body{display:flex;min-height:100vh;background:#edf2f7;color:#172033}
-    .sidebar{position:fixed;inset:0 auto 0 0;width:240px;padding:24px 18px;background:#071d49;color:#fff}
-    .sidebar h2{margin-bottom:28px}
-    .sidebar a{display:block;margin-bottom:8px;padding:12px 14px;border-radius:8px;color:#fff;text-decoration:none}
-    .sidebar a:hover,.sidebar a.active{background:#0b5ed7}
-    .main{width:calc(100% - 240px);margin-left:240px;padding:28px}
-    .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
-    .header p{margin-top:5px;color:#667085}
-    .card{margin-bottom:20px;padding:22px;background:#fff;border-radius:14px;box-shadow:0 8px 24px rgba(7,29,73,.08)}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    .field{display:flex;flex-direction:column;gap:7px}
-    .field label{font-size:14px;font-weight:bold}
-    .field input,.field select{height:44px;padding:0 12px;border:1px solid #d5ddea;border-radius:8px}
-    .actions{display:flex;gap:10px;margin-top:18px}
-    button{padding:11px 16px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}
-    .primary{background:#0b5ed7;color:#fff}
-    .secondary{background:#e9eef5;color:#172033}
-    .toolbar{display:flex;justify-content:space-between;gap:12px;margin-bottom:14px}
-    .toolbar input{width:320px;max-width:100%;height:42px;padding:0 12px;border:1px solid #d5ddea;border-radius:8px}
-    .counter{padding:10px 12px;border-radius:8px;background:#e9f2ff;color:#0b5ed7;font-weight:bold}
-    .table-wrap{overflow:auto}
-    table{width:100%;border-collapse:collapse}
-    th{padding:12px;background:#0b5ed7;color:#fff;text-align:left}
-    td{padding:12px;border-bottom:1px solid #edf0f5}
-    .status{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:bold}
-    .ativo{background:#d9f7e8;color:#087443}.inativo{background:#ffe2e2;color:#b42318}
-    .edit{background:#fff1cc;color:#8a5a00}.delete{background:#ffe2e2;color:#b42318}
-    .empty{padding:28px;text-align:center;color:#667085}
-    @media(max-width:900px){body{display:block}.sidebar{position:static;width:100%;height:auto}.main{width:100%;margin-left:0}.grid{grid-template-columns:1fr 1fr}}
-    @media(max-width:600px){.grid{grid-template-columns:1fr}.header,.toolbar{align-items:flex-start;flex-direction:column}}
-  </style>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Gestão de Desempenho - Funcionários
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="css/v2.css"
+    >
+
 </head>
-<body>
-  <aside class="sidebar">
-    <h2>🚛 AutoLog ERP</h2>
-    <a href="dashboard.html">🏠 Dashboard</a>
-    <a href="#">📦 Conferência</a>
-    <a class="active" href="funcionarios.html">👥 Funcionários</a>
-    <a href="avaliacoes.html">
-    📝 Avaliações
-    <a href="#">📈 Desempenho</a>
-    <a href="#">📋 Relatórios</a>
-    <a href="#">⚙ Configurações</a>
-  </aside>
-  
-  <main class="main">
-    <header class="header">
-      <div>
-        <h1>Funcionários</h1>
-        <p>Cadastre e gerencie os colaboradores da operação.</p>
-      </div>
-      <a href="dashboard.html">Voltar ao dashboard</a>
-    </header>
 
-    <section class="card">
-      <h2 id="formTitle">Novo funcionário</h2>
-      <form id="employeeForm">
-        <input type="hidden" id="employeeId">
-        <div class="grid">
-          <div class="field"><label>Nome completo</label><input id="nome" required></div>
-          <div class="field"><label>Matrícula</label><input id="matricula" required></div>
-          <div class="field">
-            <label>Cargo</label>
-            <select id="cargo" required>
-              <option value="">Selecione</option>
-              <option>Conferente</option>
-              <option>Auxiliar de logística</option>
-              <option>Operador de estoque</option>
-              <option>Líder</option>
-              <option>Supervisor</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Setor</label>
-            <select id="setor" required>
-              <option value="">Selecione</option>
-              <option>Recebimento</option>
-              <option>Conferência</option>
-              <option>Armazenagem</option>
-              <option>Separação</option>
-              <option>Expedição</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Turno</label>
-            <select id="turno" required>
-              <option value="">Selecione</option>
-              <option>Manhã</option>
-              <option>Tarde</option>
-              <option>Noite</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Status</label>
-            <select id="status" required>
-              <option>Ativo</option>
-              <option>Inativo</option>
-            </select>
-          </div>
-        </div>
-        <div class="actions">
-          <button class="primary" type="submit">Salvar funcionário</button>
-          <button class="secondary" id="cancelButton" type="button" hidden>Cancelar edição</button>
-        </div>
-      </form>
-    </section>
 
-    <section class="card">
-      <h2>Funcionários cadastrados</h2>
-      <div class="toolbar">
-        <input id="searchInput" type="search" placeholder="Pesquisar nome ou matrícula">
-        <span class="counter" id="employeeCounter">0 funcionário(s)</span>
-      </div>
+<body class="app-v2">
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Nome</th><th>Matrícula</th><th>Cargo</th><th>Setor</th><th>Turno</th><th>Status</th><th>Ações</th></tr>
-          </thead>
-          <tbody id="employeeTableBody"></tbody>
-        </table>
-        <p class="empty" id="emptyMessage">Nenhum funcionário cadastrado.</p>
-      </div>
-    </section>
-  </main>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js"></script>
-<script src="js/funcionarios.js"></script>
+    <!-- =====================================
+         SIDEBAR
+    ====================================== -->
+
+    <aside
+        id="appSidebar"
+        class="v2-sidebar"
+    ></aside>
+
+
+    <!-- =====================================
+         CONTEÚDO PRINCIPAL
+    ====================================== -->
+
+    <main class="v2-main">
+
+
+        <!-- =================================
+             CABEÇALHO
+        ================================== -->
+
+        <section class="page-header">
+
+            <div>
+
+                <span class="v2-label">
+                    GESTÃO DA EQUIPE
+                </span>
+
+                <h1>
+                    Funcionários
+                </h1>
+
+                <p>
+                    Cadastre, consulte e gerencie os colaboradores da operação.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================
+             CADASTRO / EDIÇÃO
+        ================================== -->
+
+        <section class="v2-card ranking-table-card">
+
+
+            <div class="ranking-table-header">
+
+                <div>
+
+                    <span class="v2-label">
+                        CADASTRO
+                    </span>
+
+                    <h2 id="formTitle">
+                        Novo funcionário
+                    </h2>
+
+                    <p>
+                        Preencha os dados do colaborador.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form id="employeeForm">
+
+                <input
+                    type="hidden"
+                    id="employeeId"
+                >
+
+
+                <div class="ranking-filter-grid">
+
+
+                    <!-- NOME -->
+
+                    <div class="ranking-filter-field">
+
+                        <label
+                            for="nome"
+                            class="v2-field-label"
+                        >
+                            Nome completo
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nome"
+                            class="v2-input"
+                            placeholder="Nome do colaborador"
+                            autocomplete="off"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- MATRÍCULA -->
+
+                    <div class="ranking-filter-field">
+
+                        <label
+                            for="matricula"
+                            class="v2-field-label"
+                        >
+                            Matrícula
+                        </label>
+
+                        <input
+                            type="text"
+                            id="matricula"
+                            class="v2-input"
+                            placeholder="Digite a matrícula"
+                            autocomplete="off"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- CARGO -->
+
+                    <div class="ranking-filter-field">
+
+                        <label
+                            for="cargo"
+                            class="v2-field-label"
+                        >
+                            Cargo
+                        </label>
+
+                        <select
+                            id="cargo"
+                            class="v2-select"
+                            required
+                        >
+
+                            <option value="">
+                                Selecione
+                            </option>
+
+                            <option value="Conferente">
+                                Conferente
+                            </option>
+
+                            <option value="Auxiliar de logística">
+                                Auxiliar de logística
+                            </option>
+
+                            <option value="Operador de estoque">
+                                Operador de estoque
+                            </option>
+
+                            <option value="Líder">
+                                Líder
+                            </option>
+
+                            <option value="Supervisor">
+                                Supervisor
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- SETOR -->
+
+                    <div class="ranking-filter-field">
+
+                        <label
+                            for="setor"
+                            class="v2-field-label"
+                        >
+                            Setor
+                        </label>
+
+                        <select
+                            id="setor"
+                            class="v2-select"
+                            required
+                        >
+
+                            <option value="">
+                                Selecione
+                            </option>
+
+                            <option value="Recebimento">
+                                Recebimento
+                            </option>
+
+                            <option value="Conferência">
+                                Conferência
+                            </option>
+
+                            <option value="Armazenagem">
+                                Armazenagem
+                            </option>
+
+                            <option value="Separação">
+                                Separação
+                            </option>
+
+                            <option value="Expedição">
+                                Expedição
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- TURNO -->
+
+                    <div class="ranking-filter-field">
+
+                        <label
+                            for="turno"
+                            class="v2-field-label"
+                        >
+                            Turno
+                        </label>
+
+                        <select
+                            id="turno"
+                            class="v2-select"
+                            required
+                        >
+
+                            <option value="">
+                                Selecione
+                            </option>
+
+                            <option value="Manhã">
+                                Manhã
+                            </option>
+
+                            <option value="Tarde">
+                                Tarde
+                            </option>
+
+                            <option value="Noite">
+                                Noite
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="ranking-filter-field">
+
+                        <label
+                            for="status"
+                            class="v2-field-label"
+                        >
+                            Status
+                        </label>
+
+                        <select
+                            id="status"
+                            class="v2-select"
+                            required
+                        >
+
+                            <option value="Ativo">
+                                Ativo
+                            </option>
+
+                            <option value="Inativo">
+                                Inativo
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =================================
+                     BOTÕES
+                ================================== -->
+
+                <div
+                    style="
+                        display:flex;
+                        align-items:center;
+                        gap:12px;
+                        margin-top:22px;
+                        flex-wrap:wrap;
+                    "
+                >
+
+                    <button
+                        type="submit"
+                        class="v2-btn v2-btn-primary"
+                    >
+                        Salvar funcionário
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="cancelButton"
+                        class="v2-btn"
+                        style="display:none;"
+                    >
+                        Cancelar edição
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================
+             LISTAGEM
+        ================================== -->
+
+        <section class="v2-card ranking-table-card">
+
+
+            <!-- CABEÇALHO DA LISTA -->
+
+            <div class="ranking-table-header">
+
+                <div>
+
+                    <span class="v2-label">
+                        COLABORADORES
+                    </span>
+
+                    <h2>
+                        Funcionários cadastrados
+                    </h2>
+
+                    <p>
+                        Consulte e gerencie os colaboradores cadastrados.
+                    </p>
+
+                </div>
+
+
+                <div
+                    id="employeeCounter"
+                    class="ranking-results-count"
+                >
+                    0 funcionário(s)
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 PESQUISA
+            ================================== -->
+
+            <div
+                style="
+                    max-width:480px;
+                    margin-bottom:22px;
+                "
+            >
+
+                <label
+                    for="searchInput"
+                    class="v2-field-label"
+                >
+                    Pesquisar colaborador
+                </label>
+
+                <input
+                    id="searchInput"
+                    type="search"
+                    class="v2-input"
+                    placeholder="Digite nome ou matrícula"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- =================================
+                 TABELA
+            ================================== -->
+
+            <div class="ranking-table-wrapper">
+
+                <table class="ranking-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Nome
+                            </th>
+
+                            <th>
+                                Matrícula
+                            </th>
+
+                            <th>
+                                Cargo
+                            </th>
+
+                            <th>
+                                Setor
+                            </th>
+
+                            <th>
+                                Turno
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Ações
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="employeeTableBody"></tbody>
+
+                </table>
+
+
+                <p
+                    id="emptyMessage"
+                    class="ranking-empty-row"
+                    style="
+                        display:none;
+                        text-align:center;
+                        padding:32px;
+                    "
+                >
+                    Nenhum funcionário cadastrado.
+                </p>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =====================================
+         SCRIPTS
+    ====================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/layout.js"></script>
+
+    <script src="js/funcionarios.js"></script>
+
+
+    <script>
+
+        carregarLayout("funcionarios");
+
+    </script>
+
 
 </body>
+
 </html>
