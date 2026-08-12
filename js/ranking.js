@@ -51,9 +51,17 @@ async function carregarConfiguracaoRanking() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+
     await carregarConfiguracaoRanking();
+
     await carregarRanking();
+
     configurarFiltrosRanking();
+
+    configurarAbasRanking();
+
+    configurarRankingMensal();
+
 });
 
 let rankingBase = [];
@@ -1080,4 +1088,1007 @@ function mostrarErroRanking() {
             </tr>
         `;
     }
+}
+
+// =====================================================
+// RANKING MENSAL
+// =====================================================
+
+let rankingMensalBase = [];
+
+
+// =====================================================
+// CONFIGURA ABAS DO RANKING
+// =====================================================
+
+function configurarAbasRanking() {
+
+    const botoes =
+        document.querySelectorAll(
+            ".ranking-tabs .relatorio-tab"
+        );
+
+    const paineis =
+        document.querySelectorAll(
+            ".relatorio-tab-panel"
+        );
+
+
+    botoes.forEach(botao => {
+
+        botao.addEventListener(
+            "click",
+            async () => {
+
+                const alvo =
+                    botao.dataset.target;
+
+
+                botoes.forEach(item => {
+
+                    item.classList.remove(
+                        "active"
+                    );
+
+                });
+
+
+                paineis.forEach(painel => {
+
+                    painel.classList.remove(
+                        "active"
+                    );
+
+                });
+
+
+                botao.classList.add(
+                    "active"
+                );
+
+
+                const painelAlvo =
+                    document.getElementById(
+                        alvo
+                    );
+
+
+                if (painelAlvo) {
+
+                    painelAlvo.classList.add(
+                        "active"
+                    );
+
+                }
+
+
+                if (
+                    alvo ===
+                    "painelRankingMensal"
+                ) {
+
+                    await carregarRankingMensal();
+
+                }
+
+            }
+        );
+
+    });
+
+}
+
+
+// =====================================================
+// CONFIGURA COMPETÊNCIA DO RANKING MENSAL
+// =====================================================
+
+function configurarRankingMensal() {
+
+    const campo =
+        document.getElementById(
+            "rankingMensalCompetencia"
+        );
+
+
+    if (!campo) {
+        return;
+    }
+
+
+    if (!campo.value) {
+
+        const hoje =
+            new Date();
+
+
+        const ano =
+            hoje.getFullYear();
+
+
+        const mes =
+            String(
+                hoje.getMonth() + 1
+            ).padStart(2, "0");
+
+
+        campo.value =
+            `${ano}-${mes}`;
+
+    }
+
+
+    campo.addEventListener(
+        "change",
+        carregarRankingMensal
+    );
+
+}
+
+
+// =====================================================
+// CARREGA RANKING MENSAL
+// =====================================================
+
+async function carregarRankingMensal() {
+
+    const campo =
+        document.getElementById(
+            "rankingMensalCompetencia"
+        );
+
+
+    if (!campo) {
+        return;
+    }
+
+
+    const competencia =
+        campo.value;
+
+
+    if (!competencia) {
+
+        rankingMensalBase = [];
+
+        atualizarRankingMensal();
+
+        return;
+    }
+
+
+    const [
+        anoTexto,
+        mesTexto
+    ] =
+        competencia.split("-");
+
+
+    const ano =
+        Number(
+            anoTexto
+        );
+
+
+    const mes =
+        Number(
+            mesTexto
+        );
+
+
+    mostrarCarregandoRankingMensal();
+
+
+    try {
+
+        const {
+            data: fechamentos,
+            error: erroFechamentos
+        } =
+            await supabaseClient
+
+                .from(
+                    "fechamentos_mensais"
+                )
+
+                .select(`
+                    id,
+                    funcionario_id,
+                    ano,
+                    mes,
+                    media_tecnica,
+                    nota_gestor,
+                    classificacao,
+                    status,
+                    fechado_em
+                `)
+
+                .eq(
+                    "ano",
+                    ano
+                )
+
+                .eq(
+                    "mes",
+                    mes
+                )
+
+                .eq(
+                    "status",
+                    "fechado"
+                )
+
+                .order(
+                    "media_tecnica",
+                    {
+                        ascending:
+                            false
+                    }
+                );
+
+
+        if (erroFechamentos) {
+            throw erroFechamentos;
+        }
+
+
+        const lista =
+            fechamentos
+            || [];
+
+
+        const idsFuncionarios =
+            [
+                ...new Set(
+                    lista
+
+                        .map(
+                            item =>
+                                item.funcionario_id
+                        )
+
+                        .filter(
+                            Boolean
+                        )
+                )
+            ];
+
+
+        let mapaFuncionarios =
+            {};
+
+
+        if (
+            idsFuncionarios.length > 0
+        ) {
+
+            const {
+                data: funcionarios,
+                error: erroFuncionarios
+            } =
+                await supabaseClient
+
+                    .from(
+                        "funcionarios"
+                    )
+
+                    .select(`
+                        id,
+                        nome,
+                        matricula
+                    `)
+
+                    .in(
+                        "id",
+                        idsFuncionarios
+                    );
+
+
+            if (erroFuncionarios) {
+                throw erroFuncionarios;
+            }
+
+
+            (
+                funcionarios
+                || []
+            ).forEach(
+                funcionario => {
+
+                    mapaFuncionarios[
+                        funcionario.id
+                    ] =
+                        funcionario;
+
+                }
+            );
+
+        }
+
+
+        rankingMensalBase =
+            lista.map(
+                item => ({
+
+                    ...item,
+
+                    funcionario:
+                        mapaFuncionarios[
+                            item.funcionario_id
+                        ]
+                        || null
+
+                })
+            );
+
+
+        atualizarRankingMensal();
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao carregar ranking mensal:",
+            erro
+        );
+
+
+        rankingMensalBase =
+            [];
+
+
+        mostrarErroRankingMensal();
+
+    }
+
+}
+
+
+// =====================================================
+// ATUALIZA RANKING MENSAL
+// =====================================================
+
+function atualizarRankingMensal() {
+
+    atualizarPodioMensal();
+
+    atualizarKPIsMensais();
+
+    atualizarTabelaMensal();
+
+    atualizarQuantidadeMensal();
+
+}
+
+
+// =====================================================
+// PÓDIO MENSAL
+// =====================================================
+
+function atualizarPodioMensal() {
+
+    const container =
+        document.getElementById(
+            "rankingMensalPodio"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (
+        rankingMensalBase.length === 0
+    ) {
+
+        container.innerHTML = `
+            <div class="ranking-loading">
+                Nenhum fechamento encontrado
+                para esta competência.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    const primeiro =
+        rankingMensalBase[0]
+        || null;
+
+
+    const segundo =
+        rankingMensalBase[1]
+        || null;
+
+
+    const terceiro =
+        rankingMensalBase[2]
+        || null;
+
+
+    container.innerHTML = `
+
+        ${criarCardPodioMensal(
+            segundo,
+            2
+        )}
+
+        ${criarCardPodioMensal(
+            primeiro,
+            1
+        )}
+
+        ${criarCardPodioMensal(
+            terceiro,
+            3
+        )}
+
+    `;
+
+}
+
+
+// =====================================================
+// CARD DO PÓDIO MENSAL
+// =====================================================
+
+function criarCardPodioMensal(
+    item,
+    posicao
+) {
+
+    if (!item) {
+
+        return `
+            <article
+                class="
+                    ranking-podium-card
+                    ranking-podium-empty
+                "
+            >
+
+                <span class="podium-position">
+                    ${posicao}º
+                </span>
+
+                <strong>
+                    Sem dados
+                </strong>
+
+                <small>
+                    Aguardando fechamento
+                </small>
+
+            </article>
+        `;
+    }
+
+
+    let medalha =
+        "🥉";
+
+
+    if (
+        posicao === 1
+    ) {
+
+        medalha =
+            "🥇";
+
+    }
+
+
+    if (
+        posicao === 2
+    ) {
+
+        medalha =
+            "🥈";
+
+    }
+
+
+    const nome =
+        item.funcionario?.nome
+        || "Funcionário";
+
+
+    const matricula =
+        item.funcionario?.matricula
+        || "-";
+
+
+    const media =
+        Number(
+            item.media_tecnica
+            || 0
+        );
+
+
+    const classificacao =
+        item.classificacao
+        ||
+        obterClassificacaoPorNota(
+            media
+        );
+
+
+    return `
+        <article
+            class="
+                ranking-podium-card
+                podium-${posicao}
+            "
+        >
+
+            <div class="podium-medal">
+                ${medalha}
+            </div>
+
+            <span class="podium-position">
+                ${posicao}º lugar
+            </span>
+
+            <strong class="podium-name">
+                ${nome}
+            </strong>
+
+            <small class="podium-matricula">
+                ${matricula}
+            </small>
+
+            <div class="podium-score">
+                ${media.toFixed(1)}
+            </div>
+
+            <span
+                class="
+                    ${classeClassificacao(
+                        classificacao
+                    )}
+                "
+            >
+                ${classificacao}
+            </span>
+
+            <small class="podium-avaliacoes">
+                Fechamento mensal
+            </small>
+
+        </article>
+    `;
+
+}
+
+
+// =====================================================
+// KPIs MENSAIS
+// =====================================================
+
+function atualizarKPIsMensais() {
+
+    const quantidade =
+        rankingMensalBase.length;
+
+
+    definirTextoRanking(
+        "rankingMensalTotalColaboradores",
+        quantidade
+    );
+
+
+    definirTextoRanking(
+        "rankingMensalTotalFechamentos",
+        quantidade
+    );
+
+
+    if (
+        quantidade === 0
+    ) {
+
+        definirTextoRanking(
+            "rankingMensalMediaEquipe",
+            "0.0"
+        );
+
+
+        definirTextoRanking(
+            "rankingMensalMelhorMedia",
+            "0.0"
+        );
+
+
+        return;
+    }
+
+
+    const medias =
+        rankingMensalBase.map(
+            item =>
+                Number(
+                    item.media_tecnica
+                    || 0
+                )
+        );
+
+
+    const soma =
+        medias.reduce(
+            (
+                total,
+                media
+            ) =>
+                total
+                +
+                media,
+            0
+        );
+
+
+    const mediaEquipe =
+        soma
+        /
+        medias.length;
+
+
+    const melhorMedia =
+        Math.max(
+            ...medias
+        );
+
+
+    definirTextoRanking(
+        "rankingMensalMediaEquipe",
+        mediaEquipe.toFixed(1)
+    );
+
+
+    definirTextoRanking(
+        "rankingMensalMelhorMedia",
+        melhorMedia.toFixed(1)
+    );
+
+}
+
+
+// =====================================================
+// TABELA MENSAL
+// =====================================================
+
+function atualizarTabelaMensal() {
+
+    const tbody =
+        document.getElementById(
+            "rankingMensalTabelaCorpo"
+        );
+
+
+    if (!tbody) {
+        return;
+    }
+
+
+    if (
+        rankingMensalBase.length === 0
+    ) {
+
+        tbody.innerHTML = `
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="ranking-empty-row"
+                >
+                    Nenhum fechamento encontrado
+                    para esta competência.
+                </td>
+
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    tbody.innerHTML =
+        rankingMensalBase
+
+            .map(
+                (
+                    item,
+                    indice
+                ) => {
+
+                    const posicao =
+                        indice + 1;
+
+
+                    const nome =
+                        item.funcionario?.nome
+                        || "Funcionário";
+
+
+                    const matricula =
+                        item.funcionario?.matricula
+                        || "-";
+
+
+                    const media =
+                        Number(
+                            item.media_tecnica
+                            || 0
+                        );
+
+
+                    const notaGestor =
+                        item.nota_gestor
+                        === null
+                        ||
+                        item.nota_gestor
+                        === undefined
+
+                            ? "-"
+
+                            : Number(
+                                item.nota_gestor
+                            ).toFixed(1);
+
+
+                    const classificacao =
+                        item.classificacao
+                        ||
+                        obterClassificacaoPorNota(
+                            media
+                        );
+
+
+                    const status =
+                        String(
+                            item.status
+                            || ""
+                        ).toUpperCase();
+
+
+                    return `
+                        <tr>
+
+                            <td>
+
+                                <span
+                                    class="
+                                        ranking-table-position
+                                    "
+                                >
+                                    ${posicao}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <div
+                                    class="
+                                        ranking-table-person
+                                    "
+                                >
+
+                                    <strong>
+                                        ${nome}
+                                    </strong>
+
+                                    <small>
+                                        Matrícula:
+                                        ${matricula}
+                                    </small>
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <strong
+                                    class="
+                                        ranking-table-score
+                                    "
+                                >
+                                    ${media.toFixed(1)}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+                                ${notaGestor}
+                            </td>
+
+
+                            <td>
+
+                                <span
+                                    class="
+                                        ${classeClassificacao(
+                                            classificacao
+                                        )}
+                                    "
+                                >
+                                    ${classificacao}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+                                ${status}
+                            </td>
+
+                        </tr>
+                    `;
+
+                }
+            )
+
+            .join("");
+
+}
+
+
+// =====================================================
+// QUANTIDADE MENSAL
+// =====================================================
+
+function atualizarQuantidadeMensal() {
+
+    const elemento =
+        document.getElementById(
+            "rankingMensalQuantidadeResultados"
+        );
+
+
+    if (!elemento) {
+        return;
+    }
+
+
+    const quantidade =
+        rankingMensalBase.length;
+
+
+    elemento.textContent =
+        quantidade === 1
+
+            ? "1 colaborador"
+
+            : `${quantidade} colaboradores`;
+
+}
+
+
+// =====================================================
+// CARREGANDO RANKING MENSAL
+// =====================================================
+
+function mostrarCarregandoRankingMensal() {
+
+    const podio =
+        document.getElementById(
+            "rankingMensalPodio"
+        );
+
+
+    const tabela =
+        document.getElementById(
+            "rankingMensalTabelaCorpo"
+        );
+
+
+    if (podio) {
+
+        podio.innerHTML = `
+            <div class="ranking-loading">
+                Carregando ranking mensal...
+            </div>
+        `;
+
+    }
+
+
+    if (tabela) {
+
+        tabela.innerHTML = `
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="ranking-empty-row"
+                >
+                    Carregando dados...
+                </td>
+
+            </tr>
+        `;
+
+    }
+
+}
+
+
+// =====================================================
+// ERRO NO RANKING MENSAL
+// =====================================================
+
+function mostrarErroRankingMensal() {
+
+    const podio =
+        document.getElementById(
+            "rankingMensalPodio"
+        );
+
+
+    const tabela =
+        document.getElementById(
+            "rankingMensalTabelaCorpo"
+        );
+
+
+    if (podio) {
+
+        podio.innerHTML = `
+            <div class="ranking-loading">
+                Não foi possível carregar
+                o ranking mensal.
+            </div>
+        `;
+
+    }
+
+
+    if (tabela) {
+
+        tabela.innerHTML = `
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="ranking-empty-row"
+                >
+                    Não foi possível carregar
+                    os dados mensais.
+                </td>
+
+            </tr>
+        `;
+
+    }
+
+
+    definirTextoRanking(
+        "rankingMensalTotalColaboradores",
+        "0"
+    );
+
+
+    definirTextoRanking(
+        "rankingMensalMediaEquipe",
+        "0.0"
+    );
+
+
+    definirTextoRanking(
+        "rankingMensalMelhorMedia",
+        "0.0"
+    );
+
+
+    definirTextoRanking(
+        "rankingMensalTotalFechamentos",
+        "0"
+    );
+
 }

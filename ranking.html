@@ -24,58 +24,96 @@
 <body class="app-v2">
 
 
-        <!-- =====================================
-             SIDEBAR
-        ====================================== -->
+    <!-- =====================================
+         SIDEBAR
+    ====================================== -->
 
-        <aside
-            id="appSidebar"
-            class="v2-sidebar"
-        ></aside>
+    <aside
+        id="appSidebar"
+        class="v2-sidebar"
+    ></aside>
 
 
-        <!-- =====================================
-             CONTEÚDO PRINCIPAL
-        ====================================== -->
+    <!-- =====================================
+         CONTEÚDO PRINCIPAL
+    ====================================== -->
 
-        <main class="v2-main">
+    <main class="v2-main">
 
-            <!-- =================================
-                 CABEÇALHO
-            ================================== -->
 
-            <section class="page-header">
+        <!-- =================================
+             CABEÇALHO
+        ================================== -->
 
-                <div>
+        <section class="page-header">
 
-                    <span class="v2-label">
-                        DESEMPENHO DA EQUIPE
-                    </span>
+            <div>
 
-                    <h1>
-                        Ranking
-                    </h1>
+                <span class="v2-label">
+                    DESEMPENHO DA EQUIPE
+                </span>
 
-                    <p>
-                        Acompanhe os colaboradores com
-                        melhor desempenho e evolução nas
-                        avaliações.
-                    </p>
+                <h1>
+                    Ranking
+                </h1>
 
-                </div>
+                <p>
+                    Acompanhe os colaboradores com
+                    melhor desempenho e evolução nas
+                    avaliações.
+                </p>
 
-                <div class="page-header-actions">
+            </div>
 
-                    <a
-                        href="avaliacoes.html"
-                        class="v2-btn v2-btn-primary"
-                    >
-                        Nova Avaliação
-                    </a>
+            <div class="page-header-actions">
 
-                </div>
+                <a
+                    href="avaliacoes.html"
+                    class="v2-btn v2-btn-primary"
+                >
+                    Nova Avaliação
+                </a>
 
-            </section>
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             NAVEGAÇÃO DO RANKING
+        ========================================== -->
+
+        <section class="relatorio-tabs ranking-tabs">
+
+            <button
+                type="button"
+                class="relatorio-tab active"
+                id="tabRankingDesempenho"
+                data-target="painelRankingDesempenho"
+            >
+                Desempenho
+            </button>
+
+            <button
+                type="button"
+                class="relatorio-tab"
+                id="tabRankingMensal"
+                data-target="painelRankingMensal"
+            >
+                Ranking Mensal
+            </button>
+
+        </section>
+
+
+        <!-- =========================================
+             PAINEL 1 - DESEMPENHO
+        ========================================== -->
+
+        <div
+            id="painelRankingDesempenho"
+            class="relatorio-tab-panel active"
+        >
 
 
             <!-- =================================
@@ -85,6 +123,7 @@
             <section class="v2-card ranking-filter-card">
 
                 <div class="ranking-filter-grid">
+
 
                     <div class="ranking-filter-field">
 
@@ -182,6 +221,7 @@
 
                     </div>
 
+
                 </div>
 
             </section>
@@ -229,6 +269,7 @@
             ================================== -->
 
             <section class="ranking-kpis">
+
 
                 <article class="v2-card ranking-kpi">
 
@@ -308,6 +349,7 @@
                     </small>
 
                 </article>
+
 
             </section>
 
@@ -401,7 +443,288 @@
             </section>
 
 
-        </main>
+        </div>
+
+
+        <!-- =========================================
+             PAINEL 2 - RANKING MENSAL
+        ========================================== -->
+
+        <div
+            id="painelRankingMensal"
+            class="relatorio-tab-panel"
+        >
+
+
+            <!-- =================================
+                 CABEÇALHO MENSAL
+            ================================== -->
+
+            <section class="v2-card fechamento-header-card">
+
+                <div class="fechamento-header-grid">
+
+                    <div>
+
+                        <span class="v2-label">
+                            RANKING OFICIAL
+                        </span>
+
+                        <h2>
+                            Ranking Mensal
+                        </h2>
+
+                        <p>
+                            Classificação baseada nos
+                            fechamentos mensais finalizados.
+                        </p>
+
+                    </div>
+
+
+                    <div class="fechamento-competencia">
+
+                        <label
+                            for="rankingMensalCompetencia"
+                        >
+                            Competência
+                        </label>
+
+                        <input
+                            id="rankingMensalCompetencia"
+                            type="month"
+                            class="v2-input"
+                        >
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 PÓDIO MENSAL
+            ================================== -->
+
+            <section class="ranking-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="v2-label">
+                            DESTAQUES DO MÊS
+                        </span>
+
+                        <h2>
+                            Pódio mensal
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="rankingMensalPodio"
+                    class="ranking-podium"
+                >
+
+                    <div class="ranking-loading">
+                        Selecione uma competência.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 KPIs MENSAIS
+            ================================== -->
+
+            <section class="ranking-kpis">
+
+
+                <article class="v2-card ranking-kpi">
+
+                    <span class="v2-label">
+                        COLABORADORES
+                    </span>
+
+                    <strong
+                        id="rankingMensalTotalColaboradores"
+                        class="ranking-kpi-value"
+                    >
+                        0
+                    </strong>
+
+                    <small>
+                        Com fechamento concluído
+                    </small>
+
+                </article>
+
+
+                <article class="v2-card ranking-kpi">
+
+                    <span class="v2-label">
+                        MÉDIA DA EQUIPE
+                    </span>
+
+                    <strong
+                        id="rankingMensalMediaEquipe"
+                        class="ranking-kpi-value"
+                    >
+                        0.0
+                    </strong>
+
+                    <small>
+                        Média mensal consolidada
+                    </small>
+
+                </article>
+
+
+                <article class="v2-card ranking-kpi">
+
+                    <span class="v2-label">
+                        MELHOR MÉDIA
+                    </span>
+
+                    <strong
+                        id="rankingMensalMelhorMedia"
+                        class="ranking-kpi-value"
+                    >
+                        0.0
+                    </strong>
+
+                    <small>
+                        Melhor resultado fechado
+                    </small>
+
+                </article>
+
+
+                <article class="v2-card ranking-kpi">
+
+                    <span class="v2-label">
+                        FECHAMENTOS
+                    </span>
+
+                    <strong
+                        id="rankingMensalTotalFechamentos"
+                        class="ranking-kpi-value"
+                    >
+                        0
+                    </strong>
+
+                    <small>
+                        Registros considerados
+                    </small>
+
+                </article>
+
+
+            </section>
+
+
+            <!-- =================================
+                 TABELA MENSAL
+            ================================== -->
+
+            <section class="v2-card ranking-table-card">
+
+                <div class="ranking-table-header">
+
+                    <div>
+
+                        <span class="v2-label">
+                            CLASSIFICAÇÃO MENSAL
+                        </span>
+
+                        <h2>
+                            Ranking oficial do mês
+                        </h2>
+
+                    </div>
+
+
+                    <div
+                        id="rankingMensalQuantidadeResultados"
+                        class="ranking-results-count"
+                    >
+                        0 colaboradores
+                    </div>
+
+                </div>
+
+
+                <div class="ranking-table-wrapper">
+
+                    <table class="ranking-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Posição
+                                </th>
+
+                                <th>
+                                    Colaborador
+                                </th>
+
+                                <th>
+                                    Média mensal
+                                </th>
+
+                                <th>
+                                    Nota gestor
+                                </th>
+
+                                <th>
+                                    Classificação
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="rankingMensalTabelaCorpo">
+
+                            <tr>
+
+                                <td
+                                    colspan="6"
+                                    class="ranking-empty-row"
+                                >
+                                    Selecione uma competência
+                                    para carregar o ranking mensal.
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+
+    </main>
 
 
     <!-- =====================================
@@ -420,8 +743,11 @@
 
 
     <script>
+
         carregarLayout("ranking");
+
     </script>
+
 
 </body>
 
