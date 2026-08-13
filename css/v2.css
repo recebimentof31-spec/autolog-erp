@@ -4549,9 +4549,13 @@ body.app-v2 {
    IMPRESSÃO PROFISSIONAL - A4
    ========================================================= */
 
+/* =========================================================
+   IMPRESSÃO PROFISSIONAL - RELATÓRIO INDIVIDUAL
+   ========================================================= */
+
 @page {
-    size: A4;
-    margin: 13mm;
+    size: A4 portrait;
+    margin: 9mm 11mm;
 }
 
 
@@ -4574,19 +4578,18 @@ body.app-v2 {
             sans-serif !important;
 
         -webkit-print-color-adjust: exact !important;
-
         print-color-adjust: exact !important;
     }
 
 
-    /* ESCONDE O SITE */
+    /* =============================================
+       ESCONDE TODO O RESTANTE DO ERP
+    ============================================== */
 
     body > * {
         visibility: hidden !important;
     }
 
-
-    /* MOSTRA APENAS O RELATÓRIO */
 
     #modalDetalhesFechamento,
     #modalDetalhesFechamento * {
@@ -4594,10 +4597,15 @@ body.app-v2 {
     }
 
 
+    /* =============================================
+       ÁREA PRINCIPAL
+    ============================================== */
+
     #modalDetalhesFechamento {
         position: absolute !important;
 
-        inset: 0 !important;
+        left: 0 !important;
+        top: 0 !important;
 
         display: block !important;
 
@@ -4617,35 +4625,40 @@ body.app-v2 {
         width: 100% !important;
         max-width: none !important;
 
+        height: auto !important;
+        max-height: none !important;
+
         margin: 0 !important;
+        padding: 0 !important;
+
+        overflow: visible !important;
 
         background: #ffffff !important;
 
-        border: none !important;
+        border: 0 !important;
         border-radius: 0 !important;
 
         box-shadow: none !important;
 
         color: #172033 !important;
-
-        overflow: visible !important;
     }
 
 
-    /* CABEÇALHO */
+    /* =============================================
+       CABEÇALHO
+    ============================================== */
 
     .fechamento-modal-header {
-        position: relative;
+        min-height: 48px !important;
 
-        margin-bottom: 14px;
+        margin: 0 0 8px !important;
 
-        padding:
-            0
-            0
-            15px !important;
+        padding: 0 0 8px !important;
 
         border-bottom:
-            3px solid #ff7417 !important;
+            2px solid #ff7417 !important;
+
+        break-after: avoid !important;
     }
 
 
@@ -4654,50 +4667,62 @@ body.app-v2 {
 
         display: inline-flex;
 
-        width: 38px;
-        height: 38px;
+        width: 29px;
+        height: 29px;
 
         align-items: center;
         justify-content: center;
 
-        margin-right: 12px;
+        margin-right: 9px;
 
         float: left;
 
-        border-radius: 8px;
+        border-radius: 6px;
 
         background: #ff7417 !important;
 
         color: #ffffff !important;
 
-        font-size: 14px;
+        font-size: 10px;
         font-weight: 900;
     }
 
 
     .fechamento-modal-header h2 {
-        margin-top: 3px !important;
+        margin: 2px 0 !important;
 
         color: #111827 !important;
 
-        font-size: 22px !important;
+        font-size: 17px !important;
+
+        line-height: 1.05 !important;
     }
 
 
     .fechamento-modal-header p {
+        margin: 0 !important;
+
         color: #64748b !important;
 
-        font-size: 10px !important;
+        font-size: 6.7px !important;
+
+        line-height: 1.2 !important;
     }
 
 
     .v2-label,
     .detalhes-label-destaque {
-        color: #e8610a !important;
+        color: #df5c08 !important;
+
+        font-size: 6.5px !important;
+
+        letter-spacing: 0.04em !important;
     }
 
 
-    /* ESCONDE CONTROLES */
+    /* =============================================
+       ESCONDE CONTROLES
+    ============================================== */
 
     .fechamento-modal-close,
     .fechamento-modal-footer,
@@ -4708,148 +4733,201 @@ body.app-v2 {
     }
 
 
-    /* SEÇÕES */
+    /* =============================================
+       SEÇÕES
+    ============================================== */
 
     .fechamento-modal-section,
     .parecer-gestor-section {
         margin:
             0
             0
-            16px !important;
+            8px !important;
 
         padding:
             0
             0
-            16px !important;
+            8px !important;
 
         border-bottom:
-            1px solid #d9dee5 !important;
+            1px solid #d8dde3 !important;
 
-        break-inside: avoid;
+        break-inside: avoid !important;
     }
 
 
     .fechamento-modal-section-header {
         margin-bottom:
-            10px !important;
+            5px !important;
     }
 
 
     .fechamento-modal-section-header h3,
     .parecer-gestor-header h3 {
+        margin:
+            2px
+            0 !important;
+
         color: #172033 !important;
 
-        font-size: 15px !important;
+        font-size: 10px !important;
+
+        line-height: 1.1 !important;
     }
 
 
     .fechamento-modal-section-header p,
     .parecer-gestor-header p {
+        margin: 0 !important;
+
         color: #64748b !important;
 
-        font-size: 9px !important;
+        font-size: 6px !important;
+
+        line-height: 1.2 !important;
     }
 
 
-    /* RESUMO */
+    .fechamento-modal-count {
+        min-height: 19px !important;
+
+        padding:
+            0
+            7px !important;
+
+        border:
+            1px solid #cfd5dc !important;
+
+        background: #ffffff !important;
+
+        color: #172033 !important;
+
+        font-size: 6px !important;
+    }
+
+
+    /* =============================================
+       RESUMO
+    ============================================== */
 
     #fechamentoDetalhesResumo,
     .fechamento-detalhes-resumo-grid {
         grid-template-columns:
             repeat(4, 1fr) !important;
 
-        gap: 7px !important;
+        gap: 4px !important;
     }
 
 
     .detalhe-resumo-card {
-        min-height: 65px !important;
+        min-height: 44px !important;
 
-        padding: 9px !important;
+        padding: 6px !important;
 
-        background: #f8fafc !important;
+        background:
+            #f8fafc !important;
 
         border:
             1px solid #dce2e8 !important;
 
-        border-radius: 6px !important;
+        border-radius:
+            4px !important;
 
-        break-inside: avoid;
+        break-inside: avoid !important;
     }
 
 
     .detalhe-resumo-card small {
         margin-bottom:
-            5px !important;
+            3px !important;
 
         color: #64748b !important;
 
-        font-size: 7px !important;
+        font-size: 5.4px !important;
     }
 
 
     .detalhe-resumo-card strong {
         color: #172033 !important;
 
-        font-size: 10px !important;
+        font-size: 7px !important;
+
+        line-height: 1.1 !important;
     }
 
 
     .detalhe-resumo-card .detalhe-destaque {
-        color: #e8610a !important;
+        color: #df5c08 !important;
 
-        font-size: 17px !important;
+        font-size: 11px !important;
     }
 
 
-    /* TABELA */
+    /* =============================================
+       TABELA DAS AVALIAÇÕES
+    ============================================== */
 
     .fechamento-modal-table-wrapper {
+        overflow: visible !important;
+
         border:
             1px solid #d9dee5 !important;
 
         border-radius:
-            6px !important;
-
-        overflow: visible !important;
+            4px !important;
     }
 
 
     .fechamento-modal-table {
-        background: #ffffff !important;
+        width: 100% !important;
+
+        border-collapse:
+            collapse !important;
+
+        background:
+            #ffffff !important;
     }
 
 
     .fechamento-modal-table th {
         padding:
-            7px 8px !important;
+            4px
+            5px !important;
 
         background:
-            #f3f5f7 !important;
+            #f2f4f6 !important;
 
         border-bottom:
             1px solid #d9dee5 !important;
 
-        color: #475569 !important;
+        color:
+            #475569 !important;
 
-        font-size: 7px !important;
+        font-size:
+            5.3px !important;
     }
 
 
     .fechamento-modal-table td {
         padding:
-            8px !important;
-
-        color: #172033 !important;
-
-        font-size: 8px !important;
+            5px !important;
 
         border-bottom:
-            1px solid #e8ebef !important;
+            1px solid #e5e8ec !important;
+
+        color:
+            #172033 !important;
+
+        font-size:
+            6px !important;
     }
 
 
     .ranking-status {
+        padding:
+            2px
+            4px !important;
+
         border:
             1px solid #d9dee5 !important;
 
@@ -4860,26 +4938,29 @@ body.app-v2 {
             #172033 !important;
 
         font-size:
-            6px !important;
+            4.7px !important;
     }
 
 
-    /* CRITÉRIOS */
+    /* =============================================
+       CRITÉRIOS
+    ============================================== */
 
     .fechamento-criterios-grid {
         grid-template-columns:
             repeat(4, 1fr) !important;
 
-        gap: 7px !important;
+        gap:
+            4px !important;
     }
 
 
     .fechamento-criterio-card {
         min-height:
-            72px !important;
+            48px !important;
 
         padding:
-            9px !important;
+            6px !important;
 
         background:
             #f8fafc !important;
@@ -4888,15 +4969,16 @@ body.app-v2 {
             1px solid #dce2e8 !important;
 
         border-radius:
-            6px !important;
+            4px !important;
 
-        break-inside: avoid;
+        break-inside:
+            avoid !important;
     }
 
 
     .fechamento-criterio-card::after {
         height:
-            2px !important;
+            1.5px !important;
 
         background:
             #ff7417 !important;
@@ -4908,51 +4990,53 @@ body.app-v2 {
             #64748b !important;
 
         font-size:
-            7px !important;
+            5.2px !important;
     }
 
 
     .fechamento-criterio-card > strong {
         margin-top:
-            7px !important;
+            3px !important;
 
         color:
             #172033 !important;
 
         font-size:
-            16px !important;
+            10px !important;
     }
 
 
     .fechamento-criterio-card > small {
         padding-top:
-            5px !important;
+            2px !important;
 
         color:
-            #87909b !important;
+            #8a939e !important;
 
         font-size:
-            6px !important;
+            4.8px !important;
     }
 
 
-    /* DESTAQUES */
+    /* =============================================
+       PONTO FORTE / ATENÇÃO
+    ============================================== */
 
     .fechamento-criterios-destaques {
         grid-template-columns:
             1fr 1fr !important;
 
         gap:
-            7px !important;
+            4px !important;
 
         margin-top:
-            8px !important;
+            5px !important;
     }
 
 
     .fechamento-destaque {
         padding:
-            9px 11px !important;
+            6px !important;
 
         background:
             #f8fafc !important;
@@ -4961,7 +5045,10 @@ body.app-v2 {
             1px solid #dce2e8 !important;
 
         border-radius:
-            6px !important;
+            4px !important;
+
+        break-inside:
+            avoid !important;
     }
 
 
@@ -4970,7 +5057,7 @@ body.app-v2 {
             #64748b !important;
 
         font-size:
-            7px !important;
+            5px !important;
     }
 
 
@@ -4979,37 +5066,46 @@ body.app-v2 {
             #172033 !important;
 
         font-size:
-            10px !important;
+            7px !important;
     }
 
 
     .fechamento-destaque > small {
         color:
-            #e8610a !important;
+            #df5c08 !important;
 
         font-size:
-            15px !important;
+            10px !important;
     }
 
 
-    /* PARECER */
+    /* =============================================
+       PARECER FINAL
+    ============================================== */
+
+    .parecer-gestor-header {
+        margin-bottom:
+            5px !important;
+    }
+
 
     .parecer-gestor-grid {
         grid-template-columns:
-            135px 1fr !important;
+            95px
+            1fr !important;
 
         gap:
-            8px !important;
+            5px !important;
 
         margin-top:
-            10px !important;
+            5px !important;
     }
 
 
     .parecer-nota-box,
     .parecer-texto-box {
         padding:
-            10px !important;
+            6px !important;
 
         background:
             #f8fafc !important;
@@ -5018,22 +5114,23 @@ body.app-v2 {
             1px solid #dce2e8 !important;
 
         border-radius:
-            6px !important;
+            4px !important;
 
-        break-inside: avoid;
+        break-inside:
+            avoid !important;
     }
 
 
     .parecer-nota-box label,
     .parecer-texto-box label {
         margin-bottom:
-            5px !important;
+            3px !important;
 
         color:
             #475569 !important;
 
         font-size:
-            7px !important;
+            5.3px !important;
     }
 
 
@@ -5043,71 +5140,80 @@ body.app-v2 {
             100% !important;
 
         border:
-            1px solid #cdd4dc !important;
+            1px solid #ccd3db !important;
+
+        border-radius:
+            3px !important;
 
         background:
             #ffffff !important;
 
         color:
             #172033 !important;
-
-        border-radius:
-            4px !important;
     }
 
 
     .parecer-nota-box input {
         height:
-            30px !important;
+            21px !important;
 
         padding:
-            0 7px !important;
+            0
+            5px !important;
 
         font-size:
-            10px !important;
+            7px !important;
     }
 
 
     .parecer-texto-box textarea {
         min-height:
-            72px !important;
+            44px !important;
+
+        height:
+            44px !important;
 
         padding:
-            7px !important;
+            5px !important;
 
         resize:
             none !important;
 
         font-size:
-            8px !important;
+            6px !important;
 
         line-height:
-            1.35 !important;
+            1.2 !important;
     }
 
 
     .parecer-nota-box small {
         margin-top:
-            5px !important;
+            3px !important;
 
         color:
             #87909b !important;
 
         font-size:
-            6px !important;
+            4.6px !important;
     }
 
 
-    /* EVITA QUEBRA FEIA */
+    /* =============================================
+       EVITA QUEBRAS
+    ============================================== */
 
     .detalhe-resumo-card,
     .fechamento-criterio-card,
     .fechamento-destaque,
     .parecer-nota-box,
     .parecer-texto-box,
-    table,
-    tr {
+    .fechamento-modal-table,
+    .fechamento-modal-table tr {
         break-inside:
+            avoid !important;
+
+        page-break-inside:
             avoid !important;
     }
 
