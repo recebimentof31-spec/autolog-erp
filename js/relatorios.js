@@ -1,3 +1,5 @@
+// BUILD RELATORIOS 20260813-2
+
 let configuracaoRelatorios = {
     pontuacaoMaxima: 100,
     notaMinima: 70
@@ -222,7 +224,7 @@ function configurarAbasRelatorio() {
         "Abas dos Relatórios configuradas com sucesso!"
     );
 
-}git add js/relatorios.js
+}
 
 let relatorioBase = [];
 let graficoRelatorioInstance = null;
