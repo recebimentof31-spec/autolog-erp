@@ -64,43 +64,165 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 });
 
+// =====================================================
+// CONFIGURA ABAS DOS RELATÓRIOS
+// =====================================================
+
 function configurarAbasRelatorio() {
 
-    const botoes =
-        document.querySelectorAll(".relatorio-tab");
+    const botaoRelatorios =
+        document.getElementById(
+            "tabRelatorios"
+        );
 
-    const paineis =
-        document.querySelectorAll(".relatorio-tab-panel");
+    const botaoFechamento =
+        document.getElementById(
+            "tabFechamentoMensal"
+        );
 
-    botoes.forEach((botao) => {
+    const painelRelatorios =
+        document.getElementById(
+            "painelRelatorios"
+        );
 
-        botao.addEventListener("click", () => {
+    const painelFechamento =
+        document.getElementById(
+            "painelFechamentoMensal"
+        );
 
-            const alvo =
-                botao.dataset.target;
 
-            botoes.forEach((item) => {
-                item.classList.remove("active");
-            });
+    if (
+        !botaoRelatorios ||
+        !botaoFechamento ||
+        !painelRelatorios ||
+        !painelFechamento
+    ) {
 
-            paineis.forEach((painel) => {
-                painel.classList.remove("active");
-            });
+        console.error(
+            "Erro ao configurar abas dos Relatórios:",
+            {
+                botaoRelatorios,
+                botaoFechamento,
+                painelRelatorios,
+                painelFechamento
+            }
+        );
 
-            botao.classList.add("active");
+        return;
+    }
 
-            const painelAlvo =
-                document.getElementById(alvo);
 
-            if (painelAlvo) {
-                painelAlvo.classList.add("active");
+    // =================================================
+    // ABA RELATÓRIOS
+    // =================================================
+
+    botaoRelatorios.onclick = () => {
+
+        botaoRelatorios.classList.add(
+            "active"
+        );
+
+        botaoFechamento.classList.remove(
+            "active"
+        );
+
+
+        painelRelatorios.classList.add(
+            "active"
+        );
+
+        painelFechamento.classList.remove(
+            "active"
+        );
+
+
+        painelRelatorios.style.display =
+            "block";
+
+        painelFechamento.style.display =
+            "none";
+
+
+        if (
+            typeof atualizarRelatorio ===
+            "function"
+        ) {
+
+            atualizarRelatorio();
+
+        }
+
+    };
+
+
+    // =================================================
+    // ABA FECHAMENTO MENSAL
+    // =================================================
+
+    botaoFechamento.onclick =
+        async () => {
+
+            botaoFechamento.classList.add(
+                "active"
+            );
+
+            botaoRelatorios.classList.remove(
+                "active"
+            );
+
+
+            painelFechamento.classList.add(
+                "active"
+            );
+
+            painelRelatorios.classList.remove(
+                "active"
+            );
+
+
+            painelFechamento.style.display =
+                "block";
+
+            painelRelatorios.style.display =
+                "none";
+
+
+            if (
+                typeof carregarFechamentoMensal ===
+                "function"
+            ) {
+
+                await carregarFechamentoMensal();
+
             }
 
-        });
+        };
 
-    });
 
-}
+    // =================================================
+    // ESTADO INICIAL
+    // =================================================
+
+    botaoRelatorios.classList.add(
+        "active"
+    );
+
+    botaoFechamento.classList.remove(
+        "active"
+    );
+
+    painelRelatorios.style.display =
+        "block";
+
+    painelFechamento.style.display =
+        "none";
+
+
+    console.log(
+        "Abas dos Relatórios configuradas com sucesso!"
+    );
+
+}git add js/relatorios.js
 
 let relatorioBase = [];
 let graficoRelatorioInstance = null;
