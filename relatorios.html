@@ -918,25 +918,40 @@
         carregarLayout("relatorios");
     </script>
 
-    <!-- =========================================
+<!-- =========================================
      MODAL - DETALHES DO FECHAMENTO MENSAL
 ========================================= -->
 
-<div id="modalDetalhesFechamento" class="fechamento-modal-overlay">
+<div
+    id="modalDetalhesFechamento"
+    class="fechamento-modal-overlay"
+>
 
     <div class="fechamento-modal">
+
+
+        <!-- =====================================
+             CABEÇALHO
+        ====================================== -->
 
         <div class="fechamento-modal-header">
 
             <div>
-                <span class="v2-label">FECHAMENTO MENSAL</span>
 
-                <h2>Detalhes do fechamento</h2>
+                <span class="v2-label">
+                    FECHAMENTO MENSAL
+                </span>
+
+                <h2>
+                    Relatório Individual
+                </h2>
 
                 <p>
-                    Resultado consolidado das avaliações do colaborador.
+                    Resultado consolidado do desempenho mensal do colaborador.
                 </p>
+
             </div>
+
 
             <button
                 type="button"
@@ -950,19 +965,75 @@
         </div>
 
 
-        <div id="fechamentoDetalhesResumo">
-            <!-- preenchido pelo JavaScript -->
-        </div>
+        <!-- =====================================
+             RESUMO DO FECHAMENTO
+        ====================================== -->
 
-
-        <div class="fechamento-modal-section">
+        <section class="fechamento-modal-section">
 
             <div class="fechamento-modal-section-header">
 
                 <div>
-                    <span class="v2-label">AVALIAÇÕES</span>
-                    <h3>Avaliações consideradas</h3>
+
+                    <span class="v2-label">
+                        RESULTADO MENSAL
+                    </span>
+
+                    <h3>
+                        Resumo do fechamento
+                    </h3>
+
                 </div>
+
+            </div>
+
+
+            <div
+                id="fechamentoDetalhesResumo"
+                class="fechamento-detalhes-resumo-grid"
+            >
+
+                <div class="detalhe-resumo-card">
+
+                    <small>
+                        Colaborador
+                    </small>
+
+                    <strong>
+                        Carregando...
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             AVALIAÇÕES CONSIDERADAS
+        ====================================== -->
+
+        <section class="fechamento-modal-section">
+
+            <div class="fechamento-modal-section-header">
+
+                <div>
+
+                    <span class="v2-label">
+                        AVALIAÇÕES
+                    </span>
+
+                    <h3>
+                        Avaliações consideradas
+                    </h3>
+
+                    <p>
+                        Avaliações semanais utilizadas para formar a média mensal.
+                    </p>
+
+                </div>
+
 
                 <span
                     id="detalhesTotalAvaliacoes"
@@ -979,20 +1050,38 @@
                 <table class="fechamento-modal-table">
 
                     <thead>
+
                         <tr>
-                            <th>SEMANA</th>
-                            <th>NOTA</th>
-                            <th>CLASSIFICAÇÃO</th>
-                            <th>DATA</th>
+
+                            <th>
+                                SEMANA
+                            </th>
+
+                            <th>
+                                NOTA
+                            </th>
+
+                            <th>
+                                CLASSIFICAÇÃO
+                            </th>
+
+                            <th>
+                                DATA
+                            </th>
+
                         </tr>
+
                     </thead>
+
 
                     <tbody id="detalhesAvaliacoesCorpo">
 
                         <tr>
+
                             <td colspan="4">
                                 Carregando avaliações...
                             </td>
+
                         </tr>
 
                     </tbody>
@@ -1001,90 +1090,360 @@
 
             </div>
 
-        </div>
+        </section>
 
-        <!-- ==========================================
-     PARECER FINAL DO GESTOR
-=========================================== -->
 
-<div class="parecer-gestor-section">
+        <!-- =====================================
+             DESEMPENHO POR CRITÉRIO
+        ====================================== -->
 
-    <div class="parecer-gestor-header">
-        <div>
-            <span class="detalhes-label-destaque">
-                ANÁLISE GERENCIAL
-            </span>
+        <section class="fechamento-modal-section">
 
-            <h3>Parecer Final do Gestor</h3>
+            <div class="fechamento-modal-section-header">
 
-            <p>
-                Registre a análise final do desempenho do colaborador
-                para esta competência.
-            </p>
-        </div>
-    </div>
+                <div>
 
-    <div class="parecer-gestor-grid">
+                    <span class="v2-label">
+                        DESEMPENHO
+                    </span>
 
-        <div class="parecer-nota-box">
-            <label for="detalhesNotaGestor">
-                Nota do Gestor
-            </label>
+                    <h3>
+                        Desempenho por critério
+                    </h3>
 
-            <input
-                type="number"
-                id="detalhesNotaGestor"
-                min="0"
-                max="100"
-                step="0.1"
-                placeholder="0 a 100"
-            >
+                    <p>
+                        Média percentual de cada critério nas avaliações consideradas.
+                    </p>
 
-            <small>
-                A nota gerencial não altera a média técnica.
-            </small>
-        </div>
+                </div>
 
-        <div class="parecer-texto-box">
-            <label for="detalhesParecerFinal">
-                Parecer
-            </label>
-
-            <textarea
-                id="detalhesParecerFinal"
-                rows="5"
-                maxlength="2000"
-                placeholder="Descreva os principais resultados, pontos positivos, oportunidades de melhoria e orientações para o próximo período..."
-            ></textarea>
-
-            <div class="parecer-contador">
-                <span id="contadorParecer">0</span>/2000
             </div>
-        </div>
 
-    </div>
 
-    <div class="parecer-acoes">
+            <div class="fechamento-criterios-grid">
 
-        <div
-            id="parecerStatusSalvo"
-            class="parecer-status-salvo"
-        ></div>
 
-        <button
-            type="button"
-            id="btnSalvarParecer"
-            class="btn-salvar-parecer"
-        >
-            Salvar parecer
-        </button>
+                <!-- PRODUTIVIDADE -->
 
-    </div>
+                <article class="fechamento-criterio-card">
 
-</div>
+                    <span>
+                        Produtividade
+                    </span>
 
+                    <strong id="detalhesCriterioProdutividade">
+                        0.0%
+                    </strong>
+
+                    <small>
+                        Máximo 15 pontos
+                    </small>
+
+                </article>
+
+
+                <!-- PRAZO -->
+
+                <article class="fechamento-criterio-card">
+
+                    <span>
+                        Prazo
+                    </span>
+
+                    <strong id="detalhesCriterioPrazo">
+                        0.0%
+                    </strong>
+
+                    <small>
+                        Máximo 10 pontos
+                    </small>
+
+                </article>
+
+
+                <!-- QUALIDADE -->
+
+                <article class="fechamento-criterio-card">
+
+                    <span>
+                        Qualidade
+                    </span>
+
+                    <strong id="detalhesCriterioQualidade">
+                        0.0%
+                    </strong>
+
+                    <small>
+                        Máximo 15 pontos
+                    </small>
+
+                </article>
+
+
+                <!-- CONHECIMENTO TÉCNICO -->
+
+                <article class="fechamento-criterio-card">
+
+                    <span>
+                        Conhecimento técnico
+                    </span>
+
+                    <strong id="detalhesCriterioConhecimento">
+                        0.0%
+                    </strong>
+
+                    <small>
+                        Máximo 15 pontos
+                    </small>
+
+                </article>
+
+
+                <!-- PROATIVIDADE -->
+
+                <article class="fechamento-criterio-card">
+
+                    <span>
+                        Proatividade
+                    </span>
+
+                    <strong id="detalhesCriterioProatividade">
+                        0.0%
+                    </strong>
+
+                    <small>
+                        Máximo 10 pontos
+                    </small>
+
+                </article>
+
+
+                <!-- TRABALHO EM EQUIPE -->
+
+                <article class="fechamento-criterio-card">
+
+                    <span>
+                        Trabalho em equipe
+                    </span>
+
+                    <strong id="detalhesCriterioTrabalhoEquipe">
+                        0.0%
+                    </strong>
+
+                    <small>
+                        Máximo 15 pontos
+                    </small>
+
+                </article>
+
+
+                <!-- ADAPTABILIDADE -->
+
+                <article class="fechamento-criterio-card">
+
+                    <span>
+                        Adaptabilidade
+                    </span>
+
+                    <strong id="detalhesCriterioAdaptabilidade">
+                        0.0%
+                    </strong>
+
+                    <small>
+                        Máximo 10 pontos
+                    </small>
+
+                </article>
+
+
+                <!-- RESPONSABILIDADE -->
+
+                <article class="fechamento-criterio-card">
+
+                    <span>
+                        Responsabilidade
+                    </span>
+
+                    <strong id="detalhesCriterioResponsabilidade">
+                        0.0%
+                    </strong>
+
+                    <small>
+                        Máximo 10 pontos
+                    </small>
+
+                </article>
+
+            </div>
+
+
+            <!-- DESTAQUES -->
+
+            <div class="fechamento-criterios-destaques">
+
+                <article class="fechamento-destaque positivo">
+
+                    <span>
+                        PONTO FORTE
+                    </span>
+
+                    <strong id="detalhesPontoForte">
+                        -
+                    </strong>
+
+                    <small id="detalhesPontoForteNota">
+                        0.0%
+                    </small>
+
+                </article>
+
+
+                <article class="fechamento-destaque atencao">
+
+                    <span>
+                        PONTO DE ATENÇÃO
+                    </span>
+
+                    <strong id="detalhesPontoAtencao">
+                        -
+                    </strong>
+
+                    <small id="detalhesPontoAtencaoNota">
+                        0.0%
+                    </small>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             PARECER FINAL DO GESTOR
+        ====================================== -->
+
+        <section class="parecer-gestor-section">
+
+            <div class="parecer-gestor-header">
+
+                <div>
+
+                    <span class="detalhes-label-destaque">
+                        ANÁLISE GERENCIAL
+                    </span>
+
+                    <h3>
+                        Parecer Final do Gestor
+                    </h3>
+
+                    <p>
+                        Registre a análise final do desempenho do colaborador para esta competência.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="parecer-gestor-grid">
+
+
+                <!-- NOTA DO GESTOR -->
+
+                <div class="parecer-nota-box">
+
+                    <label for="detalhesNotaGestor">
+                        Nota do Gestor
+                    </label>
+
+                    <input
+                        type="number"
+                        id="detalhesNotaGestor"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        placeholder="0 a 100"
+                    >
+
+                    <small>
+                        A nota gerencial não altera a média técnica.
+                    </small>
+
+                </div>
+
+
+                <!-- PARECER -->
+
+                <div class="parecer-texto-box">
+
+                    <label for="detalhesParecerFinal">
+                        Parecer
+                    </label>
+
+                    <textarea
+                        id="detalhesParecerFinal"
+                        rows="6"
+                        maxlength="2000"
+                        placeholder="Descreva os principais resultados, pontos positivos, oportunidades de melhoria e orientações para o próximo período..."
+                    ></textarea>
+
+
+                    <div class="parecer-contador">
+
+                        <span id="contadorParecer">
+                            0
+                        </span>
+
+                        /2000
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="parecer-acoes">
+
+                <div
+                    id="parecerStatusSalvo"
+                    class="parecer-status-salvo"
+                ></div>
+
+
+                <button
+                    type="button"
+                    id="btnSalvarParecer"
+                    class="btn-salvar-parecer"
+                >
+                    Salvar parecer
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             RODAPÉ DO MODAL
+        ====================================== -->
 
         <div class="fechamento-modal-footer">
+
+
+            <!-- IMPRIMIR -->
+
+            <button
+                type="button"
+                id="btnImprimirFechamento"
+                class="v2-btn v2-btn-primary"
+            >
+                Imprimir relatório individual
+            </button>
+
+
+            <!-- FECHAR -->
 
             <button
                 type="button"
@@ -1095,6 +1454,7 @@
             </button>
 
         </div>
+
 
     </div>
 

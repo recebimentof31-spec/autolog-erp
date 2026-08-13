@@ -2531,22 +2531,30 @@ if (perfilUsuarioId) {
 
 }
 
-let fechamentoDetalhesAtualId
-
 // =====================================================
 // DETALHES DO FECHAMENTO MENSAL
+// =====================================================
+
+let fechamentoDetalhesAtualId = null;
+
+
+// =====================================================
+// ABRE DETALHES DO FECHAMENTO
 // =====================================================
 
 async function abrirDetalhesFechamento(fechamentoId) {
 
     fechamentoDetalhesAtualId =
         fechamentoId;
+
+
     const fechamento =
         fechamentoMensalBase.find(
             item =>
                 String(item.id) ===
                 String(fechamentoId)
         );
+
 
     if (!fechamento) {
 
@@ -2563,15 +2571,18 @@ async function abrirDetalhesFechamento(fechamentoId) {
             "modalDetalhesFechamento"
         );
 
+
     const resumo =
         document.getElementById(
             "fechamentoDetalhesResumo"
         );
 
+
     const tbody =
         document.getElementById(
             "detalhesAvaliacoesCorpo"
         );
+
 
     const contador =
         document.getElementById(
@@ -2595,34 +2606,65 @@ async function abrirDetalhesFechamento(fechamentoId) {
     }
 
 
-    // Abre o modal já em estado de carregamento
-    modal.classList.add("active");
+    // =============================================
+    // ABRE MODAL
+    // =============================================
 
+    modal.classList.add(
+        "active"
+    );
+
+
+    // =============================================
+    // ESTADO DE CARREGAMENTO
+    // =============================================
 
     resumo.innerHTML = `
+
         <div class="detalhe-resumo-card">
-            <small>Colaborador</small>
-            <strong>Carregando...</strong>
+
+            <small>
+                Colaborador
+            </small>
+
+            <strong>
+                Carregando...
+            </strong>
+
         </div>
+
     `;
 
 
     tbody.innerHTML = `
+
         <tr>
+
             <td colspan="4">
                 Carregando avaliações...
             </td>
+
         </tr>
+
     `;
 
 
     if (contador) {
+
         contador.textContent =
             "Carregando...";
+
     }
 
 
+    limparCriteriosDetalhes();
+
+
     try {
+
+        // =============================================
+        // DADOS DO FECHAMENTO
+        // =============================================
 
         const funcionarioId =
             fechamento.funcionario_id;
@@ -2640,13 +2682,22 @@ async function abrirDetalhesFechamento(fechamentoId) {
             );
 
 
+        // =============================================
+        // INTERVALO DA COMPETÊNCIA
+        // =============================================
+
         const inicioCompetencia =
-            `${ano}-${String(mes)
-                .padStart(2, "0")}-01`;
+            `${ano}-${String(
+                mes
+            ).padStart(
+                2,
+                "0"
+            )}-01`;
 
 
         let proximoAno =
             ano;
+
 
         let proximoMes =
             mes + 1;
@@ -2658,16 +2709,22 @@ async function abrirDetalhesFechamento(fechamentoId) {
 
             proximoAno =
                 ano + 1;
+
         }
 
 
         const fimCompetencia =
-            `${proximoAno}-${String(proximoMes)
-                .padStart(2, "0")}-01`;
+            `${proximoAno}-${String(
+                proximoMes
+            ).padStart(
+                2,
+                "0"
+            )}-01`;
 
 
         // =============================================
-        // BUSCA AS AVALIAÇÕES QUE FORMARAM O MÊS
+        // BUSCA AS AVALIAÇÕES DO MÊS
+        // AGORA COM OS 8 CRITÉRIOS
         // =============================================
 
         const {
@@ -2689,7 +2746,16 @@ async function abrirDetalhesFechamento(fechamentoId) {
                     competencia,
                     periodo_inicio,
                     periodo_fim,
-                    created_at
+                    created_at,
+
+                    produtividade,
+                    prazo,
+                    qualidade,
+                    conhecimento_tecnico,
+                    proatividade,
+                    trabalho_equipe,
+                    adaptabilidade,
+                    responsabilidade
                 `)
 
                 .eq(
@@ -2721,7 +2787,9 @@ async function abrirDetalhesFechamento(fechamentoId) {
 
 
         if (erroAvaliacoes) {
+
             throw erroAvaliacoes;
+
         }
 
 
@@ -2730,7 +2798,7 @@ async function abrirDetalhesFechamento(fechamentoId) {
 
 
         // =============================================
-        // TENTA IDENTIFICAR QUEM FECHOU
+        // QUEM FECHOU
         // =============================================
 
         let responsavelFechamento =
@@ -2762,13 +2830,17 @@ async function abrirDetalhesFechamento(fechamentoId) {
                     .maybeSingle();
 
 
-            // Não interrompe o modal caso
-            // a leitura do perfil seja bloqueada.
-            if (!erroPerfil && perfil) {
+            if (
+                !erroPerfil
+                &&
+                perfil
+            ) {
 
                 responsavelFechamento =
                     perfil.nome_exibicao
-                    || "Usuário do sistema";
+                    ||
+                    "Usuário do sistema";
+
             }
 
             else {
@@ -2776,14 +2848,18 @@ async function abrirDetalhesFechamento(fechamentoId) {
                 responsavelFechamento =
                     "Usuário do sistema";
 
+
                 if (erroPerfil) {
 
                     console.warn(
-                        "Não foi possível identificar o responsável pelo fechamento:",
+                        "Não foi possível identificar o responsável:",
                         erroPerfil
                     );
+
                 }
+
             }
+
         }
 
 
@@ -2793,12 +2869,14 @@ async function abrirDetalhesFechamento(fechamentoId) {
 
         const nome =
             fechamento.funcionario?.nome
-            || "Funcionário";
+            ||
+            "Funcionário";
 
 
         const matricula =
             fechamento.funcionario?.matricula
-            || "-";
+            ||
+            "-";
 
 
         const media =
@@ -2832,62 +2910,89 @@ async function abrirDetalhesFechamento(fechamentoId) {
 
         const fechadoEm =
             fechamento.fechado_em
+
                 ? formatarDataHoraFechamento(
                     fechamento.fechado_em
                 )
+
                 : "-";
-
-                const campoNotaGestor =
-    document.getElementById(
-        "detalhesNotaGestor"
-    );
-
-const campoParecer =
-    document.getElementById(
-        "detalhesParecerFinal"
-    );
-
-const contadorParecer =
-    document.getElementById(
-        "contadorParecer"
-    );
-
-const statusParecer =
-    document.getElementById(
-        "parecerStatusSalvo"
-    );
-
-if (campoNotaGestor) {
-    campoNotaGestor.value =
-        fechamento.nota_gestor ?? "";
-}
-
-if (campoParecer) {
-    campoParecer.value =
-        fechamento.parecer_final || "";
-}
-
-if (contadorParecer) {
-    contadorParecer.textContent =
-        String(
-            fechamento.parecer_final || ""
-        ).length;
-}
-
-if (statusParecer) {
-    statusParecer.textContent =
-        fechamento.parecer_atualizado_em
-            ? `Última atualização: ${
-                formatarDataHoraFechamento(
-                    fechamento.parecer_atualizado_em
-                )
-            }`
-            : "";
-}
 
 
         // =============================================
-        // RESUMO
+        // PREENCHE NOTA DO GESTOR / PARECER
+        // =============================================
+
+        const campoNotaGestor =
+            document.getElementById(
+                "detalhesNotaGestor"
+            );
+
+
+        const campoParecer =
+            document.getElementById(
+                "detalhesParecerFinal"
+            );
+
+
+        const contadorParecer =
+            document.getElementById(
+                "contadorParecer"
+            );
+
+
+        const statusParecer =
+            document.getElementById(
+                "parecerStatusSalvo"
+            );
+
+
+        if (campoNotaGestor) {
+
+            campoNotaGestor.value =
+                fechamento.nota_gestor
+                ?? "";
+
+        }
+
+
+        if (campoParecer) {
+
+            campoParecer.value =
+                fechamento.parecer_final
+                || "";
+
+        }
+
+
+        if (contadorParecer) {
+
+            contadorParecer.textContent =
+                String(
+                    fechamento.parecer_final
+                    || ""
+                ).length;
+
+        }
+
+
+        if (statusParecer) {
+
+            statusParecer.textContent =
+                fechamento.parecer_atualizado_em
+
+                    ? `Última atualização: ${
+                        formatarDataHoraFechamento(
+                            fechamento.parecer_atualizado_em
+                        )
+                    }`
+
+                    : "";
+
+        }
+
+
+        // =============================================
+        // RESUMO DO FECHAMENTO
         // =============================================
 
         resumo.innerHTML = `
@@ -2899,7 +3004,9 @@ if (statusParecer) {
                 </small>
 
                 <strong>
-                    ${escaparHTMLDetalhes(nome)}
+                    ${escaparHTMLDetalhes(
+                        nome
+                    )}
                 </strong>
 
             </div>
@@ -2912,7 +3019,9 @@ if (statusParecer) {
                 </small>
 
                 <strong>
-                    ${escaparHTMLDetalhes(matricula)}
+                    ${escaparHTMLDetalhes(
+                        matricula
+                    )}
                 </strong>
 
             </div>
@@ -2925,7 +3034,9 @@ if (statusParecer) {
                 </small>
 
                 <strong>
-                    ${escaparHTMLDetalhes(periodo)}
+                    ${escaparHTMLDetalhes(
+                        periodo
+                    )}
                 </strong>
 
             </div>
@@ -3007,7 +3118,7 @@ if (statusParecer) {
 
 
         // =============================================
-        // CONTADOR
+        // CONTADOR DE AVALIAÇÕES
         // =============================================
 
         if (contador) {
@@ -3018,13 +3129,25 @@ if (statusParecer) {
 
             contador.textContent =
                 quantidade === 1
+
                     ? "1 avaliação"
+
                     : `${quantidade} avaliações`;
+
         }
 
 
         // =============================================
-        // TABELA SEMANAL
+        // CRITÉRIOS
+        // =============================================
+
+        atualizarCriteriosDetalhes(
+            listaAvaliacoes
+        );
+
+
+        // =============================================
+        // SEM AVALIAÇÕES
         // =============================================
 
         if (
@@ -3032,103 +3155,124 @@ if (statusParecer) {
         ) {
 
             tbody.innerHTML = `
+
                 <tr>
 
                     <td colspan="4">
+
                         Nenhuma avaliação encontrada
                         para esta competência.
+
                     </td>
 
                 </tr>
+
             `;
 
+
             return;
+
         }
 
+
+        // =============================================
+        // TABELA SEMANAL
+        // =============================================
 
         tbody.innerHTML =
             listaAvaliacoes
 
-                .map(avaliacao => {
+                .map(
+                    avaliacao => {
 
-                    const nota =
-                        Number(
-                            avaliacao.nota_final
-                            || 0
-                        );
-
-
-                    const classe =
-                        avaliacao.classificacao
-                        ||
-                        obterClassificacaoRelatorio(
-                            nota
-                        );
+                        const nota =
+                            Number(
+                                avaliacao.nota_final
+                                || 0
+                            );
 
 
-                    const data =
-                        avaliacao.created_at
-                        ||
-                        avaliacao.periodo_fim
-                        ||
-                        avaliacao.competencia;
+                        const classe =
+                            avaliacao.classificacao
+                            ||
+                            obterClassificacaoRelatorio(
+                                nota
+                            );
 
 
-                    return `
-
-                        <tr>
-
-                            <td>
-                                Semana
-                                ${avaliacao.semana || "-"}
-                            </td>
+                        const data =
+                            avaliacao.created_at
+                            ||
+                            avaliacao.periodo_fim
+                            ||
+                            avaliacao.competencia;
 
 
-                            <td>
+                        return `
 
-                                <strong
-                                    class="ranking-table-score"
-                                >
-                                    ${nota.toFixed(1)}
-                                </strong>
+                            <tr>
 
-                            </td>
+                                <td>
+
+                                    Semana
+                                    ${
+                                        avaliacao.semana
+                                        || "-"
+                                    }
+
+                                </td>
 
 
-                            <td>
+                                <td>
 
-                                <span
-                                    class="
-                                        ${classeRelatorio(
+                                    <strong
+                                        class="ranking-table-score"
+                                    >
+                                        ${nota.toFixed(1)}
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span
+                                        class="
+                                            ${classeRelatorio(
+                                                classe
+                                            )}
+                                        "
+                                    >
+
+                                        ${escaparHTMLDetalhes(
                                             classe
                                         )}
-                                    "
-                                >
-                                    ${escaparHTMLDetalhes(
-                                        classe
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    ${formatarDataRelatorio(
+                                        data
                                     )}
-                                </span>
 
-                            </td>
+                                </td>
 
+                            </tr>
 
-                            <td>
-                                ${formatarDataRelatorio(
-                                    data
-                                )}
-                            </td>
+                        `;
 
-                        </tr>
-
-                    `;
-
-                })
+                    }
+                )
 
                 .join("");
 
 
         console.log(
-            "Detalhes do fechamento carregados:",
+            "Relatório individual carregado:",
             {
                 fechamento,
                 avaliacoes:
@@ -3137,6 +3281,7 @@ if (statusParecer) {
         );
 
     }
+
 
     catch (erro) {
 
@@ -3147,33 +3292,422 @@ if (statusParecer) {
 
 
         resumo.innerHTML = `
+
             <div class="detalhe-resumo-card">
-                <small>Erro</small>
+
+                <small>
+                    Erro
+                </small>
+
                 <strong>
                     Não foi possível carregar os detalhes.
                 </strong>
+
             </div>
+
         `;
 
 
         tbody.innerHTML = `
+
             <tr>
 
                 <td colspan="4">
+
                     Não foi possível carregar
                     as avaliações.
+
                 </td>
 
             </tr>
+
         `;
 
 
         if (contador) {
+
             contador.textContent =
                 "0 avaliações";
+
         }
 
+
+        limparCriteriosDetalhes();
+
     }
+
+}
+
+
+// =====================================================
+// CRITÉRIOS DO RELATÓRIO INDIVIDUAL
+// =====================================================
+
+function atualizarCriteriosDetalhes(
+    avaliacoes
+) {
+
+    const criterios = [
+
+        {
+            campo:
+                "produtividade",
+
+            nome:
+                "Produtividade",
+
+            elemento:
+                "detalhesCriterioProdutividade",
+
+            maximo:
+                15
+        },
+
+
+        {
+            campo:
+                "prazo",
+
+            nome:
+                "Prazo",
+
+            elemento:
+                "detalhesCriterioPrazo",
+
+            maximo:
+                10
+        },
+
+
+        {
+            campo:
+                "qualidade",
+
+            nome:
+                "Qualidade",
+
+            elemento:
+                "detalhesCriterioQualidade",
+
+            maximo:
+                15
+        },
+
+
+        {
+            campo:
+                "conhecimento_tecnico",
+
+            nome:
+                "Conhecimento técnico",
+
+            elemento:
+                "detalhesCriterioConhecimento",
+
+            maximo:
+                15
+        },
+
+
+        {
+            campo:
+                "proatividade",
+
+            nome:
+                "Proatividade",
+
+            elemento:
+                "detalhesCriterioProatividade",
+
+            maximo:
+                10
+        },
+
+
+        {
+            campo:
+                "trabalho_equipe",
+
+            nome:
+                "Trabalho em equipe",
+
+            elemento:
+                "detalhesCriterioTrabalhoEquipe",
+
+            maximo:
+                15
+        },
+
+
+        {
+            campo:
+                "adaptabilidade",
+
+            nome:
+                "Adaptabilidade",
+
+            elemento:
+                "detalhesCriterioAdaptabilidade",
+
+            maximo:
+                10
+        },
+
+
+        {
+            campo:
+                "responsabilidade",
+
+            nome:
+                "Responsabilidade",
+
+            elemento:
+                "detalhesCriterioResponsabilidade",
+
+            maximo:
+                10
+        }
+
+    ];
+
+
+    if (
+        !Array.isArray(
+            avaliacoes
+        )
+        ||
+        avaliacoes.length === 0
+    ) {
+
+        limparCriteriosDetalhes();
+
+        return;
+
+    }
+
+
+    const resultados =
+        criterios.map(
+            criterio => {
+
+                const valores =
+                    avaliacoes
+
+                        .map(
+                            avaliacao =>
+                                Number(
+                                    avaliacao[
+                                        criterio.campo
+                                    ]
+                                )
+                        )
+
+                        .filter(
+                            valor =>
+                                Number.isFinite(
+                                    valor
+                                )
+                        );
+
+
+                const mediaPontos =
+                    valores.length > 0
+
+                        ? valores.reduce(
+                            (
+                                total,
+                                valor
+                            ) =>
+                                total
+                                +
+                                valor,
+                            0
+                        )
+                        /
+                        valores.length
+
+                        : 0;
+
+
+                const percentual =
+                    criterio.maximo > 0
+
+                        ? (
+                            mediaPontos
+                            /
+                            criterio.maximo
+                        )
+                        *
+                        100
+
+                        : 0;
+
+
+                const percentualLimitado =
+                    Math.max(
+                        0,
+                        Math.min(
+                            100,
+                            percentual
+                        )
+                    );
+
+
+                const elemento =
+                    document.getElementById(
+                        criterio.elemento
+                    );
+
+
+                if (elemento) {
+
+                    elemento.textContent =
+                        `${percentualLimitado.toFixed(1)}%`;
+
+                }
+
+
+                return {
+
+                    nome:
+                        criterio.nome,
+
+                    percentual:
+                        percentualLimitado
+
+                };
+
+            }
+        );
+
+
+    // =============================================
+    // PONTO FORTE
+    // =============================================
+
+    const ordenados =
+        [...resultados].sort(
+            (
+                a,
+                b
+            ) =>
+                b.percentual
+                -
+                a.percentual
+        );
+
+
+    const pontoForte =
+        ordenados[0];
+
+
+    const pontoAtencao =
+        ordenados[
+            ordenados.length - 1
+        ];
+
+
+    definirTextoRelatorio(
+        "detalhesPontoForte",
+        pontoForte?.nome
+        || "-"
+    );
+
+
+    definirTextoRelatorio(
+        "detalhesPontoForteNota",
+        pontoForte
+
+            ? `${pontoForte.percentual.toFixed(1)}%`
+
+            : "0.0%"
+    );
+
+
+    // =============================================
+    // PONTO DE ATENÇÃO
+    // =============================================
+
+    definirTextoRelatorio(
+        "detalhesPontoAtencao",
+        pontoAtencao?.nome
+        || "-"
+    );
+
+
+    definirTextoRelatorio(
+        "detalhesPontoAtencaoNota",
+        pontoAtencao
+
+            ? `${pontoAtencao.percentual.toFixed(1)}%`
+
+            : "0.0%"
+    );
+
+}
+
+
+// =====================================================
+// LIMPA CRITÉRIOS
+// =====================================================
+
+function limparCriteriosDetalhes() {
+
+    const ids = [
+
+        "detalhesCriterioProdutividade",
+
+        "detalhesCriterioPrazo",
+
+        "detalhesCriterioQualidade",
+
+        "detalhesCriterioConhecimento",
+
+        "detalhesCriterioProatividade",
+
+        "detalhesCriterioTrabalhoEquipe",
+
+        "detalhesCriterioAdaptabilidade",
+
+        "detalhesCriterioResponsabilidade"
+
+    ];
+
+
+    ids.forEach(
+        id => {
+
+            definirTextoRelatorio(
+                id,
+                "0.0%"
+            );
+
+        }
+    );
+
+
+    definirTextoRelatorio(
+        "detalhesPontoForte",
+        "-"
+    );
+
+
+    definirTextoRelatorio(
+        "detalhesPontoForteNota",
+        "0.0%"
+    );
+
+
+    definirTextoRelatorio(
+        "detalhesPontoAtencao",
+        "-"
+    );
+
+
+    definirTextoRelatorio(
+        "detalhesPontoAtencaoNota",
+        "0.0%"
+    );
 
 }
 
@@ -3195,13 +3729,14 @@ function fecharModalDetalhes() {
         modal.classList.remove(
             "active"
         );
+
     }
 
 }
 
 
 // =====================================================
-// FORMATA DATA E HORA DO FECHAMENTO
+// FORMATA DATA E HORA
 // =====================================================
 
 function formatarDataHoraFechamento(
@@ -3209,7 +3744,9 @@ function formatarDataHoraFechamento(
 ) {
 
     if (!dataISO) {
+
         return "-";
+
     }
 
 
@@ -3226,12 +3763,14 @@ function formatarDataHoraFechamento(
     ) {
 
         return "-";
+
     }
 
 
     return data.toLocaleString(
         "pt-BR",
         {
+
             day:
                 "2-digit",
 
@@ -3246,6 +3785,7 @@ function formatarDataHoraFechamento(
 
             minute:
                 "2-digit"
+
         }
     );
 
@@ -3253,7 +3793,7 @@ function formatarDataHoraFechamento(
 
 
 // =====================================================
-// PROTEGE TEXTO USADO NO HTML
+// PROTEÇÃO DE HTML
 // =====================================================
 
 function escaparHTMLDetalhes(
@@ -3290,8 +3830,10 @@ function escaparHTMLDetalhes(
         );
 
 }
+
+
 // =====================================================
-// CONFIGURA PARECER FINAL DO GESTOR
+// CONFIGURA PARECER + IMPRESSÃO
 // =====================================================
 
 function configurarParecerGestor() {
@@ -3301,10 +3843,12 @@ function configurarParecerGestor() {
             "btnSalvarParecer"
         );
 
+
     const campoParecer =
         document.getElementById(
             "detalhesParecerFinal"
         );
+
 
     const contador =
         document.getElementById(
@@ -3312,7 +3856,21 @@ function configurarParecerGestor() {
         );
 
 
-    if (campoParecer && contador) {
+    const botaoImprimir =
+        document.getElementById(
+            "btnImprimirFechamento"
+        );
+
+
+    // =============================================
+    // CONTADOR DO PARECER
+    // =============================================
+
+    if (
+        campoParecer
+        &&
+        contador
+    ) {
 
         campoParecer.addEventListener(
             "input",
@@ -3320,10 +3878,16 @@ function configurarParecerGestor() {
 
                 contador.textContent =
                     campoParecer.value.length;
+
             }
         );
+
     }
 
+
+    // =============================================
+    // SALVAR PARECER
+    // =============================================
 
     if (botao) {
 
@@ -3331,13 +3895,28 @@ function configurarParecerGestor() {
             "click",
             salvarParecerGestor
         );
+
+    }
+
+
+    // =============================================
+    // IMPRIMIR
+    // =============================================
+
+    if (botaoImprimir) {
+
+        botaoImprimir.addEventListener(
+            "click",
+            imprimirFechamentoIndividual
+        );
+
     }
 
 }
 
 
 // =====================================================
-// SALVA PARECER FINAL
+// SALVA PARECER FINAL DO GESTOR
 // =====================================================
 
 async function salvarParecerGestor() {
@@ -3349,6 +3928,7 @@ async function salvarParecerGestor() {
         );
 
         return;
+
     }
 
 
@@ -3357,15 +3937,18 @@ async function salvarParecerGestor() {
             "detalhesNotaGestor"
         );
 
+
     const campoParecer =
         document.getElementById(
             "detalhesParecerFinal"
         );
 
+
     const botao =
         document.getElementById(
             "btnSalvarParecer"
         );
+
 
     const status =
         document.getElementById(
@@ -3382,6 +3965,10 @@ async function salvarParecerGestor() {
         null;
 
 
+    // =============================================
+    // VALIDA NOTA
+    // =============================================
+
     if (
         campoNota
         &&
@@ -3395,7 +3982,9 @@ async function salvarParecerGestor() {
 
 
         if (
-            Number.isNaN(notaGestor)
+            Number.isNaN(
+                notaGestor
+            )
             ||
             notaGestor < 0
             ||
@@ -3407,27 +3996,42 @@ async function salvarParecerGestor() {
             );
 
             return;
+
         }
+
     }
 
 
-    if (parecer.length > 2000) {
+    // =============================================
+    // VALIDA PARECER
+    // =============================================
+
+    if (
+        parecer.length > 2000
+    ) {
 
         alert(
             "O parecer deve ter no máximo 2000 caracteres."
         );
 
         return;
+
     }
 
+
+    // =============================================
+    // BOTÃO
+    // =============================================
 
     if (botao) {
 
         botao.disabled =
             true;
 
+
         botao.textContent =
             "Salvando...";
+
     }
 
 
@@ -3435,13 +4039,15 @@ async function salvarParecerGestor() {
 
         status.textContent =
             "Salvando parecer...";
+
     }
 
 
     try {
 
         const agora =
-            new Date().toISOString();
+            new Date()
+                .toISOString();
 
 
         const {
@@ -3460,7 +4066,8 @@ async function salvarParecerGestor() {
                         notaGestor,
 
                     parecer_final:
-                        parecer || null,
+                        parecer
+                        || null,
 
                     parecer_atualizado_em:
                         agora
@@ -3483,9 +4090,15 @@ async function salvarParecerGestor() {
 
 
         if (error) {
+
             throw error;
+
         }
 
+
+        // =============================================
+        // ATUALIZA CACHE LOCAL
+        // =============================================
 
         const fechamento =
             fechamentoMensalBase.find(
@@ -3503,11 +4116,14 @@ async function salvarParecerGestor() {
             fechamento.nota_gestor =
                 data.nota_gestor;
 
+
             fechamento.parecer_final =
                 data.parecer_final;
 
+
             fechamento.parecer_atualizado_em =
                 data.parecer_atualizado_em;
+
         }
 
 
@@ -3519,6 +4135,7 @@ async function salvarParecerGestor() {
                         data.parecer_atualizado_em
                     )
                 }`;
+
         }
 
 
@@ -3528,6 +4145,7 @@ async function salvarParecerGestor() {
         );
 
     }
+
 
     catch (erro) {
 
@@ -3541,6 +4159,7 @@ async function salvarParecerGestor() {
 
             status.textContent =
                 "Erro ao salvar parecer.";
+
         }
 
 
@@ -3550,6 +4169,7 @@ async function salvarParecerGestor() {
 
     }
 
+
     finally {
 
         if (botao) {
@@ -3557,12 +4177,164 @@ async function salvarParecerGestor() {
             botao.disabled =
                 false;
 
+
             botao.textContent =
                 "Salvar parecer";
+
         }
+
     }
 
 }
+
+
+// =====================================================
+// IMPRIME SOMENTE O RELATÓRIO INDIVIDUAL
+// =====================================================
+
+function imprimirFechamentoIndividual() {
+
+    const modal =
+        document.getElementById(
+            "modalDetalhesFechamento"
+        );
+
+
+    if (!modal) {
+
+        return;
+
+    }
+
+
+    // =============================================
+    // CRIA CSS TEMPORÁRIO DE IMPRESSÃO
+    // =============================================
+
+    const style =
+        document.createElement(
+            "style"
+        );
+
+
+    style.id =
+        "cssImpressaoFechamento";
+
+
+    style.textContent = `
+
+        @media print {
+
+            body * {
+                visibility: hidden !important;
+            }
+
+            #modalDetalhesFechamento,
+            #modalDetalhesFechamento * {
+                visibility: visible !important;
+            }
+
+            #modalDetalhesFechamento {
+                position: absolute !important;
+                inset: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
+                background: #ffffff !important;
+            }
+
+            .fechamento-modal {
+                position: static !important;
+                width: 100% !important;
+                max-width: none !important;
+                height: auto !important;
+                max-height: none !important;
+                overflow: visible !important;
+                background: #ffffff !important;
+                color: #111827 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+
+            .fechamento-modal * {
+                color: #111827 !important;
+            }
+
+            .fechamento-modal-close,
+            .fechamento-modal-footer,
+            #btnSalvarParecer,
+            .parecer-contador,
+            #parecerStatusSalvo {
+                display: none !important;
+            }
+
+            .fechamento-modal-section,
+            .parecer-gestor-section,
+            .detalhe-resumo-card,
+            .fechamento-criterio-card,
+            .fechamento-destaque {
+                break-inside: avoid;
+            }
+
+            input,
+            textarea {
+                border: 1px solid #d1d5db !important;
+                background: #ffffff !important;
+                color: #111827 !important;
+            }
+
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+
+            th,
+            td {
+                border-bottom: 1px solid #d1d5db !important;
+            }
+
+        }
+
+    `;
+
+
+    document.head.appendChild(
+        style
+    );
+
+
+    // =============================================
+    // IMPRIME
+    // =============================================
+
+    window.print();
+
+
+    // =============================================
+    // REMOVE CSS TEMPORÁRIO
+    // =============================================
+
+    setTimeout(
+        () => {
+
+            const estilo =
+                document.getElementById(
+                    "cssImpressaoFechamento"
+                );
+
+
+            if (estilo) {
+
+                estilo.remove();
+
+            }
+
+        },
+        500
+    );
+
+}
+
 // =====================================================
 // RESUMO INDIVIDUAL DO COLABORADOR
 // =====================================================
