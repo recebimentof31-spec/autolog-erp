@@ -1101,83 +1101,158 @@ let rankingMensalBase = [];
 // CONFIGURA ABAS DO RANKING
 // =====================================================
 
+// =====================================================
+// CONFIGURA ABAS DO RANKING
+// =====================================================
+
+// =====================================================
+// CONFIGURA ABAS DO RANKING
+// =====================================================
+
+// =====================================================
+// CONFIGURA ABAS DO RANKING
+// =====================================================
+
 function configurarAbasRanking() {
 
-    const botoes =
-        document.querySelectorAll(
-            ".ranking-tabs .relatorio-tab"
+    const botaoDesempenho =
+        document.getElementById(
+            "tabRankingDesempenho"
         );
 
-    const paineis =
-        document.querySelectorAll(
-            ".relatorio-tab-panel"
+    const botaoMensal =
+        document.getElementById(
+            "tabRankingMensal"
+        );
+
+    const painelDesempenho =
+        document.getElementById(
+            "painelRankingDesempenho"
+        );
+
+    const painelMensal =
+        document.getElementById(
+            "painelRankingMensal"
         );
 
 
-    botoes.forEach(botao => {
+    if (
+        !botaoDesempenho ||
+        !botaoMensal ||
+        !painelDesempenho ||
+        !painelMensal
+    ) {
 
-        botao.addEventListener(
-            "click",
-            async () => {
-
-                const alvo =
-                    botao.dataset.target;
-
-
-                botoes.forEach(item => {
-
-                    item.classList.remove(
-                        "active"
-                    );
-
-                });
-
-
-                paineis.forEach(painel => {
-
-                    painel.classList.remove(
-                        "active"
-                    );
-
-                });
-
-
-                botao.classList.add(
-                    "active"
-                );
-
-
-                const painelAlvo =
-                    document.getElementById(
-                        alvo
-                    );
-
-
-                if (painelAlvo) {
-
-                    painelAlvo.classList.add(
-                        "active"
-                    );
-
-                }
-
-
-                if (
-                    alvo ===
-                    "painelRankingMensal"
-                ) {
-
-                    await carregarRankingMensal();
-
-                }
-
+        console.error(
+            "Erro ao configurar abas do Ranking:",
+            {
+                botaoDesempenho,
+                botaoMensal,
+                painelDesempenho,
+                painelMensal
             }
         );
 
-    });
+        return;
+    }
+
+
+    // =================================================
+    // ABRE ABA DE DESEMPENHO
+    // =================================================
+
+    botaoDesempenho.onclick = () => {
+
+        botaoDesempenho.classList.add(
+            "active"
+        );
+
+        botaoMensal.classList.remove(
+            "active"
+        );
+
+
+        painelDesempenho.classList.add(
+            "active"
+        );
+
+        painelMensal.classList.remove(
+            "active"
+        );
+
+
+        painelDesempenho.style.display =
+            "block";
+
+        painelMensal.style.display =
+            "none";
+
+
+        atualizarRankingCompleto();
+
+    };
+
+
+    // =================================================
+    // ABRE ABA DE RANKING MENSAL
+    // =================================================
+
+    botaoMensal.onclick = async () => {
+
+        botaoMensal.classList.add(
+            "active"
+        );
+
+        botaoDesempenho.classList.remove(
+            "active"
+        );
+
+
+        painelMensal.classList.add(
+            "active"
+        );
+
+        painelDesempenho.classList.remove(
+            "active"
+        );
+
+
+        painelMensal.style.display =
+            "block";
+
+        painelDesempenho.style.display =
+            "none";
+
+
+        await carregarRankingMensal();
+
+    };
+
+
+    // =================================================
+    // ESTADO INICIAL
+    // =================================================
+
+    botaoDesempenho.classList.add(
+        "active"
+    );
+
+    botaoMensal.classList.remove(
+        "active"
+    );
+
+    painelDesempenho.style.display =
+        "block";
+
+    painelMensal.style.display =
+        "none";
+
+
+    console.log(
+        "Abas do Ranking configuradas com sucesso!"
+    );
 
 }
-
 
 // =====================================================
 // CONFIGURA COMPETÊNCIA DO RANKING MENSAL
