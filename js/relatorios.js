@@ -2797,71 +2797,135 @@ async function abrirDetalhesFechamento(fechamentoId) {
             avaliacoes || [];
 
 
-        // =============================================
-        // QUEM FECHOU
-        // =============================================
+       // =============================================
+// QUEM FECHOU
+// =============================================
 
-        let responsavelFechamento =
-            "Não informado";
+let responsavelFechamento =
+    "Não informado";
 
 
-        if (fechamento.fechado_por) {
+if (fechamento.fechado_por) {
 
-            const {
-                data: perfil,
-                error: erroPerfil
-            } =
-                await supabaseClient
+    const {
+        data: perfil,
+        error: erroPerfil
+    } =
+        await supabaseClient
 
-                    .from(
-                        "perfis_usuario"
+            .from("perfis_usuario")
+
+            .select(`
+                id,
+                nome_exibicao
+            `)
+
+            .eq(
+                "id",
+                fechamento.fechado_por
+            )
+
+            .maybeSingle();
+
+
+    if (
+        !erroPerfil
+        &&
+        perfil
+    ) {
+
+        const nomePerfil =
+            String(
+                perfil.nome_exibicao
+                || ""
+            ).trim();
+
+
+        // =========================================
+        // SE O NOME CADASTRADO FOR UM E-MAIL,
+        // REMOVE O DOMÍNIO E FORMATA PARA EXIBIÇÃO
+        // =========================================
+
+        if (
+            nomePerfil.includes("@")
+        ) {
+
+            const parteAntesDoEmail =
+                nomePerfil
+                    .split("@")[0]
+
+                    .replace(
+                        /[._-]+/g,
+                        " "
                     )
 
-                    .select(`
-                        id,
-                        nome_exibicao
-                    `)
-
-                    .eq(
-                        "id",
-                        fechamento.fechado_por
+                    .replace(
+                        /\d+/g,
+                        " "
                     )
 
-                    .maybeSingle();
+                    .replace(
+                        /\s+/g,
+                        " "
+                    )
+
+                    .trim();
 
 
-            if (
-                !erroPerfil
-                &&
-                perfil
-            ) {
+            responsavelFechamento =
+                parteAntesDoEmail
 
-                responsavelFechamento =
-                    perfil.nome_exibicao
-                    ||
-                    "Usuário do sistema";
+                    ? parteAntesDoEmail
+                        .split(" ")
 
-            }
+                        .filter(Boolean)
 
-            else {
+                        .map(
+                            palavra =>
+                                palavra
+                                    .charAt(0)
+                                    .toUpperCase()
+                                +
+                                palavra
+                                    .slice(1)
+                                    .toLowerCase()
+                        )
 
-                responsavelFechamento =
-                    "Usuário do sistema";
+                        .join(" ")
 
-
-                if (erroPerfil) {
-
-                    console.warn(
-                        "Não foi possível identificar o responsável:",
-                        erroPerfil
-                    );
-
-                }
-
-            }
+                    : "Usuário do sistema";
 
         }
 
+        else {
+
+            responsavelFechamento =
+                nomePerfil
+                ||
+                "Usuário do sistema";
+
+        }
+
+    }
+
+    else {
+
+        responsavelFechamento =
+            "Usuário do sistema";
+
+
+        if (erroPerfil) {
+
+            console.warn(
+                "Não foi possível identificar o responsável pelo fechamento:",
+                erroPerfil
+            );
+
+        }
+
+    }
+
+}
 
         // =============================================
         // DADOS PRINCIPAIS
@@ -4192,22 +4256,31 @@ async function salvarParecerGestor() {
 // IMPRIME RELATÓRIO INDIVIDUAL PROFISSIONAL
 // =====================================================
 
+// =====================================================
+// IMPRIME RELATÓRIO INDIVIDUAL PROFISSIONAL
+// =====================================================
+
+// =====================================================
+// IMPRIME RELATÓRIO INDIVIDUAL PROFISSIONAL
+// =====================================================
+
+// =====================================================
+// IMPRIME RELATÓRIO INDIVIDUAL PROFISSIONAL
+// =====================================================
+
+// =====================================================
+// IMPRIME RELATÓRIO INDIVIDUAL PROFISSIONAL
+// =====================================================
+
 function imprimirFechamentoIndividual() {
 
-    const modal =
-        document.querySelector(
-            "#modalDetalhesFechamento .fechamento-modal"
-        );
-
+    const modal = document.querySelector(
+        "#modalDetalhesFechamento .fechamento-modal"
+    );
 
     if (!modal) {
-
-        alert(
-            "Não foi possível localizar o relatório para impressão."
-        );
-
+        alert("Não foi possível localizar o relatório para impressão.");
         return;
-
     }
 
 
@@ -4215,95 +4288,62 @@ function imprimirFechamentoIndividual() {
     // CLONA O RELATÓRIO
     // =================================================
 
-    const clone =
-        modal.cloneNode(
-            true
-        );
+    const clone = modal.cloneNode(true);
 
 
     // =================================================
-    // REMOVE BOTÕES / CONTROLES
+    // REMOVE CONTROLES
     // =================================================
 
     clone
-        .querySelectorAll(
-            `
-                .fechamento-modal-close,
-                .fechamento-modal-footer,
-                #btnSalvarParecer,
-                .parecer-contador,
-                #parecerStatusSalvo
-            `
-        )
-        .forEach(
-            elemento => {
-
-                elemento.remove();
-
-            }
-        );
+        .querySelectorAll(`
+            .fechamento-modal-close,
+            .fechamento-modal-footer,
+            #btnSalvarParecer,
+            .btn-salvar-parecer,
+            .parecer-contador,
+            #parecerStatusSalvo
+        `)
+        .forEach(elemento => elemento.remove());
 
 
     // =================================================
-    // CONVERTE NOTA DO GESTOR EM TEXTO
+    // NOTA DO GESTOR
     // =================================================
 
     const notaOriginal =
-        document.getElementById(
-            "detalhesNotaGestor"
-        );
-
+        document.getElementById("detalhesNotaGestor");
 
     const notaClone =
-        clone.querySelector(
-            "#detalhesNotaGestor"
-        );
-
+        clone.querySelector("#detalhesNotaGestor");
 
     if (notaClone) {
 
         const valorNota =
-            notaOriginal?.value
-            ||
-            "-";
-
+            String(notaOriginal?.value || "-").trim();
 
         const textoNota =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
 
         textoNota.className =
             "print-valor-campo";
 
-
         textoNota.textContent =
             valorNota;
 
-
-        notaClone.replaceWith(
-            textoNota
-        );
-
+        notaClone.replaceWith(textoNota);
     }
 
 
     // =================================================
-    // CONVERTE PARECER EM TEXTO
+    // PARECER
     // =================================================
 
     const parecerOriginal =
-        document.getElementById(
-            "detalhesParecerFinal"
-        );
-
+        document.getElementById("detalhesParecerFinal");
 
     const parecerClone =
-        clone.querySelector(
-            "#detalhesParecerFinal"
-        );
-
+        clone.querySelector("#detalhesParecerFinal");
 
     if (parecerClone) {
 
@@ -4312,27 +4352,773 @@ function imprimirFechamentoIndividual() {
             ||
             "Nenhum parecer registrado.";
 
-
         const textoParecer =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
 
         textoParecer.className =
             "print-parecer-texto";
 
-
         textoParecer.textContent =
             valorParecer;
 
-
-        parecerClone.replaceWith(
-            textoParecer
-        );
-
+        parecerClone.replaceWith(textoParecer);
     }
 
+
+    // =================================================
+    // JANELA EXCLUSIVA
+    // =================================================
+
+    const janela = window.open(
+        "",
+        "_blank",
+        "width=1200,height=950"
+    );
+
+    if (!janela) {
+        alert(
+            "O navegador bloqueou a janela de impressão. Permita pop-ups para este site."
+        );
+        return;
+    }
+
+
+    // =================================================
+    // HTML DA IMPRESSÃO
+    // =================================================
+
+    janela.document.open();
+
+    janela.document.write(`
+
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Relatório Individual</title>
+
+<style>
+
+/* =====================================================
+   CONFIGURAÇÃO A4
+===================================================== */
+
+@page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+
+    background: #ffffff;
+    color: #172033;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+body {
+    font-size: 11px;
+}
+
+.relatorio-print {
+    width: 100%;
+    max-width: 190mm;
+
+    margin: 0 auto;
+}
+
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.fechamento-modal {
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    background: #ffffff;
+    color: #172033;
+
+    border: 0;
+    border-radius: 0;
+
+    box-shadow: none;
+
+    overflow: visible;
+}
+
+
+/* =====================================================
+   CABEÇALHO
+===================================================== */
+
+.fechamento-modal-header {
+    display: grid;
+
+    grid-template-columns:
+        54px
+        1fr;
+
+    align-items: center;
+
+    column-gap: 15px;
+
+    min-height: 70px;
+
+    margin-bottom: 18px;
+
+    padding:
+        0
+        0
+        15px;
+
+    border-bottom:
+        3px solid #ff7417;
+}
+
+.fechamento-modal-header::before {
+    content: "GD";
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 50px;
+    height: 50px;
+
+    grid-row: 1 / 4;
+
+    border-radius: 10px;
+
+    background: #ff7417;
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.fechamento-modal-header > div {
+    grid-column: 2;
+}
+
+.fechamento-modal-header h2 {
+    margin: 4px 0;
+
+    color: #111827;
+
+    font-size: 27px;
+    line-height: 1.05;
+}
+
+.fechamento-modal-header p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 9px;
+}
+
+.v2-label,
+.detalhes-label-destaque {
+    color: #e8610a;
+
+    font-size: 8px;
+    font-weight: 800;
+
+    letter-spacing: 0.07em;
+
+    text-transform: uppercase;
+}
+
+
+/* =====================================================
+   SEÇÕES
+===================================================== */
+
+.fechamento-modal-section,
+.parecer-gestor-section {
+    margin:
+        0
+        0
+        17px;
+
+    padding:
+        0
+        0
+        15px;
+
+    border-bottom:
+        1px solid #d9dee5;
+
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.fechamento-modal-section-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: flex-start;
+
+    gap: 15px;
+
+    margin-bottom: 11px;
+}
+
+.fechamento-modal-section-header h3,
+.parecer-gestor-header h3 {
+    margin: 4px 0;
+
+    color: #172033;
+
+    font-size: 16px;
+}
+
+.fechamento-modal-section-header p,
+.parecer-gestor-header p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 8px;
+    line-height: 1.35;
+}
+
+.fechamento-modal-count {
+    display: inline-flex;
+
+    align-items: center;
+
+    min-height: 28px;
+
+    padding: 0 11px;
+
+    border:
+        1px solid #d4d9df;
+
+    border-radius: 999px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   RESUMO
+===================================================== */
+
+#fechamentoDetalhesResumo,
+.fechamento-detalhes-resumo-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 8px;
+}
+
+.detalhe-resumo-card {
+    min-height: 77px;
+
+    padding: 11px;
+
+    background: #f8fafc;
+
+    border:
+        1px solid #dce2e8;
+
+    border-radius: 7px;
+
+    break-inside: avoid;
+}
+
+.detalhe-resumo-card small {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #64748b;
+
+    font-size: 7px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.detalhe-resumo-card strong {
+    display: block;
+
+    color: #172033;
+
+    font-size: 10px;
+    line-height: 1.3;
+
+    word-break: break-word;
+}
+
+.detalhe-resumo-card .detalhe-destaque {
+    color: #e8610a;
+
+    font-size: 18px;
+}
+
+
+/* =====================================================
+   TABELA
+===================================================== */
+
+.fechamento-modal-table-wrapper {
+    overflow: hidden;
+
+    border:
+        1px solid #d9dee5;
+
+    border-radius: 7px;
+}
+
+.fechamento-modal-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: #ffffff;
+}
+
+.fechamento-modal-table th {
+    padding: 9px 10px;
+
+    background: #f2f4f6;
+
+    border-bottom:
+        1px solid #d9dee5;
+
+    color: #475569;
+
+    font-size: 7px;
+    font-weight: 800;
+
+    text-align: left;
+
+    text-transform: uppercase;
+}
+
+.fechamento-modal-table td {
+    padding: 10px;
+
+    border-bottom:
+        1px solid #e5e8ec;
+
+    color: #172033;
+
+    font-size: 9px;
+}
+
+.fechamento-modal-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.ranking-table-score {
+    color: #e8610a;
+
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.ranking-status {
+    display: inline-block;
+
+    padding:
+        3px
+        7px;
+
+    border:
+        1px solid #d9dee5;
+
+    border-radius: 999px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    font-size: 6px;
+    font-weight: 800;
+}
+
+
+/* =====================================================
+   CRITÉRIOS
+===================================================== */
+
+.fechamento-criterios-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 8px;
+}
+
+.fechamento-criterio-card {
+    position: relative;
+
+    min-height: 84px;
+
+    padding: 11px;
+
+    overflow: hidden;
+
+    background: #f8fafc;
+
+    border:
+        1px solid #dce2e8;
+
+    border-radius: 7px;
+
+    break-inside: avoid;
+}
+
+.fechamento-criterio-card::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 3px;
+
+    background: #ff7417;
+}
+
+.fechamento-criterio-card > span {
+    display: block;
+
+    color: #64748b;
+
+    font-size: 7px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.fechamento-criterio-card > strong {
+    display: block;
+
+    margin-top: 8px;
+
+    color: #172033;
+
+    font-size: 17px;
+}
+
+.fechamento-criterio-card > small {
+    display: block;
+
+    margin-top: 8px;
+
+    color: #89929d;
+
+    font-size: 6px;
+}
+
+
+/* =====================================================
+   DESTAQUES
+===================================================== */
+
+.fechamento-criterios-destaques {
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap: 8px;
+
+    margin-top: 9px;
+}
+
+.fechamento-destaque {
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        auto;
+
+    align-items: center;
+
+    gap:
+        6px
+        15px;
+
+    min-height: 65px;
+
+    padding: 11px;
+
+    background: #f8fafc;
+
+    border:
+        1px solid #dce2e8;
+
+    border-radius: 7px;
+
+    break-inside: avoid;
+}
+
+.fechamento-destaque > span {
+    grid-column: 1 / -1;
+
+    color: #64748b;
+
+    font-size: 7px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.fechamento-destaque > strong {
+    color: #172033;
+
+    font-size: 10px;
+}
+
+.fechamento-destaque > small {
+    color: #e8610a;
+
+    font-size: 17px;
+    font-weight: 900;
+}
+
+
+/* =====================================================
+   PARECER FINAL
+===================================================== */
+
+.parecer-gestor-section {
+    display: block !important;
+    visibility: visible !important;
+
+    margin-top: 12px;
+}
+
+.parecer-gestor-header {
+    margin-bottom: 10px;
+}
+
+.parecer-gestor-grid {
+    display: grid;
+
+    grid-template-columns:
+        130px
+        minmax(0, 1fr);
+
+    gap: 9px;
+}
+
+.parecer-nota-box,
+.parecer-texto-box {
+    padding: 11px;
+
+    background: #f8fafc;
+
+    border:
+        1px solid #dce2e8;
+
+    border-radius: 7px;
+
+    break-inside: avoid;
+}
+
+.parecer-nota-box label,
+.parecer-texto-box label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #475569;
+
+    font-size: 7px;
+    font-weight: 800;
+}
+
+.print-valor-campo {
+    min-height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 9px;
+
+    background: #ffffff;
+
+    border:
+        1px solid #cfd6dd;
+
+    border-radius: 5px;
+
+    color: #172033;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.print-parecer-texto {
+    min-height: 115px;
+
+    padding: 11px;
+
+    background: #ffffff;
+
+    border:
+        1px solid #cfd6dd;
+
+    border-radius: 5px;
+
+    color: #172033;
+
+    font-size: 9px;
+    line-height: 1.5;
+
+    white-space: pre-wrap;
+}
+
+.parecer-nota-box small {
+    display: block;
+
+    margin-top: 7px;
+
+    color: #89929d;
+
+    font-size: 6px;
+}
+
+
+/* =====================================================
+   ESCONDE CONTROLES
+===================================================== */
+
+.fechamento-modal-close,
+.fechamento-modal-footer,
+.btn-salvar-parecer,
+#btnSalvarParecer,
+.parecer-contador,
+#parecerStatusSalvo {
+    display: none !important;
+}
+
+
+/* =====================================================
+   IMPRESSÃO
+===================================================== */
+
+@media print {
+
+    html,
+    body {
+        width: 100%;
+    }
+
+    .relatorio-print {
+        width: 100%;
+        max-width: 190mm;
+
+        margin: 0 auto;
+
+        /* sem transform e sem zoom */
+    }
+
+    .fechamento-modal-section,
+    .parecer-gestor-section,
+    .detalhe-resumo-card,
+    .fechamento-criterio-card,
+    .fechamento-destaque,
+    .parecer-nota-box,
+    .parecer-texto-box,
+    .fechamento-modal-table,
+    .fechamento-modal-table tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="relatorio-print">
+
+    ${clone.outerHTML}
+
+</div>
+
+</body>
+
+</html>
+
+    `);
+
+    janela.document.close();
+
+
+    // =================================================
+    // IMPRIME
+    // =================================================
+
+    janela.onload = () => {
+
+        setTimeout(
+            () => {
+
+                janela.focus();
+
+                janela.print();
+
+            },
+            350
+        );
+
+    };
+
+}
 
     // =================================================
     // ABRE JANELA EXCLUSIVA DE IMPRESSÃO
@@ -5349,7 +6135,6 @@ function imprimirFechamentoIndividual() {
 
         };
 
-}
 
 // =====================================================
 // RESUMO INDIVIDUAL DO COLABORADOR
