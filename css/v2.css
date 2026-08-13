@@ -5218,3 +5218,99 @@ body.app-v2 {
     }
 
 }
+
+/* =====================================================
+   RANKING - ABAS E NOVA AVALIAÇÃO
+===================================================== */
+
+.ranking-tabs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.ranking-tabs .relatorio-tab,
+.ranking-tabs .ranking-tab-link {
+    min-height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 20px;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.ranking-tabs .ranking-tab-link {
+    background: #ff7417;
+    border: 1px solid #ff7417;
+    color: #080b0e;
+}
+
+.ranking-tabs .ranking-tab-link:hover {
+    filter: brightness(1.08);
+}
+/* =====================================================
+   RANKING - BARRA DE AÇÕES
+===================================================== */
+
+.ranking-actions-bar {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+
+    margin: 0 0 18px !important;
+    padding: 0 !important;
+}
+
+.ranking-action-btn {
+    min-height: 44px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 22px !important;
+
+    border-radius: 9px !important;
+
+    font-size: 13px !important;
+    font-weight: 800 !important;
+
+    text-decoration: none !important;
+
+    cursor: pointer !important;
+
+    white-space: nowrap !important;
+}
+
+.ranking-action-primary {
+    background: #ff7417 !important;
+    border: 1px solid #ff7417 !important;
+    color: #090b0e !important;
+}
+
+.ranking-tab-btn {
+    background: #11151a !important;
+    border: 1px solid #303943 !important;
+    color: #95a3b4 !important;
+}
+
+.ranking-tab-btn.active {
+    background: #ff7417 !important;
+    border-color: #ff7417 !important;
+    color: #090b0e !important;
+}
+
+.ranking-action-btn:hover {
+    filter: brightness(1.08);
+}
