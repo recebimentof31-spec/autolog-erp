@@ -94,6 +94,7 @@ async function carregarMeuPerfil() {
                     nome_exibicao,
                     papel,
                     ativo,
+                    avatar_url,
                     created_at
                 `)
 
@@ -244,8 +245,9 @@ function preencherPerfil(
     );
 
 
-    atualizarAvatarIniciais(
-        nome
+    atualizarAvatarPerfil(
+    perfil.avatar_url,
+    nome
     );
 
 }
@@ -279,27 +281,59 @@ function configurarEventosPerfil() {
         );
 
 
-    if (botaoAvatar) {
+const botaoAvatar =
+    document.getElementById(
+        "btnAlterarAvatar"
+    );
 
-        botaoAvatar.addEventListener(
-            "click",
-            () => {
+const inputAvatar =
+    document.getElementById(
+        "inputAvatar"
+    );
 
-                alert(
-                    "A alteração de foto será habilitada na próxima etapa."
-                );
+if (
+    botaoAvatar &&
+    inputAvatar
+) {
 
+    botaoAvatar.addEventListener(
+        "click",
+        () => {
+
+            inputAvatar.click();
+
+        }
+    );
+
+
+    inputAvatar.addEventListener(
+        "change",
+        async () => {
+
+            const arquivo =
+                inputAvatar.files?.[0];
+
+            if (!arquivo) {
+                return;
             }
-        );
 
-    }
+            await enviarAvatar(
+                arquivo
+            );
+
+            inputAvatar.value =
+                "";
+
+        }
+    );
 
 }
-
 
 // =====================================================
 // SALVA PERFIL
 // =====================================================
+
+}
 
 async function salvarMeuPerfil() {
 
@@ -419,6 +453,7 @@ async function salvarMeuPerfil() {
                     nome_exibicao,
                     papel,
                     ativo,
+                    avatar_url,
                     created_at
                 `)
 
@@ -509,7 +544,8 @@ async function salvarMeuPerfil() {
 // AVATAR COM INICIAIS
 // =====================================================
 
-function atualizarAvatarIniciais(
+function atualizarAvatarPerfil(
+    avatarUrl,
     nome
 ) {
 
@@ -518,25 +554,57 @@ function atualizarAvatarIniciais(
             "perfilAvatar"
         );
 
-
     if (!avatar) {
         return;
     }
 
+    // Limpa conteúdo anterior
+    avatar.innerHTML = "";
 
+    // Se existe foto, mostra a imagem
+    if (avatarUrl) {
+
+        const imagem =
+            document.createElement(
+                "img"
+            );
+
+        imagem.src =
+            avatarUrl;
+
+        imagem.alt =
+            "Foto de perfil";
+
+        imagem.style.width =
+            "100%";
+
+        imagem.style.height =
+            "100%";
+
+        imagem.style.objectFit =
+            "cover";
+
+        imagem.style.borderRadius =
+            "50%";
+
+        avatar.appendChild(
+            imagem
+        );
+
+        return;
+    }
+
+    // Caso contrário, usa iniciais
     const palavras =
         String(
-            nome
-            || "Usuário"
+            nome || "Usuário"
         )
             .trim()
             .split(/\s+/)
             .filter(Boolean);
 
-
     let iniciais =
         "U";
-
 
     if (palavras.length === 1) {
 
@@ -547,10 +615,7 @@ function atualizarAvatarIniciais(
 
     }
 
-
-    else if (
-        palavras.length >= 2
-    ) {
+    else if (palavras.length >= 2) {
 
         iniciais =
             (
@@ -564,10 +629,8 @@ function atualizarAvatarIniciais(
 
     }
 
-
     avatar.textContent =
         iniciais;
-
 }
 
 
@@ -708,6 +771,6 @@ function definirMensagemPerfil(
             elemento.style.color =
                 "#8792a2";
 
-    }
 
+    }
 }
