@@ -18,6 +18,7 @@ function carregarLayout(paginaAtiva = "") {
 
     if (!sidebar) {
         return;
+
     }
 
 
@@ -146,8 +147,9 @@ function carregarLayout(paginaAtiva = "") {
     `;
 
 
-    // Busca permissões após montar o layout
-    carregarPerfilUsuarioAtual();
+   // Busca perfil e permissões após montar o layout
+carregarPerfilUsuarioAtual();
+
 
 }
 
@@ -190,57 +192,7 @@ async function carregarPerfilUsuarioAtual() {
                 "Nenhum usuário autenticado."
             );
 
-            function aplicarPerfilSidebar(perfil) {
 
-    const nome = document.getElementById("sidebarUserName");
-    const papel = document.getElementById("sidebarUserRole");
-    const avatar = document.getElementById("sidebarUserAvatar");
-
-    if (!nome || !papel || !avatar) {
-        return;
-    }
-
-    if (!perfil) {
-        nome.textContent = "Usuário";
-        papel.textContent = "Perfil não identificado";
-        avatar.textContent = "U";
-        return;
-    }
-
-    const nomeExibicao =
-        perfil.nome_exibicao || "Usuário";
-
-    nome.textContent = nomeExibicao;
-
-    papel.textContent =
-        obterNomePapel(perfil.papel);
-
-    // Gera as iniciais automaticamente.
-    // Ex.: Derick Bryan -> DB
-    const partesNome = nomeExibicao
-        .trim()
-        .split(/\s+/)
-        .filter(Boolean);
-
-    let iniciais = "U";
-
-    if (partesNome.length === 1) {
-        iniciais =
-            partesNome[0]
-                .substring(0, 2)
-                .toUpperCase();
-    }
-
-    if (partesNome.length >= 2) {
-        iniciais =
-            (
-                partesNome[0][0] +
-                partesNome[partesNome.length - 1][0]
-            ).toUpperCase();
-    }
-
-    avatar.textContent = iniciais;
-}
             aplicarPermissoesUsuario(
                 null
             );
@@ -381,23 +333,25 @@ async function carregarPerfilUsuarioAtual() {
 // EXIBE USUÁRIO NA SIDEBAR
 // =====================================================
 
-function aplicarPerfilSidebar(
-    perfil
-) {
+function aplicarPerfilSidebar(perfil) {
 
     const nome =
         document.getElementById(
-            "sidebarNomeUsuario"
+            "sidebarUserName"
         );
-
 
     const papel =
         document.getElementById(
-            "sidebarPapelUsuario"
+            "sidebarUserRole"
+        );
+
+    const avatar =
+        document.getElementById(
+            "sidebarUserAvatar"
         );
 
 
-    if (!nome || !papel) {
+    if (!nome || !papel || !avatar) {
         return;
     }
 
@@ -410,14 +364,22 @@ function aplicarPerfilSidebar(
         papel.textContent =
             "Perfil não identificado";
 
+        avatar.textContent =
+            "U";
+
         return;
     }
 
 
+    const nomeExibicao =
+        String(
+            perfil.nome_exibicao ||
+            "Usuário"
+        ).trim();
+
+
     nome.textContent =
-        perfil.nome_exibicao
-        ||
-        "Usuário";
+        nomeExibicao;
 
 
     papel.textContent =
@@ -425,8 +387,150 @@ function aplicarPerfilSidebar(
             perfil.papel
         );
 
+
+    // =============================================
+    // INICIAIS DO AVATAR
+    // =============================================
+
+    const partesNome =
+        nomeExibicao
+            .split(/\s+/)
+            .filter(Boolean);
+
+
+    let iniciais = "U";
+
+
+    if (partesNome.length === 1) {
+
+        iniciais =
+            partesNome[0]
+                .substring(0, 2)
+                .toUpperCase();
+
+    }
+
+
+    if (partesNome.length >= 2) {
+
+        iniciais =
+            (
+                partesNome[0][0]
+                +
+                partesNome[
+                    partesNome.length - 1
+                ][0]
+            )
+            .toUpperCase();
+
+    }
+
+
+    avatar.textContent =
+        iniciais;
+
 }
 
+// =====================================================
+// EXIBE USUÁRIO NA SIDEBAR
+// =====================================================
+
+function aplicarPerfilSidebar(perfil) {
+
+    const nome =
+        document.getElementById(
+            "sidebarUserName"
+        );
+
+    const papel =
+        document.getElementById(
+            "sidebarUserRole"
+        );
+
+    const avatar =
+        document.getElementById(
+            "sidebarUserAvatar"
+        );
+
+
+    if (!nome || !papel || !avatar) {
+        return;
+    }
+
+
+    if (!perfil) {
+
+        nome.textContent =
+            "Usuário";
+
+        papel.textContent =
+            "Perfil não identificado";
+
+        avatar.textContent =
+            "U";
+
+        return;
+    }
+
+
+    const nomeExibicao =
+        String(
+            perfil.nome_exibicao ||
+            "Usuário"
+        ).trim();
+
+
+    nome.textContent =
+        nomeExibicao;
+
+
+    papel.textContent =
+        obterNomePapel(
+            perfil.papel
+        );
+
+
+    // =============================================
+    // GERA INICIAIS DO AVATAR
+    // =============================================
+
+    const partesNome =
+        nomeExibicao
+            .split(/\s+/)
+            .filter(Boolean);
+
+
+    let iniciais = "U";
+
+
+    if (partesNome.length === 1) {
+
+        iniciais =
+            partesNome[0]
+                .substring(0, 2)
+                .toUpperCase();
+
+    }
+
+
+    if (partesNome.length >= 2) {
+
+        iniciais =
+            (
+                partesNome[0][0] +
+                partesNome[
+                    partesNome.length - 1
+                ][0]
+            )
+            .toUpperCase();
+
+    }
+
+
+    avatar.textContent =
+        iniciais;
+
+}
 
 // =====================================================
 // NOME AMIGÁVEL DO PERFIL
@@ -585,3 +689,8 @@ function usuarioEhLider() {
     return papel === "lider";
 
 }
+
+// =====================================================
+// CARREGAR USUÁRIO CONECTADO NA SIDEBAR
+// =====================================================
+
