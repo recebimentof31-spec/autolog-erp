@@ -22,29 +22,23 @@ function carregarLayout(paginaAtiva = "") {
 
 
     sidebar.innerHTML = `
+    <a href="perfil.html"
+       class="v2-user-profile ${paginaAtiva === "perfil" ? "active" : ""}"
+       title="Meu Perfil">
 
-        <div class="v2-brand">
-
-            <div class="v2-brand-icon">
-                GD
-            </div>
-
-            <div>
-
-                <strong>
-                    Gestão
-                </strong>
-
-                <span>
-                    Desempenho
-                </span>
-
-            </div>
-
+        <div class="v2-user-avatar" id="sidebarUserAvatar">
+            DB
         </div>
 
+        <div class="v2-user-info">
+            <strong id="sidebarUserName">Usuário</strong>
+            <span id="sidebarUserRole">Carregando...</span>
+        </div>
 
-        <nav class="v2-menu">
+        <div class="v2-user-arrow">›</div>
+    </a>
+
+    <nav class="v2-menu">
 
             <a
                 href="dashboard.html"
@@ -110,12 +104,6 @@ function carregarLayout(paginaAtiva = "") {
                 Relatórios
             </a>
 
-            <a href="perfil.html"
-   class="${paginaAtiva === "perfil" ? "active" : ""}">
-    <span>👤</span>
-    Meu Perfil
-</a>
-
             <a
                 href="configuracoes.html"
                 id="menuConfiguracoes"
@@ -133,49 +121,6 @@ function carregarLayout(paginaAtiva = "") {
 
 
         <div class="v2-sidebar-bottom">
-
-            <div
-                id="usuarioLogadoSidebar"
-                style="
-                    margin-bottom: 16px;
-                    padding-bottom: 16px;
-                    border-bottom: 1px solid rgba(255,255,255,.08);
-                "
-            >
-
-                <small
-                    style="
-                        display:block;
-                        opacity:.55;
-                        margin-bottom:5px;
-                    "
-                >
-                    Usuário conectado
-                </small>
-
-                <strong
-                    id="sidebarNomeUsuario"
-                    style="
-                        display:block;
-                        font-size:12px;
-                    "
-                >
-                    Carregando...
-                </strong>
-
-                <small
-                    id="sidebarPapelUsuario"
-                    style="
-                        display:block;
-                        margin-top:3px;
-                        color:#ff7518;
-                        font-weight:700;
-                    "
-                >
-                    ...
-                </small>
-
-            </div>
 
 
             <div class="v2-status">
@@ -245,10 +190,57 @@ async function carregarPerfilUsuarioAtual() {
                 "Nenhum usuário autenticado."
             );
 
-            aplicarPerfilSidebar(
-                null
-            );
+            function aplicarPerfilSidebar(perfil) {
 
+    const nome = document.getElementById("sidebarUserName");
+    const papel = document.getElementById("sidebarUserRole");
+    const avatar = document.getElementById("sidebarUserAvatar");
+
+    if (!nome || !papel || !avatar) {
+        return;
+    }
+
+    if (!perfil) {
+        nome.textContent = "Usuário";
+        papel.textContent = "Perfil não identificado";
+        avatar.textContent = "U";
+        return;
+    }
+
+    const nomeExibicao =
+        perfil.nome_exibicao || "Usuário";
+
+    nome.textContent = nomeExibicao;
+
+    papel.textContent =
+        obterNomePapel(perfil.papel);
+
+    // Gera as iniciais automaticamente.
+    // Ex.: Derick Bryan -> DB
+    const partesNome = nomeExibicao
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+
+    let iniciais = "U";
+
+    if (partesNome.length === 1) {
+        iniciais =
+            partesNome[0]
+                .substring(0, 2)
+                .toUpperCase();
+    }
+
+    if (partesNome.length >= 2) {
+        iniciais =
+            (
+                partesNome[0][0] +
+                partesNome[partesNome.length - 1][0]
+            ).toUpperCase();
+    }
+
+    avatar.textContent = iniciais;
+}
             aplicarPermissoesUsuario(
                 null
             );
