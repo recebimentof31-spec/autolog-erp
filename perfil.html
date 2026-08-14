@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Meu Perfil | Gestão de Desempenho</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme-pro.css">
+    <link rel="stylesheet" href="css/v2.css">
+
+    <style>
+        .perfil-container {
+            max-width: 1100px;
+        }
+
+        .perfil-card {
+            background: #11151a;
+            border: 1px solid #252b33;
+            border-radius: 16px;
+            padding: 28px;
+            margin-top: 24px;
+        }
+
+        .perfil-topo {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid #252b33;
+        }
+
+        .perfil-avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: #ff7417;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            font-weight: 800;
+            color: #fff;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .perfil-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .perfil-info h2 {
+            margin: 0 0 6px;
+            font-size: 26px;
+        }
+
+        .perfil-info p {
+            margin: 0;
+            color: #8792a2;
+        }
+
+        .perfil-badge {
+            display: inline-flex;
+            margin-top: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(255, 116, 23, 0.12);
+            color: #ff7417;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .perfil-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 28px;
+        }
+
+        .perfil-campo {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .perfil-campo label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #8290a5;
+        }
+
+        .perfil-campo input {
+            width: 100%;
+            box-sizing: border-box;
+            background: #090c10;
+            border: 1px solid #2a3038;
+            border-radius: 9px;
+            color: #fff;
+            padding: 13px 14px;
+            outline: none;
+        }
+
+        .perfil-campo input:focus {
+            border-color: #ff7417;
+        }
+
+        .perfil-campo input:disabled {
+            color: #8994a3;
+            cursor: not-allowed;
+        }
+
+        .perfil-acoes {
+            display: flex;
+            gap: 12px;
+            margin-top: 26px;
+        }
+
+        .btn-perfil {
+            border: 0;
+            border-radius: 9px;
+            padding: 12px 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-salvar {
+            background: #ff7417;
+            color: #080808;
+        }
+
+        .btn-avatar {
+            background: #191e25;
+            color: #fff;
+            border: 1px solid #303741;
+        }
+
+        .perfil-status {
+            margin-top: 16px;
+            font-size: 13px;
+            min-height: 20px;
+        }
+
+        @media (max-width: 700px) {
+            .perfil-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .perfil-topo {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body class="app-v2">
+
+    <aside id="appSidebar" class="v2-sidebar"></aside>
+
+    <main class="v2-main">
+
+        <div class="perfil-container">
+
+            <div>
+                <span style="
+                    color:#ff7417;
+                    font-size:11px;
+                    font-weight:800;
+                    text-transform:uppercase;
+                ">
+                    Minha conta
+                </span>
+
+                <h1 style="margin:8px 0 6px;">Meu Perfil</h1>
+
+                <p style="margin:0;color:#8792a2;">
+                    Gerencie suas informações pessoais e dados de acesso.
+                </p>
+            </div>
+
+            <section class="perfil-card">
+
+                <div class="perfil-topo">
+
+                    <div class="perfil-avatar" id="perfilAvatar">
+                        DB
+                    </div>
+
+                    <div class="perfil-info">
+                        <h2 id="perfilNomeTopo">Carregando...</h2>
+
+                        <p id="perfilEmailTopo">...</p>
+
+                        <span class="perfil-badge" id="perfilPapel">
+                            ...
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="perfil-grid">
+
+                    <div class="perfil-campo">
+                        <label>Nome de exibição</label>
+                        <input
+                            id="perfilNome"
+                            type="text"
+                            placeholder="Seu nome"
+                        >
+                    </div>
+
+                    <div class="perfil-campo">
+                        <label>E-mail</label>
+                        <input
+                            id="perfilEmail"
+                            type="email"
+                            disabled
+                        >
+                    </div>
+
+                    <div class="perfil-campo">
+                        <label>Perfil de acesso</label>
+                        <input
+                            id="perfilFuncao"
+                            type="text"
+                            disabled
+                        >
+                    </div>
+
+                    <div class="perfil-campo">
+                        <label>Conta</label>
+                        <input
+                            id="perfilStatus"
+                            type="text"
+                            disabled
+                        >
+                    </div>
+
+                </div>
+
+                <div class="perfil-acoes">
+
+                    <button
+                        class="btn-perfil btn-avatar"
+                        id="btnAlterarAvatar"
+                        type="button"
+                    >
+                        Alterar foto
+                    </button>
+
+                    <button
+                        class="btn-perfil btn-salvar"
+                        id="btnSalvarPerfil"
+                        type="button"
+                    >
+                        Salvar alterações
+                    </button>
+
+                </div>
+
+                <input
+                    type="file"
+                    id="inputAvatar"
+                    accept="image/png,image/jpeg,image/webp"
+                    hidden
+                >
+
+                <div
+                    id="perfilMensagem"
+                    class="perfil-status"
+                ></div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
+
+    <script src="js/supabase.js"></script>
+    <script src="js/layout.js?v=20260814-1"></script>
+    <script src="js/perfil.js?v=20260814-1"></script>
+
+    <script>
+        carregarLayout("perfil");
+    </script>
+
+</body>
+</html>
