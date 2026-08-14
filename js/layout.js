@@ -110,6 +110,11 @@ function carregarLayout(paginaAtiva = "") {
                 Relatórios
             </a>
 
+            <a href="perfil.html"
+   class="${paginaAtiva === "perfil" ? "active" : ""}">
+    <span>👤</span>
+    Meu Perfil
+</a>
 
             <a
                 href="configuracoes.html"
