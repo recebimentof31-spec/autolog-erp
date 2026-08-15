@@ -552,6 +552,46 @@
             border-color: #ff7417;
         }
 
+        .senha-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.senha-input-wrapper input {
+    width: 100%;
+    padding-right: 52px;
+}
+
+.senha-toggle {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+
+    transform: translateY(-50%);
+
+    width: 36px;
+    height: 36px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+    color: #8792a2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    font-size: 16px;
+}
+
+.senha-toggle:hover {
+    color: #ff7417;
+    background: rgba(255, 116, 23, 0.08);
+}
+
 
         /* =====================================================
            MODAL DE ALTERAÇÃO DE SENHA
@@ -1096,36 +1136,64 @@
             <div class="senha-modal-body">
 
 
-                <div class="perfil-campo">
+               <div class="perfil-campo">
 
-                    <label for="novaSenha">
-                        Nova senha
-                    </label>
+    <label for="novaSenha">
+        Nova senha
+    </label>
 
-                    <input
-                        id="novaSenha"
-                        type="password"
-                        autocomplete="new-password"
-                        placeholder="Digite a nova senha"
-                    >
+    <div class="senha-input-wrapper">
 
-                </div>
+        <input
+            id="novaSenha"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Digite a nova senha"
+        >
+
+        <button
+            class="senha-toggle"
+            type="button"
+            data-target="novaSenha"
+            aria-label="Mostrar senha"
+            title="Mostrar senha"
+        >
+            👁
+        </button>
+
+    </div>
+
+</div>
 
 
-                <div class="perfil-campo">
+<div class="perfil-campo">
 
-                    <label for="confirmarNovaSenha">
-                        Confirmar nova senha
-                    </label>
+    <label for="confirmarNovaSenha">
+        Confirmar nova senha
+    </label>
 
-                    <input
-                        id="confirmarNovaSenha"
-                        type="password"
-                        autocomplete="new-password"
-                        placeholder="Repita a nova senha"
-                    >
+    <div class="senha-input-wrapper">
 
-                </div>
+        <input
+            id="confirmarNovaSenha"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Repita a nova senha"
+        >
+
+        <button
+            class="senha-toggle"
+            type="button"
+            data-target="confirmarNovaSenha"
+            aria-label="Mostrar senha"
+            title="Mostrar senha"
+        >
+            👁
+        </button>
+
+    </div>
+
+</div>
 
 
                 <p class="senha-ajuda">

@@ -1437,3 +1437,46 @@ function definirMensagemSenha(
     }
 
 }
+
+// =====================================================
+// MOSTRAR / OCULTAR SENHA
+// =====================================================
+
+document.querySelectorAll(".senha-toggle").forEach((botao) => {
+
+    botao.addEventListener("click", () => {
+
+        const targetId = botao.dataset.target;
+        const campoSenha = document.getElementById(targetId);
+
+        if (!campoSenha) {
+            return;
+        }
+
+        const senhaVisivel = campoSenha.type === "text";
+
+        campoSenha.type = senhaVisivel
+            ? "password"
+            : "text";
+
+        botao.textContent = senhaVisivel
+            ? "👁"
+            : "🙈";
+
+        botao.setAttribute(
+            "aria-label",
+            senhaVisivel
+                ? "Mostrar senha"
+                : "Ocultar senha"
+        );
+
+        botao.setAttribute(
+            "title",
+            senhaVisivel
+                ? "Mostrar senha"
+                : "Ocultar senha"
+        );
+
+    });
+
+});
