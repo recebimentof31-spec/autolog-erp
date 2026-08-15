@@ -264,7 +264,18 @@ function configurarEventosPerfil() {
             "btnSalvarPerfil"
         );
 
+    const botaoAvatar =
+        document.getElementById(
+            "btnAlterarAvatar"
+        );
 
+    const inputAvatar =
+        document.getElementById(
+            "inputAvatar"
+        );
+
+
+    // SALVAR PERFIL
     if (botaoSalvar) {
 
         botaoSalvar.addEventListener(
@@ -275,63 +286,46 @@ function configurarEventosPerfil() {
     }
 
 
-    const botaoAvatar =
-        document.getElementById(
-            "btnAlterarAvatar"
+    // ABRIR SELETOR DE FOTO
+    if (
+        botaoAvatar &&
+        inputAvatar
+    ) {
+
+        botaoAvatar.addEventListener(
+            "click",
+            () => {
+
+                inputAvatar.click();
+
+            }
         );
 
 
-const botaoAvatar =
-    document.getElementById(
-        "btnAlterarAvatar"
-    );
+        // FOTO SELECIONADA
+        inputAvatar.addEventListener(
+            "change",
+            async () => {
 
-const inputAvatar =
-    document.getElementById(
-        "inputAvatar"
-    );
+                const arquivo =
+                    inputAvatar.files?.[0];
 
-if (
-    botaoAvatar &&
-    inputAvatar
-) {
-
-    botaoAvatar.addEventListener(
-        "click",
-        () => {
-
-            inputAvatar.click();
-
-        }
-    );
+                if (!arquivo) {
+                    return;
+                }
 
 
-    inputAvatar.addEventListener(
-        "change",
-        async () => {
+                await enviarAvatar(
+                    arquivo
+                );
 
-            const arquivo =
-                inputAvatar.files?.[0];
 
-            if (!arquivo) {
-                return;
+                inputAvatar.value = "";
+
             }
+        );
 
-            await enviarAvatar(
-                arquivo
-            );
-
-            inputAvatar.value =
-                "";
-
-        }
-    );
-
-}
-
-// =====================================================
-// SALVA PERFIL
-// =====================================================
+    }
 
 }
 
@@ -773,4 +767,255 @@ function definirMensagemPerfil(
 
 
     }
+}
+
+// =====================================================
+// ENVIA AVATAR PARA O SUPABASE
+// =====================================================
+
+async function enviarAvatar(arquivo) {
+
+    if (!usuarioAuthAtual || !perfilAtual) {
+
+        definirMensagemPerfil(
+            "Usuário ainda não identificado.",
+            "erro"
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // TIPOS PERMITIDOS
+    // =================================================
+
+    const tiposPermitidos = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
+
+
+    if (!tiposPermitidos.includes(arquivo.type)) {
+
+        definirMensagemPerfil(
+            "Formato inválido. Selecione JPG, PNG ou WEBP.",
+            "erro"
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // LIMITE 2 MB
+    // =================================================
+
+    const tamanhoMaximo =
+        2 * 1024 * 1024;
+
+
+    if (arquivo.size > tamanhoMaximo) {
+
+        definirMensagemPerfil(
+            "A imagem deve ter no máximo 2 MB.",
+            "erro"
+        );
+
+        return;
+    }
+
+
+    definirMensagemPerfil(
+        "Enviando foto...",
+        "normal"
+    );
+
+
+    try {
+
+        // =================================================
+        // EXTENSÃO
+        // =================================================
+
+        let extensao =
+            arquivo.name
+                .split(".")
+                .pop()
+                ?.toLowerCase();
+
+
+        if (
+            !["jpg", "jpeg", "png", "webp"]
+                .includes(extensao)
+        ) {
+
+            extensao =
+                arquivo.type === "image/png"
+                    ? "png"
+                    : arquivo.type === "image/webp"
+                        ? "webp"
+                        : "jpg";
+        }
+
+
+        // =================================================
+        // CAMINHO
+        //
+        // avatars/
+        //     auth-user-id/
+        //         avatar.jpg
+        // =================================================
+
+        const caminho =
+            `${usuarioAuthAtual.id}/avatar.${extensao}`;
+
+
+        // =================================================
+        // ENVIA PARA STORAGE
+        // =================================================
+
+        const {
+            error: erroUpload
+        } =
+            await supabaseClient
+                .storage
+                .from("avatars")
+                .upload(
+                    caminho,
+                    arquivo,
+                    {
+                        upsert: true,
+                        cacheControl: "3600",
+                        contentType: arquivo.type
+                    }
+                );
+
+
+        if (erroUpload) {
+            throw erroUpload;
+        }
+
+
+        // =================================================
+        // GERA URL PÚBLICA
+        // =================================================
+
+        const {
+            data: dadosUrl
+        } =
+            supabaseClient
+                .storage
+                .from("avatars")
+                .getPublicUrl(caminho);
+
+
+        const urlPublica =
+            dadosUrl?.publicUrl;
+
+
+        if (!urlPublica) {
+
+            throw new Error(
+                "Não foi possível gerar a URL pública do avatar."
+            );
+
+        }
+
+
+        // =================================================
+        // EVITA CACHE DA FOTO ANTIGA
+        // =================================================
+
+        const avatarUrl =
+            `${urlPublica}?v=${Date.now()}`;
+
+
+        // =================================================
+        // SALVA URL EM perfis_usuario
+        // =================================================
+
+        const {
+            data: perfilAtualizado,
+            error: erroPerfil
+        } =
+            await supabaseClient
+                .from("perfis_usuario")
+                .update({
+                    avatar_url: avatarUrl
+                })
+                .eq(
+                    "id",
+                    perfilAtual.id
+                )
+                .select(`
+                    id,
+                    auth_user_id,
+                    funcionario_id,
+                    nome_exibicao,
+                    papel,
+                    ativo,
+                    avatar_url,
+                    created_at
+                `)
+                .single();
+
+
+        if (erroPerfil) {
+            throw erroPerfil;
+        }
+
+
+        // =================================================
+        // ATUALIZA MEMÓRIA LOCAL
+        // =================================================
+
+        perfilAtual =
+            perfilAtualizado;
+
+
+        window.perfilUsuarioAtual =
+            perfilAtualizado;
+
+
+        // =================================================
+        // ATUALIZA FOTO DA PÁGINA
+        // =================================================
+
+        atualizarAvatarPerfil(
+            perfilAtualizado.avatar_url,
+            perfilAtualizado.nome_exibicao
+        );
+
+
+        definirMensagemPerfil(
+            "Foto atualizada com sucesso.",
+            "sucesso"
+        );
+
+
+        console.log(
+            "Avatar atualizado com sucesso:",
+            perfilAtualizado.avatar_url
+        );
+
+    }
+
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao atualizar avatar:",
+            erro
+        );
+
+
+        definirMensagemPerfil(
+            "Não foi possível atualizar a foto.",
+            "erro"
+        );
+
+    }
+
 }
