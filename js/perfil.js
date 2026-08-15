@@ -18,6 +18,98 @@ document.addEventListener(
 
         configurarEventosPerfil();
 
+    const botaoAlterarSenha =
+    document.getElementById(
+        "btnAlterarSenha"
+    );
+
+const modalAlterarSenha =
+    document.getElementById(
+        "modalAlterarSenha"
+    );
+
+const botaoFecharSenha =
+    document.getElementById(
+        "btnFecharModalSenha"
+    );
+
+const botaoCancelarSenha =
+    document.getElementById(
+        "btnCancelarSenha"
+    );
+
+const botaoSalvarSenha =
+    document.getElementById(
+        "btnSalvarSenha"
+    );
+
+
+if (
+    botaoAlterarSenha &&
+    modalAlterarSenha
+) {
+
+    botaoAlterarSenha.addEventListener(
+        "click",
+        () => {
+
+            abrirModalSenha();
+
+        }
+    );
+
+}
+
+
+if (botaoFecharSenha) {
+
+    botaoFecharSenha.addEventListener(
+        "click",
+        fecharModalSenha
+    );
+
+}
+
+
+if (botaoCancelarSenha) {
+
+    botaoCancelarSenha.addEventListener(
+        "click",
+        fecharModalSenha
+    );
+
+}
+
+
+if (botaoSalvarSenha) {
+
+    botaoSalvarSenha.addEventListener(
+        "click",
+        atualizarSenhaUsuario
+    );
+
+}
+
+
+if (modalAlterarSenha) {
+
+    modalAlterarSenha.addEventListener(
+        "click",
+        (evento) => {
+
+            if (
+                evento.target ===
+                modalAlterarSenha
+            ) {
+
+                fecharModalSenha();
+
+            }
+
+        }
+    );
+
+}
     }
 );
 
@@ -1015,6 +1107,332 @@ async function enviarAvatar(arquivo) {
             "Não foi possível atualizar a foto.",
             "erro"
         );
+
+    }
+
+}
+
+// =====================================================
+// MODAL DE ALTERAÇÃO DE SENHA
+// =====================================================
+
+function abrirModalSenha() {
+
+    const modal =
+        document.getElementById(
+            "modalAlterarSenha"
+        );
+
+    const novaSenha =
+        document.getElementById(
+            "novaSenha"
+        );
+
+    const confirmarSenha =
+        document.getElementById(
+            "confirmarNovaSenha"
+        );
+
+    const mensagem =
+        document.getElementById(
+            "senhaMensagem"
+        );
+
+
+    if (!modal) {
+        return;
+    }
+
+
+    if (novaSenha) {
+        novaSenha.value = "";
+    }
+
+
+    if (confirmarSenha) {
+        confirmarSenha.value = "";
+    }
+
+
+    if (mensagem) {
+
+        mensagem.textContent = "";
+
+        mensagem.style.color =
+            "#8792a2";
+
+    }
+
+
+    modal.classList.add(
+        "aberto"
+    );
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    setTimeout(
+        () => {
+
+            novaSenha?.focus();
+
+        },
+        50
+    );
+
+}
+
+
+// =====================================================
+// FECHA MODAL
+// =====================================================
+
+function fecharModalSenha() {
+
+    const modal =
+        document.getElementById(
+            "modalAlterarSenha"
+        );
+
+
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.remove(
+        "aberto"
+    );
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+// =====================================================
+// ATUALIZA SENHA
+// =====================================================
+
+async function atualizarSenhaUsuario() {
+
+    const campoNovaSenha =
+        document.getElementById(
+            "novaSenha"
+        );
+
+    const campoConfirmacao =
+        document.getElementById(
+            "confirmarNovaSenha"
+        );
+
+    const botao =
+        document.getElementById(
+            "btnSalvarSenha"
+        );
+
+    const mensagem =
+        document.getElementById(
+            "senhaMensagem"
+        );
+
+
+    const novaSenha =
+        String(
+            campoNovaSenha?.value ||
+            ""
+        );
+
+
+    const confirmarSenha =
+        String(
+            campoConfirmacao?.value ||
+            ""
+        );
+
+
+    // =============================================
+    // VALIDAÇÕES
+    // =============================================
+
+    if (novaSenha.length < 8) {
+
+        definirMensagemSenha(
+            "A senha deve ter pelo menos 8 caracteres.",
+            "erro"
+        );
+
+        campoNovaSenha?.focus();
+
+        return;
+
+    }
+
+
+    if (
+        novaSenha !==
+        confirmarSenha
+    ) {
+
+        definirMensagemSenha(
+            "As senhas informadas não coincidem.",
+            "erro"
+        );
+
+        campoConfirmacao?.focus();
+
+        return;
+
+    }
+
+
+    try {
+
+        if (botao) {
+
+            botao.disabled =
+                true;
+
+            botao.textContent =
+                "Atualizando...";
+
+        }
+
+
+        definirMensagemSenha(
+            "Atualizando sua senha...",
+            "normal"
+        );
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .auth
+                .updateUser({
+                    password:
+                        novaSenha
+                });
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        definirMensagemSenha(
+            "Senha atualizada com sucesso.",
+            "sucesso"
+        );
+
+
+        campoNovaSenha.value = "";
+        campoConfirmacao.value = "";
+
+
+        setTimeout(
+            () => {
+
+                fecharModalSenha();
+
+            },
+            1200
+        );
+
+
+        console.log(
+            "Senha atualizada com sucesso."
+        );
+
+    }
+
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao atualizar senha:",
+            erro
+        );
+
+
+        definirMensagemSenha(
+            erro?.message ||
+            "Não foi possível atualizar a senha.",
+            "erro"
+        );
+
+    }
+
+
+    finally {
+
+        if (botao) {
+
+            botao.disabled =
+                false;
+
+            botao.textContent =
+                "Atualizar senha";
+
+        }
+
+    }
+
+}
+
+
+// =====================================================
+// MENSAGEM DO MODAL
+// =====================================================
+
+function definirMensagemSenha(
+    mensagem,
+    tipo
+) {
+
+    const elemento =
+        document.getElementById(
+            "senhaMensagem"
+        );
+
+
+    if (!elemento) {
+        return;
+    }
+
+
+    elemento.textContent =
+        mensagem;
+
+
+    switch (tipo) {
+
+        case "sucesso":
+
+            elemento.style.color =
+                "#37d67a";
+
+            break;
+
+
+        case "erro":
+
+            elemento.style.color =
+                "#ff5d5d";
+
+            break;
+
+
+        default:
+
+            elemento.style.color =
+                "#8792a2";
 
     }
 

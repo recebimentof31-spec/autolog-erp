@@ -3,248 +3,943 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Meu Perfil | Gestão de Desempenho</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/theme-pro.css">
-    <link rel="stylesheet" href="css/v2.css">
+    <title>
+        Meu Perfil | Gestão de Desempenho
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/theme-pro.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/v2.css"
+    >
+
 
     <style>
+
+        /* =====================================================
+           CONTAINER
+        ===================================================== */
+
         .perfil-container {
             max-width: 1100px;
         }
 
+
+        /* =====================================================
+           CABEÇALHO DA PÁGINA
+        ===================================================== */
+
+        .perfil-page-header {
+            margin-bottom: 24px;
+        }
+
+        .perfil-page-kicker {
+            color: #ff7417;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .perfil-page-header h1 {
+            margin: 8px 0 6px;
+
+            font-size: 30px;
+        }
+
+        .perfil-page-header p {
+            margin: 0;
+
+            color: #8792a2;
+
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           CARDS
+        ===================================================== */
+
         .perfil-card {
             background: #11151a;
+
             border: 1px solid #252b33;
             border-radius: 16px;
+
             padding: 28px;
-            margin-top: 24px;
+
+            margin-top: 18px;
         }
+
+
+        /* =====================================================
+           TOPO DO PERFIL
+        ===================================================== */
 
         .perfil-topo {
             display: flex;
             align-items: center;
+
             gap: 24px;
+
             padding-bottom: 28px;
-            border-bottom: 1px solid #252b33;
+
+            border-bottom:
+                1px solid #252b33;
+        }
+
+
+        /* =====================================================
+           AVATAR
+        ===================================================== */
+
+        .perfil-avatar-wrapper {
+            position: relative;
+
+            flex-shrink: 0;
         }
 
         .perfil-avatar {
             width: 110px;
             height: 110px;
+
             border-radius: 50%;
+
             background: #ff7417;
+
             display: flex;
             align-items: center;
             justify-content: center;
+
             font-size: 34px;
             font-weight: 800;
-            color: #fff;
+
+            color: #ffffff;
+
             overflow: hidden;
-            flex-shrink: 0;
+
+            border:
+                3px solid rgba(
+                    255,
+                    255,
+                    255,
+                    0.08
+                );
         }
 
         .perfil-avatar img {
             width: 100%;
             height: 100%;
+
             object-fit: cover;
+        }
+
+        .perfil-avatar-editar {
+            position: absolute;
+
+            right: 0;
+            bottom: 2px;
+
+            width: 32px;
+            height: 32px;
+
+            border-radius: 50%;
+
+            border:
+                3px solid #11151a;
+
+            background: #ff7417;
+
+            color: #0a0a0a;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 14px;
+            font-weight: 900;
+
+            pointer-events: none;
+        }
+
+
+        /* =====================================================
+           INFORMAÇÕES DO TOPO
+        ===================================================== */
+
+        .perfil-info {
+            min-width: 0;
         }
 
         .perfil-info h2 {
             margin: 0 0 6px;
+
             font-size: 26px;
         }
 
         .perfil-info p {
             margin: 0;
+
             color: #8792a2;
+
+            font-size: 14px;
+        }
+
+        .perfil-badges {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            margin-top: 12px;
         }
 
         .perfil-badge {
             display: inline-flex;
-            margin-top: 12px;
+
             padding: 6px 12px;
+
             border-radius: 20px;
-            background: rgba(255, 116, 23, 0.12);
+
+            background:
+                rgba(
+                    255,
+                    116,
+                    23,
+                    0.12
+                );
+
             color: #ff7417;
+
             font-size: 12px;
             font-weight: 700;
+
             text-transform: uppercase;
         }
 
+
+        /* =====================================================
+           TÍTULO DE SEÇÃO
+        ===================================================== */
+
+        .perfil-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 16px;
+
+            margin-top: 28px;
+            margin-bottom: 18px;
+        }
+
+        .perfil-section-header h3 {
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size: 16px;
+        }
+
+        .perfil-section-header p {
+            margin: 5px 0 0;
+
+            color: #778394;
+
+            font-size: 12px;
+        }
+
+        .perfil-section-kicker {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #ff7417;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+
+        /* =====================================================
+           CAMPOS
+        ===================================================== */
+
         .perfil-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+
             gap: 18px;
-            margin-top: 28px;
         }
 
         .perfil-campo {
             display: flex;
             flex-direction: column;
+
             gap: 8px;
         }
 
         .perfil-campo label {
             font-size: 11px;
             font-weight: 700;
+
             text-transform: uppercase;
+
             color: #8290a5;
         }
 
         .perfil-campo input {
             width: 100%;
+
             box-sizing: border-box;
+
             background: #090c10;
-            border: 1px solid #2a3038;
+
+            border:
+                1px solid #2a3038;
+
             border-radius: 9px;
-            color: #fff;
+
+            color: #ffffff;
+
             padding: 13px 14px;
+
             outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
         }
 
         .perfil-campo input:focus {
             border-color: #ff7417;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(
+                    255,
+                    116,
+                    23,
+                    0.08
+                );
         }
 
         .perfil-campo input:disabled {
             color: #8994a3;
+
             cursor: not-allowed;
+
+            background: #0c1015;
         }
+
+
+        /* =====================================================
+           AÇÕES
+        ===================================================== */
 
         .perfil-acoes {
             display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+
             gap: 12px;
+
             margin-top: 26px;
         }
 
         .btn-perfil {
             border: 0;
+
             border-radius: 9px;
+
             padding: 12px 18px;
+
             font-weight: 700;
+
             cursor: pointer;
+
+            transition:
+                transform 0.15s ease,
+                opacity 0.15s ease,
+                border-color 0.15s ease;
+        }
+
+        .btn-perfil:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-perfil:disabled {
+            opacity: 0.55;
+
+            cursor: not-allowed;
+
+            transform: none;
         }
 
         .btn-salvar {
             background: #ff7417;
+
             color: #080808;
         }
 
         .btn-avatar {
             background: #191e25;
-            color: #fff;
-            border: 1px solid #303741;
+
+            color: #ffffff;
+
+            border:
+                1px solid #303741;
         }
+
+        .btn-avatar:hover {
+            border-color:
+                rgba(
+                    255,
+                    116,
+                    23,
+                    0.55
+                );
+        }
+
+
+        /* =====================================================
+           MENSAGEM
+        ===================================================== */
 
         .perfil-status {
             margin-top: 16px;
+
             font-size: 13px;
+
             min-height: 20px;
         }
 
-        @media (max-width: 700px) {
+
+        /* =====================================================
+           SEGURANÇA
+        ===================================================== */
+
+        .seguranca-card {
+            background: #11151a;
+
+            border:
+                1px solid #252b33;
+
+            border-radius: 16px;
+
+            padding: 26px 28px;
+
+            margin-top: 18px;
+        }
+
+        .seguranca-conteudo {
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 24px;
+        }
+
+        .seguranca-info {
+            display: flex;
+            align-items: center;
+
+            gap: 16px;
+
+            min-width: 0;
+        }
+
+        .seguranca-icon {
+            width: 46px;
+            height: 46px;
+
+            flex-shrink: 0;
+
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                rgba(
+                    255,
+                    116,
+                    23,
+                    0.10
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    116,
+                    23,
+                    0.18
+                );
+
+            color: #ff7417;
+
+            font-size: 20px;
+        }
+
+        .seguranca-texto h3 {
+            margin: 0 0 5px;
+
+            color: #ffffff;
+
+            font-size: 15px;
+        }
+
+        .seguranca-texto p {
+            margin: 0;
+
+            color: #778394;
+
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .seguranca-senha {
+            margin-top: 6px;
+
+            color: #a8b0bc;
+
+            letter-spacing: 3px;
+
+            font-size: 14px;
+        }
+
+        .btn-seguranca {
+            flex-shrink: 0;
+
+            background: #191e25;
+
+            color: #ffffff;
+
+            border:
+                1px solid #303741;
+        }
+
+        .btn-seguranca:hover {
+            border-color: #ff7417;
+        }
+
+
+        /* =====================================================
+           MODAL DE ALTERAÇÃO DE SENHA
+        ===================================================== */
+
+        .senha-modal-overlay {
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 9999;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.72
+                );
+
+            backdrop-filter:
+                blur(5px);
+        }
+
+        .senha-modal-overlay.aberto {
+            display: flex;
+        }
+
+        .senha-modal {
+            width: 100%;
+
+            max-width: 460px;
+
+            background: #11151a;
+
+            border:
+                1px solid #2a3038;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 25px 70px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.45
+                );
+
+            overflow: hidden;
+        }
+
+        .senha-modal-header {
+            display: flex;
+
+            align-items: flex-start;
+            justify-content: space-between;
+
+            gap: 18px;
+
+            padding: 24px 24px 18px;
+
+            border-bottom:
+                1px solid #252b33;
+        }
+
+        .senha-modal-header h2 {
+            margin: 4px 0 0;
+
+            color: #ffffff;
+
+            font-size: 20px;
+        }
+
+        .senha-modal-fechar {
+            width: 36px;
+            height: 36px;
+
+            border-radius: 9px;
+
+            border:
+                1px solid #303741;
+
+            background: #171c22;
+
+            color: #ffffff;
+
+            cursor: pointer;
+
+            font-size: 18px;
+        }
+
+        .senha-modal-body {
+            padding: 24px;
+        }
+
+        .senha-modal-body .perfil-campo
+        + .perfil-campo {
+            margin-top: 16px;
+        }
+
+        .senha-ajuda {
+            margin-top: 14px;
+
+            color: #778394;
+
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .senha-modal-acoes {
+            display: flex;
+            justify-content: flex-end;
+
+            gap: 10px;
+
+            margin-top: 22px;
+        }
+
+        .btn-cancelar {
+            background: #191e25;
+
+            color: #ffffff;
+
+            border:
+                1px solid #303741;
+        }
+
+        .senha-mensagem {
+            min-height: 18px;
+
+            margin-top: 14px;
+
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVO
+        ===================================================== */
+
+        @media (
+            max-width: 700px
+        ) {
+
             .perfil-grid {
                 grid-template-columns: 1fr;
             }
 
             .perfil-topo {
                 align-items: flex-start;
+
                 flex-direction: column;
             }
+
+            .seguranca-conteudo {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .btn-seguranca {
+                width: 100%;
+            }
+
+            .senha-modal-acoes {
+                flex-direction: column-reverse;
+            }
+
+            .senha-modal-acoes
+            .btn-perfil {
+                width: 100%;
+            }
+
         }
+
     </style>
+
 </head>
+
 
 <body class="app-v2">
 
-    <aside id="appSidebar" class="v2-sidebar"></aside>
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside
+        id="appSidebar"
+        class="v2-sidebar"
+    ></aside>
+
+
+    <!-- =====================================================
+         CONTEÚDO
+    ====================================================== -->
 
     <main class="v2-main">
 
         <div class="perfil-container">
 
-            <div>
-                <span style="
-                    color:#ff7417;
-                    font-size:11px;
-                    font-weight:800;
-                    text-transform:uppercase;
-                ">
+
+            <!-- =================================================
+                 CABEÇALHO
+            ================================================== -->
+
+            <header class="perfil-page-header">
+
+                <span class="perfil-page-kicker">
                     Minha conta
                 </span>
 
-                <h1 style="margin:8px 0 6px;">Meu Perfil</h1>
+                <h1>
+                    Meu Perfil
+                </h1>
 
-                <p style="margin:0;color:#8792a2;">
-                    Gerencie suas informações pessoais e dados de acesso.
+                <p>
+                    Gerencie suas informações pessoais,
+                    foto e segurança da conta.
                 </p>
-            </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 PERFIL
+            ================================================== -->
 
             <section class="perfil-card">
 
+
+                <!-- TOPO -->
+
                 <div class="perfil-topo">
 
-                    <div class="perfil-avatar" id="perfilAvatar">
-                        DB
+
+                    <div class="perfil-avatar-wrapper">
+
+                        <div
+                            class="perfil-avatar"
+                            id="perfilAvatar"
+                        >
+                            DB
+                        </div>
+
+                        <div
+                            class="perfil-avatar-editar"
+                            title="Alterar foto"
+                        >
+                            ✎
+                        </div>
+
                     </div>
 
+
                     <div class="perfil-info">
-                        <h2 id="perfilNomeTopo">Carregando...</h2>
 
-                        <p id="perfilEmailTopo">...</p>
+                        <h2 id="perfilNomeTopo">
+                            Carregando...
+                        </h2>
 
-                        <span class="perfil-badge" id="perfilPapel">
+                        <p id="perfilEmailTopo">
                             ...
-                        </span>
+                        </p>
+
+                        <div class="perfil-badges">
+
+                            <span
+                                class="perfil-badge"
+                                id="perfilPapel"
+                            >
+                                ...
+                            </span>
+
+                        </div>
+
                     </div>
 
                 </div>
 
+
+                <!-- =================================================
+                     INFORMAÇÕES
+                ================================================== -->
+
+                <div class="perfil-section-header">
+
+                    <div>
+
+                        <span class="perfil-section-kicker">
+                            Informações pessoais
+                        </span>
+
+                        <h3>
+                            Dados da conta
+                        </h3>
+
+                        <p>
+                            Informações utilizadas para
+                            identificar sua conta no sistema.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
                 <div class="perfil-grid">
 
+
                     <div class="perfil-campo">
-                        <label>Nome de exibição</label>
+
+                        <label for="perfilNome">
+                            Nome de exibição
+                        </label>
+
                         <input
                             id="perfilNome"
                             type="text"
                             placeholder="Seu nome"
+                            maxlength="80"
                         >
+
                     </div>
 
+
                     <div class="perfil-campo">
-                        <label>E-mail</label>
+
+                        <label for="perfilEmail">
+                            E-mail
+                        </label>
+
                         <input
                             id="perfilEmail"
                             type="email"
                             disabled
                         >
+
                     </div>
 
+
                     <div class="perfil-campo">
-                        <label>Perfil de acesso</label>
+
+                        <label for="perfilFuncao">
+                            Perfil de acesso
+                        </label>
+
                         <input
                             id="perfilFuncao"
                             type="text"
                             disabled
                         >
+
                     </div>
 
+
                     <div class="perfil-campo">
-                        <label>Conta</label>
+
+                        <label for="perfilStatus">
+                            Status da conta
+                        </label>
+
                         <input
                             id="perfilStatus"
                             type="text"
                             disabled
                         >
+
                     </div>
+
 
                 </div>
 
+
+                <!-- =================================================
+                     AÇÕES
+                ================================================== -->
+
                 <div class="perfil-acoes">
+
 
                     <button
                         class="btn-perfil btn-avatar"
@@ -254,6 +949,7 @@
                         Alterar foto
                     </button>
 
+
                     <button
                         class="btn-perfil btn-salvar"
                         id="btnSalvarPerfil"
@@ -262,37 +958,252 @@
                         Salvar alterações
                     </button>
 
+
                 </div>
+
 
                 <input
                     type="file"
                     id="inputAvatar"
-                    accept="image/png,image/jpeg,image/webp"
+                    accept="
+                        image/png,
+                        image/jpeg,
+                        image/webp
+                    "
                     hidden
                 >
+
 
                 <div
                     id="perfilMensagem"
                     class="perfil-status"
                 ></div>
 
+
             </section>
+
+
+            <!-- =================================================
+                 SEGURANÇA
+            ================================================== -->
+
+            <section class="seguranca-card">
+
+                <div class="seguranca-conteudo">
+
+
+                    <div class="seguranca-info">
+
+
+                        <div class="seguranca-icon">
+                            🔒
+                        </div>
+
+
+                        <div class="seguranca-texto">
+
+                            <span class="perfil-section-kicker">
+                                Segurança
+                            </span>
+
+                            <h3>
+                                Senha da conta
+                            </h3>
+
+                            <p>
+                                Altere periodicamente sua senha
+                                para manter sua conta protegida.
+                            </p>
+
+                            <div class="seguranca-senha">
+                                ••••••••••••
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <button
+                        class="btn-perfil btn-seguranca"
+                        id="btnAlterarSenha"
+                        type="button"
+                    >
+                        Alterar senha
+                    </button>
+
+
+                </div>
+
+            </section>
+
 
         </div>
 
     </main>
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-    </script>
 
-    <script src="js/supabase.js"></script>
-    <script src="js/layout.js?v=20260814-3"></script>
-    <script src="js/perfil.js?v=20260815-1"></script>
+    <!-- =====================================================
+         MODAL - ALTERAR SENHA
+    ====================================================== -->
+
+    <div
+        class="senha-modal-overlay"
+        id="modalAlterarSenha"
+        aria-hidden="true"
+    >
+
+        <div
+            class="senha-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloModalSenha"
+        >
+
+
+            <!-- HEADER -->
+
+            <div class="senha-modal-header">
+
+                <div>
+
+                    <span class="perfil-section-kicker">
+                        Segurança da conta
+                    </span>
+
+                    <h2 id="tituloModalSenha">
+                        Alterar senha
+                    </h2>
+
+                </div>
+
+
+                <button
+                    class="senha-modal-fechar"
+                    id="btnFecharModalSenha"
+                    type="button"
+                    aria-label="Fechar"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <!-- BODY -->
+
+            <div class="senha-modal-body">
+
+
+                <div class="perfil-campo">
+
+                    <label for="novaSenha">
+                        Nova senha
+                    </label>
+
+                    <input
+                        id="novaSenha"
+                        type="password"
+                        autocomplete="new-password"
+                        placeholder="Digite a nova senha"
+                    >
+
+                </div>
+
+
+                <div class="perfil-campo">
+
+                    <label for="confirmarNovaSenha">
+                        Confirmar nova senha
+                    </label>
+
+                    <input
+                        id="confirmarNovaSenha"
+                        type="password"
+                        autocomplete="new-password"
+                        placeholder="Repita a nova senha"
+                    >
+
+                </div>
+
+
+                <p class="senha-ajuda">
+                    Utilize uma senha segura e evite reutilizar
+                    senhas utilizadas em outros serviços.
+                </p>
+
+
+                <div
+                    id="senhaMensagem"
+                    class="senha-mensagem"
+                ></div>
+
+
+                <div class="senha-modal-acoes">
+
+
+                    <button
+                        class="btn-perfil btn-cancelar"
+                        id="btnCancelarSenha"
+                        type="button"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        class="btn-perfil btn-salvar"
+                        id="btnSalvarSenha"
+                        type="button"
+                    >
+                        Atualizar senha
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SCRIPTS
+    ====================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+    <script
+        src="js/supabase.js"
+    ></script>
+
+
+    <!--
+        Versão atualizada para carregar
+        a foto do usuário na sidebar.
+    -->
+    <script
+        src="js/layout.js?v=20260815-2"
+    ></script>
+
+
+    <script
+    src="js/perfil.js?v=20260815-2"
+></script>
+
 
     <script>
         carregarLayout("perfil");
     </script>
 
+
 </body>
+
 </html>
