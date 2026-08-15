@@ -152,32 +152,41 @@
         }
 
         .perfil-avatar-editar {
-            position: absolute;
+    position: absolute;
 
-            right: 0;
-            bottom: 2px;
+    right: 0;
+    bottom: 2px;
 
-            width: 32px;
-            height: 32px;
+    width: 32px;
+    height: 32px;
 
-            border-radius: 50%;
+    border-radius: 50%;
 
-            border:
-                3px solid #11151a;
+    border:
+        3px solid #11151a;
 
-            background: #ff7417;
+    background: #ff7417;
 
-            color: #0a0a0a;
+    color: #0a0a0a;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-            font-size: 14px;
-            font-weight: 900;
+    font-size: 14px;
+    font-weight: 900;
 
-            pointer-events: none;
-        }
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease;
+}
+
+.perfil-avatar-editar:hover {
+    transform: scale(1.08);
+    background: #ff8a38;
+}
 
 
         /* =====================================================
@@ -836,23 +845,27 @@
                 <div class="perfil-topo">
 
 
-                    <div class="perfil-avatar-wrapper">
+                   <div class="perfil-avatar-wrapper">
 
-                        <div
-                            class="perfil-avatar"
-                            id="perfilAvatar"
-                        >
-                            DB
-                        </div>
+    <div
+        class="perfil-avatar"
+        id="perfilAvatar"
+        title="Ver foto"
+    >
+        DB
+    </div>
 
-                        <div
-                            class="perfil-avatar-editar"
-                            title="Alterar foto"
-                        >
-                            ✎
-                        </div>
+    <button
+        class="perfil-avatar-editar"
+        id="btnEditarAvatar"
+        type="button"
+        title="Alterar foto"
+        aria-label="Alterar foto"
+    >
+        ✎
+    </button>
 
-                    </div>
+</div>
 
 
                     <div class="perfil-info">

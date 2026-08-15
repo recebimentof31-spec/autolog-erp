@@ -1480,3 +1480,25 @@ document.querySelectorAll(".senha-toggle").forEach((botao) => {
     });
 
 });
+
+// =====================================================
+// BOTÃO DE EDIÇÃO DO AVATAR
+// =====================================================
+
+const btnEditarAvatar =
+    document.getElementById("btnEditarAvatar");
+
+const inputAvatarPerfil =
+    document.getElementById("inputAvatar");
+
+if (btnEditarAvatar && inputAvatarPerfil) {
+
+    btnEditarAvatar.addEventListener("click", (event) => {
+
+        event.stopPropagation();
+
+        inputAvatarPerfil.click();
+
+    });
+
+}
