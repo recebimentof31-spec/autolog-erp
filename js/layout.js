@@ -216,13 +216,14 @@ async function carregarPerfilUsuarioAtual() {
                 )
 
                 .select(`
-                    id,
-                    auth_user_id,
-                    funcionario_id,
-                    nome_exibicao,
-                    papel,
-                    ativo
-                `)
+    id,
+    auth_user_id,
+    funcionario_id,
+    nome_exibicao,
+    papel,
+    ativo,
+    avatar_url
+`)
 
                 .eq(
                     "auth_user_id",
@@ -367,6 +368,11 @@ function aplicarPerfilSidebar(perfil) {
         avatar.textContent =
             "U";
 
+        avatar.style.backgroundImage = "";
+        avatar.style.backgroundSize = "";
+        avatar.style.backgroundPosition = "";
+        avatar.style.backgroundRepeat = "";
+
         return;
     }
 
@@ -426,10 +432,40 @@ function aplicarPerfilSidebar(perfil) {
     }
 
 
-    avatar.textContent =
-        iniciais;
+    // =============================================
+    // FOTO DO PERFIL NA SIDEBAR
+    // =============================================
+
+    if (perfil.avatar_url) {
+
+        avatar.textContent = "";
+
+        avatar.style.backgroundImage =
+            `url("${perfil.avatar_url}")`;
+
+        avatar.style.backgroundSize =
+            "cover";
+
+        avatar.style.backgroundPosition =
+            "center";
+
+        avatar.style.backgroundRepeat =
+            "no-repeat";
+
+    } else {
+
+        avatar.style.backgroundImage = "";
+        avatar.style.backgroundSize = "";
+        avatar.style.backgroundPosition = "";
+        avatar.style.backgroundRepeat = "";
+
+        avatar.textContent =
+            iniciais;
+
+    }
 
 }
+
 
 // =====================================================
 // EXIBE USUÁRIO NA SIDEBAR
