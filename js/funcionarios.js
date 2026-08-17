@@ -117,6 +117,10 @@ let funcionarios = [];
 
 let usuarioAuthAtual = null;
 
+let perfilUsuarioAtual = null;
+
+let usuarioEhAdministrador = false;
+
 let fotoSelecionada = null;
 
 let avatarAtualUrl = null;
@@ -129,6 +133,84 @@ let removerAvatarAtual = false;
 // =====================================================
 
 async function verificarSessao() {
+
+    // =====================================================
+// CARREGA PERFIL DO USUÁRIO
+// =====================================================
+
+async function carregarPerfilUsuarioAtual() {
+
+    if (!usuarioAuthAtual) {
+        return false;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("perfis_usuario")
+            .select(`
+                id,
+                auth_user_id,
+                nome_exibicao,
+                papel,
+                ativo,
+                funcionario_id
+            `)
+            .eq(
+                "auth_user_id",
+                usuarioAuthAtual.id
+            )
+            .maybeSingle();
+
+
+    if (error) {
+
+        console.error(
+            "Erro ao carregar perfil do usuário:",
+            error
+        );
+
+        return false;
+    }
+
+
+    if (!data) {
+
+        console.warn(
+            "Perfil de usuário não encontrado."
+        );
+
+        return false;
+    }
+
+
+    perfilUsuarioAtual =
+        data;
+
+
+    const papel =
+        String(
+            data.papel || ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    usuarioEhAdministrador =
+        data.ativo === true
+        &&
+        (
+            papel === "admin"
+            ||
+            papel === "administrador"
+        );
+
+
+    return true;
+}
 
     const {
         data,
@@ -757,15 +839,30 @@ function renderizarFuncionarios(
             );
 
 
-            containerAcoes.appendChild(
-                botaoEditar
-            );
+            if (usuarioEhAdministrador) {
 
+    containerAcoes.appendChild(
+        botaoEditar
+    );
 
-            containerAcoes.appendChild(
-                botaoExcluir
-            );
+    containerAcoes.appendChild(
+        botaoExcluir
+    );
 
+}
+
+if (!usuarioEhAdministrador) {
+
+    containerAcoes.textContent =
+        "Somente consulta";
+
+    containerAcoes.style.color =
+        "#718095";
+
+    containerAcoes.style.fontSize =
+        "11px";
+
+}
 
             tdAcoes.appendChild(
                 containerAcoes
@@ -1188,6 +1285,90 @@ async function enviarFotoFuncionario(
 
 
     return `${urlPublica}?v=${Date.now()}`;
+
+}
+
+// =====================================================
+// REMOVER FOTO DO STORAGE
+// =====================================================
+
+async function removerFotoFuncionarioStorage(
+    funcionarioId,
+    avatarUrl
+) {
+
+    if (
+        !funcionarioId ||
+        !avatarUrl
+    ) {
+        return;
+    }
+
+
+    try {
+
+        const url =
+            new URL(avatarUrl);
+
+
+        const marcador =
+            "/storage/v1/object/public/avatars/";
+
+
+        const indice =
+            url.pathname.indexOf(
+                marcador
+            );
+
+
+        if (indice === -1) {
+            return;
+        }
+
+
+        const caminho =
+            decodeURIComponent(
+                url.pathname.substring(
+                    indice +
+                    marcador.length
+                )
+            );
+
+
+        if (
+            !caminho.startsWith(
+                `funcionarios/${funcionarioId}/`
+            )
+        ) {
+            return;
+        }
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .storage
+                .from("avatars")
+                .remove([
+                    caminho
+                ]);
+
+
+        if (error) {
+            throw error;
+        }
+
+    }
+
+    catch (erro) {
+
+        console.warn(
+            "Não foi possível remover a foto antiga do Storage:",
+            erro
+        );
+
+    }
 
 }
 
@@ -2140,6 +2321,43 @@ cancelButton.addEventListener(
     limparFormulario
 );
 
+// =====================================================
+// PERMISSÕES DA TELA DE FUNCIONÁRIOS
+// =====================================================
+
+function aplicarPermissoesFuncionarios() {
+
+    if (usuarioEhAdministrador) {
+        return;
+    }
+
+
+    // Esconde toda a área de cadastro/edição
+    const formulario =
+        document.getElementById(
+            "employeeForm"
+        );
+
+
+    const cardCadastro =
+        formulario?.closest(
+            ".v2-card"
+        );
+
+
+    if (cardCadastro) {
+
+        cardCadastro.style.display =
+            "none";
+
+    }
+
+
+    console.log(
+        "Tela de funcionários em modo consulta."
+    );
+}
+
 
 // =====================================================
 // INICIALIZAÇÃO
@@ -2153,13 +2371,26 @@ document.addEventListener(
             await verificarSessao();
 
 
-        if (
-            !logado
-        ) {
+        if (!logado) {
+            return;
+        }
+
+
+        const perfilCarregado =
+            await carregarPerfilUsuarioAtual();
+
+
+        if (!perfilCarregado) {
+
+            alert(
+                "Não foi possível identificar as permissões do usuário."
+            );
 
             return;
-
         }
+
+
+        aplicarPermissoesFuncionarios();
 
 
         limparFormulario();
