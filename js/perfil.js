@@ -1502,3 +1502,128 @@ if (btnEditarAvatar && inputAvatarPerfil) {
     });
 
 }
+
+// =====================================================
+// VISUALIZAÇÃO AMPLIADA DA FOTO
+// =====================================================
+
+const avatarPerfil =
+    document.getElementById(
+        "perfilAvatar"
+    );
+
+const modalFotoPerfil =
+    document.getElementById(
+        "modalFotoPerfil"
+    );
+
+const fotoPerfilAmpliada =
+    document.getElementById(
+        "fotoPerfilAmpliada"
+    );
+
+const fotoPerfilNome =
+    document.getElementById(
+        "fotoPerfilNome"
+    );
+
+const btnFecharFotoPerfil =
+    document.getElementById(
+        "btnFecharFotoPerfil"
+    );
+
+
+function abrirFotoPerfil() {
+
+    if (
+        !perfilAtual?.avatar_url ||
+        !modalFotoPerfil ||
+        !fotoPerfilAmpliada
+    ) {
+        return;
+    }
+
+
+    fotoPerfilAmpliada.src =
+        perfilAtual.avatar_url;
+
+
+    if (fotoPerfilNome) {
+
+        fotoPerfilNome.textContent =
+            perfilAtual.nome_exibicao ||
+            "Usuário";
+
+    }
+
+
+    modalFotoPerfil.classList.add(
+        "aberto"
+    );
+
+    modalFotoPerfil.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+}
+
+
+function fecharFotoPerfil() {
+
+    if (!modalFotoPerfil) {
+        return;
+    }
+
+
+    modalFotoPerfil.classList.remove(
+        "aberto"
+    );
+
+    modalFotoPerfil.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+if (avatarPerfil) {
+
+    avatarPerfil.addEventListener(
+        "click",
+        abrirFotoPerfil
+    );
+
+}
+
+
+if (btnFecharFotoPerfil) {
+
+    btnFecharFotoPerfil.addEventListener(
+        "click",
+        fecharFotoPerfil
+    );
+
+}
+
+
+if (modalFotoPerfil) {
+
+    modalFotoPerfil.addEventListener(
+        "click",
+        (evento) => {
+
+            if (
+                evento.target ===
+                modalFotoPerfil
+            ) {
+
+                fecharFotoPerfil();
+
+            }
+
+        }
+    );
+
+}
