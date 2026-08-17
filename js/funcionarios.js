@@ -1098,9 +1098,98 @@ function validarFotoFuncionario(
 
 }
 
+// =====================================================
+// UPLOAD DA FOTO
+// =====================================================
+
+async function enviarFotoFuncionario(
+    funcionarioId,
+    arquivo
+) {
+
+    if (
+        !arquivo ||
+        !funcionarioId
+    ) {
+        return null;
+    }
 
 
+    let extensao =
+        arquivo.name
+            .split(".")
+            .pop()
+            ?.toLowerCase();
 
+
+    if (
+        ![
+            "jpg",
+            "jpeg",
+            "png",
+            "webp"
+        ].includes(extensao)
+    ) {
+
+        extensao =
+            arquivo.type === "image/png"
+                ? "png"
+                : arquivo.type === "image/webp"
+                    ? "webp"
+                    : "jpg";
+    }
+
+
+    const caminho =
+        `funcionarios/${funcionarioId}/avatar.${extensao}`;
+
+
+    const {
+        error: erroUpload
+    } =
+        await supabaseClient
+            .storage
+            .from("avatars")
+            .upload(
+                caminho,
+                arquivo,
+                {
+                    upsert: true,
+                    cacheControl: "3600",
+                    contentType: arquivo.type
+                }
+            );
+
+
+    if (erroUpload) {
+        throw erroUpload;
+    }
+
+
+    const {
+        data: dadosUrl
+    } =
+        supabaseClient
+            .storage
+            .from("avatars")
+            .getPublicUrl(caminho);
+
+
+    const urlPublica =
+        dadosUrl?.publicUrl;
+
+
+    if (!urlPublica) {
+
+        throw new Error(
+            "Não foi possível gerar a URL pública da foto."
+        );
+    }
+
+
+    return `${urlPublica}?v=${Date.now()}`;
+
+}
 
 // =====================================================
 // SALVAR / EDITAR
