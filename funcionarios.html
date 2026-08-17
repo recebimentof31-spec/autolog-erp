@@ -19,6 +19,502 @@
         href="css/v2.css"
     >
 
+
+    <style>
+
+        /* =====================================================
+           FOTO DO FUNCIONÁRIO - FORMULÁRIO
+        ===================================================== */
+
+        .funcionario-foto-area {
+            display: flex;
+            align-items: center;
+
+            gap: 22px;
+
+            margin-bottom: 26px;
+
+            padding: 20px;
+
+            background: #0d1116;
+
+            border:
+                1px solid #252b33;
+
+            border-radius: 14px;
+        }
+
+
+        .funcionario-avatar-wrapper {
+            position: relative;
+
+            flex-shrink: 0;
+        }
+
+
+        .funcionario-avatar {
+            width: 96px;
+            height: 96px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+
+            background: #ff7417;
+
+            border:
+                3px solid
+                rgba(
+                    255,
+                    116,
+                    23,
+                    0.24
+                );
+
+            color: #ffffff;
+
+            font-size: 28px;
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .funcionario-avatar:hover {
+            transform: scale(1.03);
+
+            box-shadow:
+                0 0 0 4px
+                rgba(
+                    255,
+                    116,
+                    23,
+                    0.10
+                );
+        }
+
+
+        .funcionario-avatar img {
+            display: block;
+
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+            object-position: center;
+
+            border-radius: 50%;
+
+            image-rendering: auto;
+        }
+
+
+        .funcionario-foto-editar {
+            position: absolute;
+
+            right: -2px;
+            bottom: 2px;
+
+            width: 30px;
+            height: 30px;
+
+            border-radius: 50%;
+
+            border:
+                3px solid #0d1116;
+
+            background: #ff7417;
+
+            color: #090909;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 13px;
+            font-weight: 900;
+
+            cursor: pointer;
+        }
+
+
+        .funcionario-foto-info {
+            min-width: 0;
+        }
+
+
+        .funcionario-foto-info h3 {
+            margin: 0 0 5px;
+
+            color: #ffffff;
+
+            font-size: 15px;
+        }
+
+
+        .funcionario-foto-info p {
+            margin: 0 0 14px;
+
+            color: #7f8a9b;
+
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+
+        .funcionario-foto-acoes {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+
+            gap: 10px;
+        }
+
+
+        .btn-foto-funcionario {
+            border-radius: 8px;
+
+            padding: 9px 13px;
+
+            font-size: 11px;
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+
+        .btn-selecionar-foto {
+            border:
+                1px solid
+                rgba(
+                    255,
+                    116,
+                    23,
+                    0.40
+                );
+
+            background:
+                rgba(
+                    255,
+                    116,
+                    23,
+                    0.10
+                );
+
+            color: #ff7417;
+        }
+
+
+        .btn-remover-foto {
+            border:
+                1px solid #303741;
+
+            background: #171c22;
+
+            color: #aeb6c2;
+        }
+
+
+        .btn-remover-foto:hover {
+            color: #ffffff;
+        }
+
+
+        .funcionario-foto-status {
+            margin-top: 10px;
+
+            min-height: 16px;
+
+            font-size: 11px;
+
+            color: #8792a2;
+        }
+
+
+        /* =====================================================
+           COLABORADOR NA TABELA
+        ===================================================== */
+
+        .funcionario-tabela-identidade {
+            display: flex;
+            align-items: center;
+
+            gap: 11px;
+
+            min-width: 210px;
+        }
+
+
+        .funcionario-tabela-avatar {
+            width: 42px;
+            height: 42px;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+
+            background:
+                rgba(
+                    255,
+                    116,
+                    23,
+                    0.14
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    116,
+                    23,
+                    0.24
+                );
+
+            color: #ff7417;
+
+            font-size: 12px;
+            font-weight: 800;
+
+            cursor: pointer;
+        }
+
+
+        .funcionario-tabela-avatar img {
+            display: block;
+
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+            object-position: center;
+
+            image-rendering: auto;
+        }
+
+
+        .funcionario-tabela-avatar:hover {
+            border-color: #ff7417;
+        }
+
+
+        .funcionario-tabela-nome {
+            display: flex;
+            flex-direction: column;
+
+            gap: 3px;
+        }
+
+
+        .funcionario-tabela-nome strong {
+            color: #ffffff;
+
+            font-size: 12px;
+        }
+
+
+        .funcionario-tabela-nome small {
+            color: #718095;
+
+            font-size: 10px;
+        }
+
+
+        /* =====================================================
+           MODAL - FOTO AMPLIADA
+        ===================================================== */
+
+        .funcionario-foto-modal-overlay {
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 10000;
+
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            padding: 24px;
+
+            background:
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.84
+                );
+
+            backdrop-filter:
+                blur(6px);
+        }
+
+
+        .funcionario-foto-modal-overlay.aberto {
+            display: flex;
+        }
+
+
+        .funcionario-foto-modal {
+            position: relative;
+
+            width: 100%;
+            max-width: 560px;
+
+            background: #11151a;
+
+            border:
+                1px solid #2a3038;
+
+            border-radius: 18px;
+
+            padding: 24px;
+
+            box-shadow:
+                0 30px 80px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.55
+                );
+        }
+
+
+        .funcionario-foto-modal-fechar {
+            position: absolute;
+
+            top: 14px;
+            right: 14px;
+
+            z-index: 2;
+
+            width: 38px;
+            height: 38px;
+
+            border-radius: 10px;
+
+            border:
+                1px solid #303741;
+
+            background:
+                rgba(
+                    17,
+                    21,
+                    26,
+                    0.94
+                );
+
+            color: #ffffff;
+
+            cursor: pointer;
+
+            font-size: 18px;
+        }
+
+
+        .funcionario-foto-modal-fechar:hover {
+            border-color: #ff7417;
+
+            color: #ff7417;
+        }
+
+
+        .funcionario-foto-modal-imagem {
+            width: 100%;
+
+            min-height: 260px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+
+            background: #080b0f;
+
+            border-radius: 14px;
+        }
+
+
+        .funcionario-foto-modal-imagem img {
+            display: block;
+
+            max-width: 100%;
+            max-height: 70vh;
+
+            width: auto;
+            height: auto;
+
+            object-fit: contain;
+
+            image-rendering: auto;
+        }
+
+
+        .funcionario-foto-modal-info {
+            margin-top: 16px;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 4px;
+        }
+
+
+        .funcionario-foto-modal-info strong {
+            color: #ffffff;
+
+            font-size: 16px;
+        }
+
+
+        .funcionario-foto-modal-info span {
+            color: #8792a2;
+
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVO
+        ===================================================== */
+
+        @media (max-width: 700px) {
+
+            .funcionario-foto-area {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+
+            .funcionario-foto-acoes {
+                width: 100%;
+            }
+
+
+            .btn-foto-funcionario {
+                flex: 1;
+            }
+
+        }
+
+    </style>
+
 </head>
 
 
@@ -59,7 +555,8 @@
                 </h1>
 
                 <p>
-                    Cadastre, consulte e gerencie os colaboradores da operação.
+                    Cadastre, consulte e gerencie
+                    os colaboradores da operação.
                 </p>
 
             </div>
@@ -97,11 +594,119 @@
 
             <form id="employeeForm">
 
+
                 <input
                     type="hidden"
                     id="employeeId"
                 >
 
+
+                <!-- =================================
+                     FOTO DO FUNCIONÁRIO
+                ================================== -->
+
+                <div class="funcionario-foto-area">
+
+
+                    <div class="funcionario-avatar-wrapper">
+
+
+                        <div
+                            class="funcionario-avatar"
+                            id="employeeAvatarPreview"
+                            title="Visualizar foto"
+                        >
+                            FN
+                        </div>
+
+
+                        <button
+                            class="funcionario-foto-editar"
+                            id="btnEditarFotoFuncionario"
+                            type="button"
+                            title="Alterar foto"
+                            aria-label="Alterar foto"
+                        >
+                            ✎
+                        </button>
+
+
+                    </div>
+
+
+                    <div class="funcionario-foto-info">
+
+
+                        <h3>
+                            Foto do colaborador
+                        </h3>
+
+
+                        <p>
+                            Utilize uma foto nítida para facilitar
+                            a identificação do colaborador no sistema.
+                            Formatos aceitos: JPG, PNG ou WEBP.
+                        </p>
+
+
+                        <div class="funcionario-foto-acoes">
+
+
+                            <button
+                                type="button"
+                                id="btnSelecionarFotoFuncionario"
+                                class="
+                                    btn-foto-funcionario
+                                    btn-selecionar-foto
+                                "
+                            >
+                                Selecionar foto
+                            </button>
+
+
+                            <button
+                                type="button"
+                                id="btnRemoverFotoFuncionario"
+                                class="
+                                    btn-foto-funcionario
+                                    btn-remover-foto
+                                "
+                                style="display:none;"
+                            >
+                                Remover foto
+                            </button>
+
+
+                        </div>
+
+
+                        <div
+                            id="employeePhotoStatus"
+                            class="funcionario-foto-status"
+                        ></div>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <input
+                    type="file"
+                    id="employeePhotoInput"
+                    accept="
+                        image/jpeg,
+                        image/png,
+                        image/webp
+                    "
+                    hidden
+                >
+
+
+                <!-- =================================
+                     CAMPOS
+                ================================== -->
 
                 <div class="ranking-filter-grid">
 
@@ -376,7 +981,8 @@
                     </h2>
 
                     <p>
-                        Consulte e gerencie os colaboradores cadastrados.
+                        Consulte e gerencie os
+                        colaboradores cadastrados.
                     </p>
 
                 </div>
@@ -434,7 +1040,7 @@
                         <tr>
 
                             <th>
-                                Nome
+                                Colaborador
                             </th>
 
                             <th>
@@ -466,7 +1072,9 @@
                     </thead>
 
 
-                    <tbody id="employeeTableBody"></tbody>
+                    <tbody
+                        id="employeeTableBody"
+                    ></tbody>
 
                 </table>
 
@@ -492,6 +1100,63 @@
 
 
     <!-- =====================================
+         MODAL - FOTO DO FUNCIONÁRIO
+    ====================================== -->
+
+    <div
+        class="funcionario-foto-modal-overlay"
+        id="employeePhotoModal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="funcionario-foto-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Foto do funcionário"
+        >
+
+
+            <button
+                class="funcionario-foto-modal-fechar"
+                id="btnCloseEmployeePhotoModal"
+                type="button"
+                aria-label="Fechar"
+            >
+                ×
+            </button>
+
+
+            <div class="funcionario-foto-modal-imagem">
+
+                <img
+                    id="employeePhotoModalImage"
+                    src=""
+                    alt="Foto ampliada do funcionário"
+                >
+
+            </div>
+
+
+            <div class="funcionario-foto-modal-info">
+
+                <strong id="employeePhotoModalName">
+                    Funcionário
+                </strong>
+
+                <span id="employeePhotoModalDetails">
+                    Colaborador
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
          SCRIPTS
     ====================================== -->
 
@@ -500,16 +1165,26 @@
     ></script>
 
 
-    <script src="js/supabase.js"></script>
+    <script
+        src="js/supabase.js"
+    ></script>
 
-    <script src="js/layout.js"></script>
 
-    <script src="js/funcionarios.js"></script>
+    <script
+        src="js/layout.js?v=20260817-1"
+    ></script>
+
+
+    <script
+        src="js/funcionarios.js?v=20260817-1"
+    ></script>
 
 
     <script>
 
-        carregarLayout("funcionarios");
+        carregarLayout(
+            "funcionarios"
+        );
 
     </script>
 
