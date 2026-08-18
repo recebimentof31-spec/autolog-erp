@@ -455,7 +455,6 @@ function atualizarRelatorio() {
         avaliacoes
     );
 
-
 }
 
 
@@ -698,7 +697,8 @@ function atualizarGraficoRelatorio(avaliacoes) {
                 avaliacao.semana
                 || "-";
 
-            const data =
+                
+                            const data =
                 avaliacao.created_at
                 ||
                 avaliacao.periodo_fim;
@@ -1398,7 +1398,7 @@ async function carregarFechamentoMensal() {
         }
 
 
-        const fimCompetencia =
+                const fimCompetencia =
             `${proximoAno}-${String(
                 proximoMes
             ).padStart(2, "0")}-01`;
@@ -1900,7 +1900,7 @@ async function carregarFechamentoMensal() {
                     )
 
                     .select(`
-                        id,
+                        id id,
                         nome,
                         matricula
                     `)
@@ -2098,6 +2098,8 @@ function atualizarKPIsFechamento() {
 
 
 // =====================================================
+
+
 // TABELA DO FECHAMENTO
 // =====================================================
 
@@ -2467,6 +2469,7 @@ function mostrarErroFechamento() {
     }
 
 }
+
 // =====================================================
 // FINALIZA FECHAMENTO MENSAL
 // =====================================================
@@ -2540,60 +2543,60 @@ async function fecharMesColaborador(fechamentoId) {
         }
 
 
-       const authUserId =
-    sessaoData?.session?.user?.id
-    || null;
+        const authUserId =
+            sessaoData?.session?.user?.id
+            || null;
 
 
-let perfilUsuarioId = null;
+        let perfilUsuarioId = null;
 
 
-if (authUserId) {
+        if (authUserId) {
 
-    const {
-        data: perfilUsuario,
-        error: erroPerfil
-    } = await supabaseClient
+            const {
+                data: perfilUsuario,
+                error: erroPerfil
+            } = await supabaseClient
 
-        .from("perfis_usuario")
+                .from("perfis_usuario")
 
-        .select("id")
+                .select("id")
 
-        .eq(
-            "auth_user_id",
-            authUserId
-        )
+                .eq(
+                    "auth_user_id",
+                    authUserId
+                )
 
-        .maybeSingle();
-
-
-    if (erroPerfil) {
-        throw erroPerfil;
-    }
+                .maybeSingle();
 
 
-    perfilUsuarioId =
-        perfilUsuario?.id
-        || null;
-}
+            if (erroPerfil) {
+                throw erroPerfil;
+            }
 
 
-const atualizacao = {
-
-    status:
-        "fechado",
-
-    fechado_em:
-        new Date().toISOString()
-
-};
+            perfilUsuarioId =
+                perfilUsuario?.id
+                || null;
+        }
 
 
-if (perfilUsuarioId) {
+        const atualizacao = {
 
-    atualizacao.fechado_por =
-        perfilUsuarioId;
-}
+            status:
+                "fechado",
+
+            fechado_em:
+                new Date().toISOString()
+
+        };
+
+
+        if (perfilUsuarioId) {
+
+            atualizacao.fechado_por =
+                perfilUsuarioId;
+        }
 
         const {
             data,
@@ -2660,6 +2663,39 @@ if (perfilUsuarioId) {
 // =====================================================
 
 let fechamentoDetalhesAtualId = null;
+
+
+// =====================================================
+// ATUALIZA O ESTADO DO BOTÃO DO PARECER
+// =====================================================
+
+function atualizarEstadoBotaoParecer(
+    parecerJaSalvo = false
+) {
+
+    const botao =
+        document.getElementById(
+            "btnSalvarParecer"
+        );
+
+
+    if (!botao) {
+        return;
+    }
+
+
+    botao.dataset.parecerSalvo =
+        parecerJaSalvo
+            ? "true"
+            : "false";
+
+
+    botao.textContent =
+        parecerJaSalvo
+            ? "Atualizar parecer"
+            : "Salvar parecer";
+
+}
 
 
 // =====================================================
@@ -2765,6 +2801,9 @@ async function abrirDetalhesFechamento(fechamentoId) {
         <tr>
 
             <td colspan="4">
+
+
+
                 Carregando avaliações...
             </td>
 
@@ -2921,135 +2960,135 @@ async function abrirDetalhesFechamento(fechamentoId) {
             avaliacoes || [];
 
 
-       // =============================================
-// QUEM FECHOU
-// =============================================
+        // =============================================
+        // QUEM FECHOU
+        // =============================================
 
-let responsavelFechamento =
-    "Não informado";
-
-
-if (fechamento.fechado_por) {
-
-    const {
-        data: perfil,
-        error: erroPerfil
-    } =
-        await supabaseClient
-
-            .from("perfis_usuario")
-
-            .select(`
-                id,
-                nome_exibicao
-            `)
-
-            .eq(
-                "id",
-                fechamento.fechado_por
-            )
-
-            .maybeSingle();
+        let responsavelFechamento =
+            "Não informado";
 
 
-    if (
-        !erroPerfil
-        &&
-        perfil
-    ) {
+        if (fechamento.fechado_por) {
 
-        const nomePerfil =
-            String(
-                perfil.nome_exibicao
-                || ""
-            ).trim();
+            const {
+                data: perfil,
+                error: erroPerfil
+            } =
+                await supabaseClient
 
+                    .from("perfis_usuario")
 
-        // =========================================
-        // SE O NOME CADASTRADO FOR UM E-MAIL,
-        // REMOVE O DOMÍNIO E FORMATA PARA EXIBIÇÃO
-        // =========================================
+                    .select(`
+                        id,
+                        nome_exibicao
+                    `)
 
-        if (
-            nomePerfil.includes("@")
-        ) {
-
-            const parteAntesDoEmail =
-                nomePerfil
-                    .split("@")[0]
-
-                    .replace(
-                        /[._-]+/g,
-                        " "
+                    .eq(
+                        "id",
+                        fechamento.fechado_por
                     )
 
-                    .replace(
-                        /\d+/g,
-                        " "
-                    )
-
-                    .replace(
-                        /\s+/g,
-                        " "
-                    )
-
-                    .trim();
+                    .maybeSingle();
 
 
-            responsavelFechamento =
-                parteAntesDoEmail
+            if (
+                !erroPerfil
+                &&
+                perfil
+            ) {
 
-                    ? parteAntesDoEmail
-                        .split(" ")
+                const nomePerfil =
+                    String(
+                        perfil.nome_exibicao
+                        || ""
+                    ).trim();
 
-                        .filter(Boolean)
 
-                        .map(
-                            palavra =>
-                                palavra
-                                    .charAt(0)
-                                    .toUpperCase()
-                                +
-                                palavra
-                                    .slice(1)
-                                    .toLowerCase()
-                        )
+                // =========================================
+                // SE O NOME CADASTRADO FOR UM E-MAIL,
+                // REMOVE O DOMÍNIO E FORMATA PARA EXIBIÇÃO
+                // =========================================
 
-                        .join(" ")
+                if (
+                    nomePerfil.includes("@")
+                ) {
 
-                    : "Usuário do sistema";
+                    const parteAntesDoEmail =
+                        nomePerfil
+                            .split("@")[0]
+
+                            .replace(
+                                /[._-]+/g,
+                                " "
+                            )
+
+                            .replace(
+                                /\d+/g,
+                                " "
+                            )
+
+                            .replace(
+                                /\s+/g,
+                                " "
+                            )
+
+                            .trim();
+
+
+                    responsavelFechamento =
+                        parteAntesDoEmail
+
+                            ? parteAntesDoEmail
+                                .split(" ")
+
+                                .filter(Boolean)
+
+                                .map(
+                                    palavra =>
+                                        palavra
+                                            .charAt(0)
+                                            .toUpperCase()
+                                        +
+                                        palavra
+                                            .slice(1)
+                                            .toLowerCase()
+                                )
+
+                                .join(" ")
+
+                            : "Usuário do sistema";
+
+                }
+
+                else {
+
+                    responsavelFechamento =
+                        nomePerfil
+                        ||
+                        "Usuário do sistema";
+
+                }
+
+            }
+
+            else {
+
+                responsavelFechamento =
+                    "Usuário do sistema";
+
+
+                if (erroPerfil) {
+
+                    console.warn(
+                        "Não foi possível identificar o responsável pelo fechamento:",
+                        erroPerfil
+                    );
+
+                }
+
+            }
 
         }
-
-        else {
-
-            responsavelFechamento =
-                nomePerfil
-                ||
-                "Usuário do sistema";
-
-        }
-
-    }
-
-    else {
-
-        responsavelFechamento =
-            "Usuário do sistema";
-
-
-        if (erroPerfil) {
-
-            console.warn(
-                "Não foi possível identificar o responsável pelo fechamento:",
-                erroPerfil
-            );
-
-        }
-
-    }
-
-}
 
         // =============================================
         // DADOS PRINCIPAIS
@@ -3177,6 +3216,13 @@ if (fechamento.fechado_por) {
                     : "";
 
         }
+
+
+        atualizarEstadoBotaoParecer(
+            Boolean(
+                fechamento.parecer_atualizado_em
+            )
+        );
 
 
         // =============================================
@@ -3459,7 +3505,7 @@ if (fechamento.fechado_por) {
                 .join("");
 
 
-        console.log(
+                        console.log(
             "Relatório individual carregado:",
             {
                 fechamento,
@@ -4149,11 +4195,16 @@ async function salvarParecerGestor() {
         || "";
 
 
+    const parecerJaSalvo =
+        botao?.dataset.parecerSalvo
+        === "true";
+
+
     let notaGestor =
         null;
 
 
-    // =============================================
+            // =============================================
     // VALIDA NOTA
     // =============================================
 
@@ -4203,6 +4254,25 @@ async function salvarParecerGestor() {
         );
 
         return;
+
+    }
+
+
+    // =============================================
+    // CONFIRMA ATUALIZAÇÃO
+    // =============================================
+
+    if (parecerJaSalvo) {
+
+        const confirmarAtualizacao =
+            window.confirm(
+                "Deseja atualizar a nota e o parecer final deste colaborador?"
+            );
+
+
+        if (!confirmarAtualizacao) {
+            return;
+        }
 
     }
 
@@ -4318,13 +4388,22 @@ async function salvarParecerGestor() {
         if (status) {
 
             status.textContent =
-                `Parecer salvo em ${
+                `Parecer ${
+                    parecerJaSalvo
+                        ? "atualizado"
+                        : "salvo"
+                } em ${
                     formatarDataHoraFechamento(
                         data.parecer_atualizado_em
                     )
                 }`;
 
         }
+
+
+        atualizarEstadoBotaoParecer(
+            true
+        );
 
 
         console.log(
@@ -4366,8 +4445,10 @@ async function salvarParecerGestor() {
                 false;
 
 
-            botao.textContent =
-                "Salvar parecer";
+            atualizarEstadoBotaoParecer(
+                botao.dataset.parecerSalvo
+                === "true"
+            );
 
         }
 
@@ -4823,6 +4904,7 @@ body {
 /* =====================================================
    TABELA
 ===================================================== */
+
 
 .fechamento-modal-table-wrapper {
     overflow: hidden;
@@ -5523,7 +5605,9 @@ function atualizarResumoIndividual(avaliacoes) {
                         b.periodo_fim
                         ||
                         0
-                    );
+
+
+                                            );
 
 
                 return (
@@ -5762,6 +5846,7 @@ function atualizarResumoIndividual(avaliacoes) {
     }
 
 }
+
 // =====================================================
 // DESEMPENHO POR CRITÉRIO
 // =====================================================
