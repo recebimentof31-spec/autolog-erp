@@ -171,9 +171,14 @@ function atualizarRankingCompleto() {
             rankingBase
         );
 
-    const ranking =
+    const rankingCompleto =
         montarRanking(
             avaliacoesFiltradas
+        );
+
+    const ranking =
+        aplicarFiltroClassificacaoRanking(
+            rankingCompleto
         );
 
     atualizarPodio(ranking);
@@ -189,7 +194,6 @@ function atualizarRankingCompleto() {
         ranking
     );
 }
-
 
 // =====================================================
 // APLICA FILTROS
@@ -211,16 +215,8 @@ function aplicarFiltros(avaliacoes) {
         )?.value
         || "todos";
 
-    const classificacao =
-        document.getElementById(
-            "rankingClassificacao"
-        )?.value
-        || "todas";
-
-
     const agora =
         new Date();
-
 
     return avaliacoes.filter(
         avaliacao => {
@@ -240,7 +236,6 @@ function aplicarFiltros(avaliacoes) {
                     || ""
                 ).toLowerCase();
 
-
             const atendeBusca =
                 !busca
                 ||
@@ -248,10 +243,8 @@ function aplicarFiltros(avaliacoes) {
                 ||
                 matricula.includes(busca);
 
-
             let atendePeriodo =
                 true;
-
 
             if (
                 periodo !== "todos"
@@ -275,37 +268,17 @@ function aplicarFiltros(avaliacoes) {
                 );
 
                 atendePeriodo =
+                    !Number.isNaN(
+                        dataAvaliacao.getTime()
+                    )
+                    &&
                     dataAvaliacao >= limite;
             }
-
-
-            let atendeClassificacao =
-                true;
-
-
-            if (
-                classificacao !== "todas"
-            ) {
-
-                const classe =
-                    obterClassificacaoPorNota(
-                        Number(
-                            avaliacao.nota_final
-                            || 0
-                        )
-                    );
-
-                atendeClassificacao =
-                    classe === classificacao;
-            }
-
 
             return (
                 atendeBusca
                 &&
                 atendePeriodo
-                &&
-                atendeClassificacao
             );
         }
     );
@@ -485,6 +458,33 @@ function montarRanking(avaliacoes) {
 
 
     return ranking;
+}
+
+// =====================================================
+// FILTRA PELA CLASSIFICAÇÃO DA MÉDIA FINAL
+// =====================================================
+
+function aplicarFiltroClassificacaoRanking(
+    ranking
+) {
+
+    const classificacao =
+        document.getElementById(
+            "rankingClassificacao"
+        )?.value
+        || "todas";
+
+    if (
+        classificacao === "todas"
+    ) {
+        return ranking;
+    }
+
+    return ranking.filter(
+        colaborador =>
+            colaborador.classificacao
+            === classificacao
+    );
 }
 
 
