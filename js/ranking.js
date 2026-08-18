@@ -87,9 +87,10 @@ async function carregarRanking() {
             created_at,
             status,
             funcionarios (
-                nome,
-                matricula
-            )
+    nome,
+    matricula,
+    avatar_url
+)
         `)
         .eq("status", "enviada")
         .order("created_at", {
@@ -317,13 +318,19 @@ function montarRanking(avaliacoes) {
                         || "Funcionário",
 
                     matricula:
-                        avaliacao
-                            .funcionarios
-                            ?.matricula
-                        || "-",
+    avaliacao
+        .funcionarios
+        ?.matricula
+    || "-",
 
-                    soma:
-                        0,
+avatar_url:
+    avaliacao
+        .funcionarios
+        ?.avatar_url
+    || null,
+
+soma:
+    0,
 
                     quantidade:
                         0,
@@ -413,10 +420,13 @@ function montarRanking(avaliacoes) {
                             item.nome,
 
                         matricula:
-                            item.matricula,
+    item.matricula,
 
-                        quantidade:
-                            item.quantidade,
+avatar_url:
+    item.avatar_url,
+
+quantidade:
+    item.quantidade,
 
                         media:
                             Number(
@@ -555,6 +565,79 @@ function atualizarPodio(ranking) {
 // =====================================================
 // CRIA CARD DO PÓDIO
 // =====================================================
+
+// =====================================================
+// AVATAR DO PÓDIO
+// =====================================================
+
+function criarAvatarPodio(
+    nome,
+    avatarUrl,
+    posicao
+) {
+
+    const nomeSeguro =
+        String(
+            nome || "Funcionário"
+        );
+
+    const iniciais =
+        nomeSeguro
+            .trim()
+            .split(/\s+/)
+            .slice(0, 2)
+            .map(
+                parte =>
+                    parte.charAt(0)
+            )
+            .join("")
+            .toUpperCase()
+        || "F";
+
+    let medalha = "🥉";
+
+    if (posicao === 1) {
+        medalha = "🥇";
+    }
+
+    if (posicao === 2) {
+        medalha = "🥈";
+    }
+
+    const imagem =
+        avatarUrl
+            ? `
+                <img
+                    src="${avatarUrl}"
+                    alt="Foto de ${nomeSeguro}"
+                    loading="lazy"
+                    onerror="this.remove()"
+                >
+            `
+            : "";
+
+    return `
+        <div
+            class="
+                podium-avatar
+                podium-avatar-${posicao}
+            "
+        >
+            <span class="podium-avatar-fallback">
+                ${iniciais}
+            </span>
+
+            ${imagem}
+
+            <span
+                class="podium-avatar-medal"
+                title="${posicao}º lugar"
+            >
+                ${medalha}
+            </span>
+        </div>
+    `;
+}
 
 function criarCardPodio(
     colaborador,
@@ -1448,10 +1531,11 @@ async function carregarRankingMensal() {
                     )
 
                     .select(`
-                        id,
-                        nome,
-                        matricula
-                    `)
+    id,
+    nome,
+    matricula,
+    avatar_url
+`)
 
                     .in(
                         "id",
