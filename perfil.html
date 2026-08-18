@@ -923,6 +923,170 @@ transition:
 
         }
 
+/* =====================================================
+   AJUSTES VISUAIS V3 - PERFIL
+===================================================== */
+
+body.app-v2,
+body.app-v2 .v2-main {
+    background: #080b0f !important;
+    color: #f7f9fc;
+}
+
+body.app-v2 .v2-main {
+    min-height: 100vh;
+    padding: 28px 34px 42px;
+}
+
+.perfil-container {
+    width: 100%;
+    max-width: 1480px;
+    margin: 0 auto;
+}
+
+.perfil-page-header {
+    margin-bottom: 20px;
+}
+
+.perfil-page-header h1 {
+    color: #ffffff;
+    font-size: clamp(28px, 2vw, 36px);
+    line-height: 1.1;
+}
+
+.perfil-page-header p {
+    color: #8e99aa;
+}
+
+.perfil-card,
+.seguranca-card {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18, 23, 29, 0.98),
+            rgba(13, 17, 22, 0.98)
+        );
+
+    border-color: #29313b;
+
+    box-shadow:
+        0 18px 55px
+        rgba(0, 0, 0, 0.22);
+}
+
+.perfil-card {
+    padding: 30px 32px;
+}
+
+.perfil-topo {
+    gap: 28px;
+}
+
+.perfil-avatar {
+    width: 124px;
+    height: 124px;
+
+    border: 3px solid #ff7417;
+
+    box-shadow:
+        0 0 0 5px rgba(255, 116, 23, 0.09),
+        0 16px 34px rgba(0, 0, 0, 0.32);
+}
+
+.perfil-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+
+    object-fit: cover !important;
+    object-position: center 22% !important;
+
+    transform: none !important;
+}
+
+.perfil-avatar:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 0 0 5px rgba(255, 116, 23, 0.14),
+        0 20px 42px rgba(0, 0, 0, 0.38);
+}
+
+.perfil-avatar-editar {
+    right: 1px;
+    bottom: 4px;
+
+    width: 34px;
+    height: 34px;
+}
+
+.perfil-info h2 {
+    color: #ffffff;
+
+    font-size:
+        clamp(25px, 2vw, 32px);
+}
+
+.perfil-grid {
+    gap: 20px 22px;
+}
+
+.perfil-campo input {
+    min-height: 48px;
+}
+
+.perfil-acoes {
+    padding-top: 2px;
+}
+
+.seguranca-card {
+    padding: 24px 28px;
+}
+
+.foto-modal {
+    max-width: min(680px, 92vw);
+}
+
+.foto-modal-imagem-wrapper {
+    min-height: 320px;
+    max-height: 72vh;
+}
+
+.foto-modal-imagem-wrapper img {
+    max-height: 72vh;
+    object-fit: contain;
+}
+
+@media (max-width: 1100px) {
+
+    body.app-v2 .v2-main {
+        padding: 24px;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    body.app-v2 .v2-main {
+        padding: 20px 16px 32px;
+    }
+
+    .perfil-card,
+    .seguranca-card {
+        padding: 22px 18px;
+    }
+
+    .perfil-avatar {
+        width: 112px;
+        height: 112px;
+    }
+
+    .foto-modal-imagem-wrapper {
+        min-height: 220px;
+    }
+
+}
+
+
     </style>
 
 </head>
