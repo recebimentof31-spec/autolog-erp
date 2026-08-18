@@ -1900,7 +1900,7 @@ async function carregarFechamentoMensal() {
                     )
 
                     .select(`
-                        id id,
+                        id,
                         nome,
                         matricula
                     `)
