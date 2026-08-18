@@ -865,6 +865,153 @@ function definirMensagemPerfil(
 // ENVIA AVATAR PARA O SUPABASE
 // =====================================================
 
+// =====================================================
+// PREPARA AVATAR EM ALTA QUALIDADE
+// =====================================================
+
+async function prepararArquivoAvatar(arquivo) {
+
+    const imagem =
+        await createImageBitmap(
+            arquivo,
+            {
+                imageOrientation: "from-image"
+            }
+        );
+
+
+    const ladoOrigem =
+        Math.min(
+            imagem.width,
+            imagem.height
+        );
+
+
+    const origemX =
+        Math.max(
+            0,
+            (imagem.width - ladoOrigem) / 2
+        );
+
+
+    const origemY =
+        Math.max(
+            0,
+            (imagem.height - ladoOrigem) / 2
+        );
+
+
+    const ladoSaida =
+        Math.min(
+            1200,
+            ladoOrigem
+        );
+
+
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
+
+
+    canvas.width =
+        ladoSaida;
+
+
+    canvas.height =
+        ladoSaida;
+
+
+    const contexto =
+        canvas.getContext(
+            "2d",
+            {
+                alpha: false
+            }
+        );
+
+
+    contexto.imageSmoothingEnabled =
+        true;
+
+
+    contexto.imageSmoothingQuality =
+        "high";
+
+
+    contexto.drawImage(
+        imagem,
+        origemX,
+        origemY,
+        ladoOrigem,
+        ladoOrigem,
+        0,
+        0,
+        ladoSaida,
+        ladoSaida
+    );
+
+
+    imagem.close();
+
+
+    const blob =
+        await new Promise(
+            (
+                resolve,
+                reject
+            ) => {
+
+                canvas.toBlob(
+                    resultado => {
+
+                        if (resultado) {
+
+                            resolve(
+                                resultado
+                            );
+
+                            return;
+                        }
+
+
+                        reject(
+                            new Error(
+                                "Não foi possível processar a imagem."
+                            )
+                        );
+
+                    },
+                    "image/webp",
+                    0.92
+                );
+
+            }
+        );
+
+
+    if (
+        blob.size >
+        2 * 1024 * 1024
+    ) {
+
+        throw new Error(
+            "A foto processada ultrapassou 2 MB."
+        );
+
+    }
+
+
+    return new File(
+        [blob],
+        "avatar.webp",
+        {
+            type: "image/webp"
+        }
+    );
+
+}
+
 async function enviarAvatar(arquivo) {
 
     if (!usuarioAuthAtual || !perfilAtual) {
@@ -905,13 +1052,13 @@ async function enviarAvatar(arquivo) {
     // =================================================
 
     const tamanhoMaximo =
-        2 * 1024 * 1024;
+    12 * 1024 * 1024;
 
 
     if (arquivo.size > tamanhoMaximo) {
 
         definirMensagemPerfil(
-            "A imagem deve ter no máximo 2 MB.",
+            "A imagem original deve ter no máximo 12 MB.",
             "erro"
         );
 
@@ -924,6 +1071,11 @@ async function enviarAvatar(arquivo) {
         "normal"
     );
 
+    const arquivoProcessado =
+    await prepararArquivoAvatar(
+        arquivo
+    );
+
 
     try {
 
@@ -931,12 +1083,8 @@ async function enviarAvatar(arquivo) {
         // EXTENSÃO
         // =================================================
 
-        let extensao =
-            arquivo.name
-                .split(".")
-                .pop()
-                ?.toLowerCase();
-
+        const extensao =
+    "webp";
 
         if (
             !["jpg", "jpeg", "png", "webp"]
@@ -976,11 +1124,11 @@ async function enviarAvatar(arquivo) {
                 .from("avatars")
                 .upload(
                     caminho,
-                    arquivo,
+                    arquivoProcessado,
                     {
                         upsert: true,
                         cacheControl: "3600",
-                        contentType: arquivo.type
+                        contentType: arquivoProcessado.type
                     }
                 );
 
