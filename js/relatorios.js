@@ -4619,7 +4619,7 @@ function imprimirFechamentoIndividual() {
 
 @page {
     size: A4 portrait;
-    margin: 8mm 10mm;
+    margin: 5mm 8mm;
 }
 
 * {
@@ -4769,15 +4769,8 @@ body {
 
 .fechamento-modal-section,
 .parecer-gestor-section {
-    margin:
-        0
-        0
-        17px;
-
-    padding:
-        0
-        0
-        15px;
+    margin: 0 0 10px;
+    padding: 0 0 9px;
 
     border-bottom:
         1px solid #d9dee5;
@@ -4856,7 +4849,7 @@ body {
 }
 
 .detalhe-resumo-card {
-    min-height: 77px;
+    min-height: 62px;
 
     padding: 11px;
 
@@ -5000,7 +4993,7 @@ body {
 .fechamento-criterio-card {
     position: relative;
 
-    min-height: 84px;
+    min-height: 68px;
 
     padding: 11px;
 
@@ -5204,7 +5197,7 @@ body {
 }
 
 .print-parecer-texto {
-    min-height: 115px;
+    min-height: 72px;
 
     padding: 11px;
 
