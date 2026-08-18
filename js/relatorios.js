@@ -5259,6 +5259,27 @@ body {
         margin: 0 auto;
 
         /* sem transform e sem zoom */
+
+        html,
+body {
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+.relatorio-print,
+.fechamento-modal {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+}
+
+.fechamento-modal > :last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
     }
 
     .fechamento-modal-section,
