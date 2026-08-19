@@ -50,7 +50,7 @@ function carregarLayout(paginaAtiva = "") {
                 }"
             >
                 <span>▦</span>
-                Dashboard
+Visão Geral
             </a>
 
 
