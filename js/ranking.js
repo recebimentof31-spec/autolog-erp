@@ -1782,6 +1782,7 @@ function criarCardPodioMensal(
 
         </article>
     `;
+    }
 
     // =====================================================
 // AVATAR DA TABELA DO RANKING
@@ -1831,8 +1832,6 @@ function criarAvatarTabelaRanking(
         </span>
     `;
 }
-}
-
 
 // =====================================================
 // KPIs MENSAIS
