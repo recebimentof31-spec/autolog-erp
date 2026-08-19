@@ -576,14 +576,19 @@ function criarAvatarPodio(
     posicao
 ) {
 
-    const nomeSeguro =
-        String(
-            nome || "Funcionário"
-        );
+    const possuiColaborador =
+    Boolean(
+        String(nome || "").trim()
+    );
 
-    const iniciais =
-        nomeSeguro
-            .trim()
+const nomeSeguro =
+    possuiColaborador
+        ? String(nome).trim()
+        : "Posição disponível";
+
+const iniciais =
+    possuiColaborador
+        ? nomeSeguro
             .split(/\s+/)
             .slice(0, 2)
             .map(
@@ -592,7 +597,7 @@ function criarAvatarPodio(
             )
             .join("")
             .toUpperCase()
-        || "F";
+        : "👤";
 
     let medalha = "🥉";
 
@@ -654,9 +659,11 @@ function criarCardPodio(
                 "
             >
 
-                <span class="podium-position">
-                    ${posicao}º
-                </span>
+                ${criarAvatarPodio(
+    null,
+    null,
+    posicao
+)}
 
                 <strong>
                     Sem dados
@@ -869,22 +876,27 @@ function atualizarTabela(ranking) {
 
                             <td>
 
-                                <div
-                                    class="
-                                        ranking-table-person
-                                    "
-                                >
+                                <div class="ranking-table-person">
 
-                                    <strong>
-                                        ${colaborador.nome}
-                                    </strong>
+    ${criarAvatarTabelaRanking(
+        colaborador.nome,
+        colaborador.avatar_url
+    )}
 
-                                    <small>
-                                        Matrícula:
-                                        ${colaborador.matricula}
-                                    </small>
+    <div class="ranking-table-person-info">
 
-                                </div>
+        <strong>
+            ${colaborador.nome}
+        </strong>
+
+        <small>
+            Matrícula:
+            ${colaborador.matricula}
+        </small>
+
+    </div>
+
+</div>
 
                             </td>
 
@@ -1685,9 +1697,11 @@ function criarCardPodioMensal(
                 "
             >
 
-                <span class="podium-position">
-                    ${posicao}º
-                </span>
+                ${criarAvatarPodio(
+    null,
+    null,
+    posicao
+)}
 
                 <strong>
                     Sem dados
@@ -1769,6 +1783,54 @@ function criarCardPodioMensal(
         </article>
     `;
 
+    // =====================================================
+// AVATAR DA TABELA DO RANKING
+// =====================================================
+
+function criarAvatarTabelaRanking(
+    nome,
+    avatarUrl
+) {
+
+    const nomeSeguro =
+        String(
+            nome || "Funcionário"
+        ).trim();
+
+    const iniciais =
+        nomeSeguro
+            .split(/\s+/)
+            .slice(0, 2)
+            .map(
+                parte =>
+                    parte.charAt(0)
+            )
+            .join("")
+            .toUpperCase()
+        || "F";
+
+    const imagem =
+        avatarUrl
+            ? `
+                <img
+                    src="${avatarUrl}"
+                    alt="Foto de ${nomeSeguro}"
+                    loading="lazy"
+                    onerror="this.remove()"
+                >
+            `
+            : "";
+
+    return `
+        <span class="ranking-table-avatar">
+            <span class="ranking-table-avatar-fallback">
+                ${iniciais}
+            </span>
+
+            ${imagem}
+        </span>
+    `;
+}
 }
 
 
@@ -1979,22 +2041,27 @@ function atualizarTabelaMensal() {
 
                             <td>
 
-                                <div
-                                    class="
-                                        ranking-table-person
-                                    "
-                                >
+                                <div class="ranking-table-person">
 
-                                    <strong>
-                                        ${nome}
-                                    </strong>
+    ${criarAvatarTabelaRanking(
+        nome,
+        item.funcionario?.avatar_url
+    )}
 
-                                    <small>
-                                        Matrícula:
-                                        ${matricula}
-                                    </small>
+    <div class="ranking-table-person-info">
 
-                                </div>
+        <strong>
+            ${nome}
+        </strong>
+
+        <small>
+            Matrícula:
+            ${matricula}
+        </small>
+
+    </div>
+
+</div>
 
                             </td>
 
