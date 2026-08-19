@@ -134,12 +134,6 @@ let removerAvatarAtual = false;
 
 async function verificarSessao() {
 
-// =====================================================
-// VERIFICA SESSÃO
-// =====================================================
-
-async function verificarSessao() {
-
     const {
         data,
         error
