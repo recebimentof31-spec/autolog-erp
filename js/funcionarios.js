@@ -134,7 +134,39 @@ let removerAvatarAtual = false;
 
 async function verificarSessao() {
 
-    // =====================================================
+// =====================================================
+// VERIFICA SESSÃO
+// =====================================================
+
+async function verificarSessao() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+    if (
+        error ||
+        !data.session
+    ) {
+
+        window.location.href =
+            "index.html";
+
+        return false;
+    }
+
+    usuarioAuthAtual =
+        data.session.user;
+
+    return true;
+}
+
+
+// =====================================================
 // CARREGA PERFIL DO USUÁRIO
 // =====================================================
 
@@ -143,7 +175,6 @@ async function carregarPerfilUsuarioAtual() {
     if (!usuarioAuthAtual) {
         return false;
     }
-
 
     const {
         data,
@@ -165,7 +196,6 @@ async function carregarPerfilUsuarioAtual() {
             )
             .maybeSingle();
 
-
     if (error) {
 
         console.error(
@@ -176,7 +206,6 @@ async function carregarPerfilUsuarioAtual() {
         return false;
     }
 
-
     if (!data) {
 
         console.warn(
@@ -186,10 +215,8 @@ async function carregarPerfilUsuarioAtual() {
         return false;
     }
 
-
     perfilUsuarioAtual =
         data;
-
 
     const papel =
         String(
@@ -197,7 +224,6 @@ async function carregarPerfilUsuarioAtual() {
         )
             .trim()
             .toLowerCase();
-
 
     usuarioEhAdministrador =
         data.ativo === true
@@ -208,38 +234,7 @@ async function carregarPerfilUsuarioAtual() {
             papel === "administrador"
         );
 
-
     return true;
-}
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .auth
-            .getSession();
-
-
-    if (
-        error ||
-        !data.session
-    ) {
-
-        window.location.href =
-            "index.html";
-
-        return false;
-
-    }
-
-
-    usuarioAuthAtual =
-        data.session.user;
-
-
-    return true;
-
 }
 
 
