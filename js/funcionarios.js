@@ -164,7 +164,7 @@ async function verificarSessao() {
 // CARREGA PERFIL DO USUÁRIO
 // =====================================================
 
-async function carregarPerfilUsuarioAtual() {
+async function carregarPerfilPermissoesFuncionarios() {
 
     if (!usuarioAuthAtual) {
         return false;
@@ -2366,7 +2366,7 @@ document.addEventListener(
 
 
         const perfilCarregado =
-            await carregarPerfilUsuarioAtual();
+            await carregarPerfilPermissoesFuncionarios();
 
 
         if (!perfilCarregado) {
