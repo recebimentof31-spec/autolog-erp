@@ -670,20 +670,6 @@ function criarCardPodio(
         `;
     }
 
-
-    let medalha =
-        "🥉";
-
-
-    if (posicao === 1) {
-        medalha = "🥇";
-    }
-
-    if (posicao === 2) {
-        medalha = "🥈";
-    }
-
-
     return `
         <article
             class="
@@ -692,21 +678,11 @@ function criarCardPodio(
             "
         >
 
-            <div
-                class="
-                    podium-medal
-                "
-            >
-                ${medalha}
-            </div>
-
-            <span
-                class="
-                    podium-position
-                "
-            >
-                ${posicao}º lugar
-            </span>
+            ${criarAvatarPodio(
+    colaborador.nome,
+    colaborador.avatar_url,
+    posicao
+)}
 
             <strong
                 class="
@@ -1725,31 +1701,6 @@ function criarCardPodioMensal(
         `;
     }
 
-
-    let medalha =
-        "🥉";
-
-
-    if (
-        posicao === 1
-    ) {
-
-        medalha =
-            "🥇";
-
-    }
-
-
-    if (
-        posicao === 2
-    ) {
-
-        medalha =
-            "🥈";
-
-    }
-
-
     const nome =
         item.funcionario?.nome
         || "Funcionário";
@@ -1783,13 +1734,11 @@ function criarCardPodioMensal(
             "
         >
 
-            <div class="podium-medal">
-                ${medalha}
-            </div>
-
-            <span class="podium-position">
-                ${posicao}º lugar
-            </span>
+            ${criarAvatarPodio(
+    nome,
+    item.funcionario?.avatar_url,
+    posicao
+)}
 
             <strong class="podium-name">
                 ${nome}
