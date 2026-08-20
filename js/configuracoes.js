@@ -4,14 +4,129 @@
 
 document.addEventListener("DOMContentLoaded", async () => {
 
+    const acessoPermitido =
+        await verificarAcessoAdministradorConfiguracoes();
+
+
+    if (!acessoPermitido) {
+
+        return;
+
+    }
+
+
     await carregarConfiguracoesSupabase();
 
     configurarEventosConfiguracoes();
 
 });
 
+
 let configuracaoId = null;
 
+// =====================================================
+// VERIFICA PERMISSÃO DE ADMINISTRADOR
+// =====================================================
+
+async function verificarAcessoAdministradorConfiguracoes() {
+
+    try {
+
+        const {
+            data: usuarioData,
+            error: usuarioErro
+        } = await supabaseClient.auth.getUser();
+
+
+        if (
+            usuarioErro
+            ||
+            !usuarioData?.user
+        ) {
+
+            window.location.href =
+                "index.html";
+
+            return false;
+
+        }
+
+
+        const {
+            data: perfil,
+            error: perfilErro
+        } = await supabaseClient
+            .from("perfis_usuario")
+            .select(`
+                papel,
+                ativo
+            `)
+            .eq(
+                "auth_user_id",
+                usuarioData.user.id
+            )
+            .maybeSingle();
+
+
+        if (perfilErro) {
+
+            throw perfilErro;
+
+        }
+
+
+        const papel =
+            String(
+                perfil?.papel ?? ""
+            )
+            .trim()
+            .toLowerCase();
+
+
+        const administradorAtivo =
+            perfil?.ativo === true
+            &&
+            papel === "admin";
+
+
+        if (!administradorAtivo) {
+
+            alert(
+                "Acesso permitido somente para administradores."
+            );
+
+            window.location.href =
+                "dashboard.html";
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao verificar acesso às configurações:",
+            erro
+        );
+
+
+        alert(
+            "Não foi possível verificar sua permissão de acesso."
+        );
+
+        window.location.href =
+            "dashboard.html";
+
+        return false;
+
+    }
+
+}
 
 // =====================================================
 // CARREGA CONFIGURAÇÕES DO SUPABASE
