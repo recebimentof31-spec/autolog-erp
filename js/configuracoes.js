@@ -231,17 +231,9 @@ async function salvarConfiguracoesSupabase() {
             )
             || null,
 
-        pontuacao_maxima:
-            Number(
-                obterCampo(
-                    "configPontuacaoMaxima"
-                )
-            ),
+        pontuacao_maxima: 100,
 
-        periodicidade:
-            obterCampo(
-                "configPeriodicidade"
-            ),
+        periodicidade: "semanal",
 
         semanas_mes:
             Number(
@@ -313,6 +305,21 @@ async function salvarConfiguracoesSupabase() {
         return;
 
     }
+
+    if (
+    !Number.isInteger(dados.semanas_mes)
+    ||
+    ![4, 5].includes(dados.semanas_mes)
+) {
+
+    mostrarMensagemConfiguracoes(
+        "A quantidade de semanas deve ser 4 ou 5.",
+        "erro"
+    );
+
+    return;
+
+}
 
 
     try {
