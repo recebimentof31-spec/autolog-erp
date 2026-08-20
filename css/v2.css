@@ -5422,3 +5422,27 @@ body.app-v2 {
     color: #ff7518;
     transform: translateX(2px);
 }
+
+/* =========================================
+   CORES DO RESUMO DAS AVALIAÇÕES
+========================================= */
+
+.status-dot.excellent {
+    background-color: #39e58c;
+}
+
+.status-dot.very-good {
+    background-color: #6375ff;
+}
+
+.status-dot.good {
+    background-color: #f4c542;
+}
+
+.status-dot.warning {
+    background-color: #ff7a1a;
+}
+
+.status-dot.critical {
+    background-color: #ff5c5c;
+}
