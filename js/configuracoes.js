@@ -321,6 +321,28 @@ async function salvarConfiguracoesSupabase() {
 
 }
 
+const emailValido =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+if (
+    dados.email
+    &&
+    !emailValido.test(dados.email)
+) {
+
+    mostrarMensagemConfiguracoes(
+        "Informe um endereço de e-mail válido.",
+        "erro"
+    );
+
+    document
+        .getElementById("configEmail")
+        ?.focus();
+
+    return;
+
+}
 
     try {
 
