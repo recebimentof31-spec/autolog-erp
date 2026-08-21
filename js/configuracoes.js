@@ -222,9 +222,9 @@ async function carregarConfiguracoesSupabase() {
 
 
         preencherCampo(
-            "configNotaMinima",
-            data.nota_minima
-        );
+    "configNotaMinima",
+    70
+);
 
 
         preencherCheckbox(
@@ -357,12 +357,7 @@ async function salvarConfiguracoesSupabase() {
                 )
             ),
 
-        nota_minima:
-            Number(
-                obterCampo(
-                    "configNotaMinima"
-                )
-            ),
+        nota_minima: 70,
 
         confirmar_exclusao:
             obterCheckbox(
