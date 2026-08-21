@@ -5446,3 +5446,15 @@ body.app-v2 {
 .status-dot.critical {
     background-color: #ff5c5c;
 }
+
+/* =========================================
+   DESTAQUE DE DESEMPENHO CRÍTICO
+========================================= */
+
+.ranking-row-critico td {
+    background-color: rgba(255, 92, 92, 0.07);
+}
+
+.ranking-row-critico td:first-child {
+    box-shadow: inset 3px 0 0 #ff5c5c;
+}

@@ -1,6 +1,12 @@
-let configuracaoRanking = {
-    pontuacaoMaxima: 100,
-    notaMinima: 70
+configuracaoRanking = {
+    pontuacaoMaxima:
+        Number(data.pontuacao_maxima) || 100,
+
+    notaMinima:
+        Number(data.nota_minima) || 70,
+
+    destacarCriticos:
+        data.destacar_criticos !== false
 };
 
 async function carregarConfiguracaoRanking() {
@@ -10,9 +16,10 @@ async function carregarConfiguracaoRanking() {
         const { data, error } = await supabaseClient
             .from("configuracoes")
             .select(`
-                pontuacao_maxima,
-                nota_minima
-            `)
+    pontuacao_maxima,
+    nota_minima,
+    destacar_criticos
+`)
             .limit(1)
             .maybeSingle();
 
@@ -857,11 +864,24 @@ function atualizarTabela(ranking) {
                 ) => {
 
                     const posicao =
-                        indice + 1;
+    indice + 1;
 
 
-                    return `
-                        <tr>
+const destacarLinhaCritica =
+    configuracaoRanking.destacarCriticos
+    &&
+    colaborador.classificacao === "CRÍTICO";
+
+
+return `
+    <tr
+        class="${
+            destacarLinhaCritica
+                ? "ranking-row-critico"
+                : ""
+        }"
+    >
+
 
                             <td>
                                 <span
@@ -2016,14 +2036,26 @@ function atualizarTabelaMensal() {
 
 
                     const status =
-                        String(
-                            item.status
-                            || ""
-                        ).toUpperCase();
+    String(
+        item.status
+        || ""
+    ).toUpperCase();
 
 
-                    return `
-                        <tr>
+const destacarLinhaCritica =
+    configuracaoRanking.destacarCriticos
+    &&
+    classificacao === "CRÍTICO";
+
+
+return `
+    <tr
+        class="${
+            destacarLinhaCritica
+                ? "ranking-row-critico"
+                : ""
+        }"
+    >
 
                             <td>
 
