@@ -238,24 +238,75 @@ async function carregarPerfilPermissoesFuncionarios() {
 
 async function carregarFuncionarios() {
 
+    let mostrarInativos =
+        false;
+
+
+    try {
+
+        const {
+            data: configuracao,
+            error: configuracaoErro
+        } = await supabaseClient
+            .from("configuracoes")
+            .select("mostrar_inativos")
+            .limit(1)
+            .maybeSingle();
+
+
+        if (configuracaoErro) {
+
+            throw configuracaoErro;
+
+        }
+
+
+        if (configuracao) {
+
+            mostrarInativos =
+                configuracao.mostrar_inativos === true;
+
+        }
+
+    }
+
+    catch (erro) {
+
+        console.warn(
+            "Não foi possível consultar a exibição de inativos:",
+            erro
+        );
+
+    }
+
+
+    let consulta =
+        supabaseClient
+            .from("funcionarios")
+            .select("*");
+
+
+    if (!mostrarInativos) {
+
+        consulta =
+            consulta.eq(
+                "status",
+                "Ativo"
+            );
+
+    }
+
+
     const {
         data,
         error
-    } =
-        await supabaseClient
-
-            .from(
-                "funcionarios"
-            )
-
-            .select("*")
-
-            .order(
-                "nome",
-                {
-                    ascending: true
-                }
-            );
+    } = await consulta
+        .order(
+            "nome",
+            {
+                ascending: true
+            }
+        );
 
 
     if (error) {
