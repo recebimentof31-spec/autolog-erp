@@ -1839,19 +1839,63 @@ async function excluirFuncionario(
         "este funcionário";
 
 
-    const confirmar =
+    let deveConfirmarExclusao =
+    true;
+
+
+try {
+
+    const {
+        data: configuracao,
+        error: configuracaoErro
+    } = await supabaseClient
+        .from("configuracoes")
+        .select("confirmar_exclusao")
+        .limit(1)
+        .maybeSingle();
+
+
+    if (configuracaoErro) {
+
+        throw configuracaoErro;
+
+    }
+
+
+    if (configuracao) {
+
+        deveConfirmarExclusao =
+            configuracao.confirmar_exclusao !== false;
+
+    }
+
+}
+
+catch (erro) {
+
+    console.warn(
+        "Não foi possível consultar a confirmação de exclusão:",
+        erro
+    );
+
+}
+
+
+if (deveConfirmarExclusao) {
+
+    const confirmouExclusao =
         confirm(
             `Deseja realmente excluir ${nome}?`
         );
 
 
-    if (
-        !confirmar
-    ) {
+    if (!confirmouExclusao) {
 
         return;
 
     }
+
+}
 
 
     const {
