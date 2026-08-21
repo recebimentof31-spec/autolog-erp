@@ -1,12 +1,7 @@
-configuracaoRanking = {
-    pontuacaoMaxima:
-        Number(data.pontuacao_maxima) || 100,
-
-    notaMinima:
-        Number(data.nota_minima) || 70,
-
-    destacarCriticos:
-        data.destacar_criticos !== false
+let configuracaoRanking = {
+    pontuacaoMaxima: 100,
+    notaMinima: 70,
+    destacarCriticos: true
 };
 
 async function carregarConfiguracaoRanking() {
@@ -30,12 +25,15 @@ async function carregarConfiguracaoRanking() {
         if (data) {
 
             configuracaoRanking = {
-                pontuacaoMaxima:
-                    Number(data.pontuacao_maxima) || 100,
+    pontuacaoMaxima:
+        Number(data.pontuacao_maxima) || 100,
 
-                notaMinima:
-                    Number(data.nota_minima) || 70
-            };
+    notaMinima:
+        Number(data.nota_minima) || 70,
+
+    destacarCriticos:
+        data.destacar_criticos !== false
+};
 
         }
 
