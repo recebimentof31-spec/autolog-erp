@@ -146,7 +146,6 @@ async function carregarConfiguracoesSupabase() {
                 email,
                 pontuacao_maxima,
                 periodicidade,
-                semanas_mes,
                 nota_minima,
                 confirmar_exclusao,
                 mostrar_inativos,
@@ -212,12 +211,6 @@ async function carregarConfiguracoesSupabase() {
         preencherCampo(
             "configPeriodicidade",
             data.periodicidade
-        );
-
-
-        preencherCampo(
-            "configSemanasMes",
-            data.semanas_mes
         );
 
 
@@ -350,13 +343,6 @@ async function salvarConfiguracoesSupabase() {
 
         periodicidade: "semanal",
 
-        semanas_mes:
-            Number(
-                obterCampo(
-                    "configSemanasMes"
-                )
-            ),
-
         nota_minima: 70,
 
         confirmar_exclusao:
@@ -416,20 +402,6 @@ async function salvarConfiguracoesSupabase() {
 
     }
 
-    if (
-    !Number.isInteger(dados.semanas_mes)
-    ||
-    ![4, 5].includes(dados.semanas_mes)
-) {
-
-    mostrarMensagemConfiguracoes(
-        "A quantidade de semanas deve ser 4 ou 5.",
-        "erro"
-    );
-
-    return;
-
-}
 
 const emailValido =
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
