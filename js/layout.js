@@ -123,6 +123,14 @@ Visão Geral
 
         <div class="v2-sidebar-bottom">
 
+        <button
+    type="button"
+    id="botaoSair"
+    class="v2-logout-button"
+>
+    <span aria-hidden="true">↪</span>
+    Sair do sistema
+</button>
 
             <div class="v2-status">
 
@@ -150,6 +158,15 @@ Visão Geral
    // Busca perfil e permissões após montar o layout
 carregarPerfilUsuarioAtual();
 
+const botaoSair =
+    document.getElementById("botaoSair");
+
+if (botaoSair) {
+    botaoSair.addEventListener(
+        "click",
+        sairDoSistema
+    );
+}
 
 }
 
@@ -634,3 +651,61 @@ function usuarioEhLider() {
 // CARREGAR USUÁRIO CONECTADO NA SIDEBAR
 // =====================================================
 
+// =====================================================
+// SAIR DO SISTEMA
+// =====================================================
+
+async function sairDoSistema() {
+
+    const confirmar =
+        window.confirm(
+            "Deseja realmente sair do sistema?"
+        );
+
+    if (!confirmar) {
+        return;
+    }
+
+    const botao =
+        document.getElementById("botaoSair");
+
+    if (botao) {
+        botao.disabled = true;
+        botao.textContent = "Saindo...";
+    }
+
+    try {
+
+        const { error } =
+            await supabaseClient
+                .auth
+                .signOut();
+
+        if (error) {
+            throw error;
+        }
+
+        window.location.replace(
+            "index.html"
+        );
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao sair do sistema:",
+            erro
+        );
+
+        alert(
+            "Não foi possível encerrar a sessão. Tente novamente."
+        );
+
+        if (botao) {
+            botao.disabled = false;
+            botao.innerHTML =
+                '<span aria-hidden="true">↪</span> Sair do sistema';
+        }
+
+    }
+
+}
