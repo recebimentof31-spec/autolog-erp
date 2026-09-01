@@ -5458,3 +5458,56 @@ body.app-v2 {
 .ranking-row-critico td:first-child {
     box-shadow: inset 3px 0 0 #ff5c5c;
 }
+
+/* =====================================================
+   BOTÃO SAIR
+===================================================== */
+
+.v2-logout-button {
+    width: 100%;
+    min-height: 42px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    border: 1px solid rgba(255, 115, 23, 0.28);
+    border-radius: 10px;
+
+    color: #cbd5e1;
+    background: rgba(255, 115, 23, 0.06);
+
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+
+    cursor: pointer;
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.v2-logout-button span {
+    color: #ff7317;
+    font-size: 18px;
+}
+
+.v2-logout-button:hover {
+    color: #ffffff;
+    border-color: rgba(255, 115, 23, 0.65);
+    background: rgba(255, 115, 23, 0.14);
+}
+
+.v2-logout-button:focus-visible {
+    outline: 2px solid #ff7317;
+    outline-offset: 2px;
+}
+
+.v2-logout-button:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
