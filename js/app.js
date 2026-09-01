@@ -669,3 +669,49 @@ document.addEventListener(
 
     }
 );
+
+// =====================================================
+// AVISO DE CAPS LOCK
+// =====================================================
+
+(() => {
+
+    const campoSenhaCapsLock =
+        document.getElementById("senha");
+
+    const avisoCapsLock =
+        document.getElementById("capsLockAviso");
+
+    if (!campoSenhaCapsLock || !avisoCapsLock) {
+        return;
+    }
+
+    function atualizarAvisoCapsLock(event) {
+
+        const ativado =
+            event.getModifierState?.("CapsLock")
+            ?? false;
+
+        avisoCapsLock.hidden =
+            !ativado;
+
+    }
+
+    campoSenhaCapsLock.addEventListener(
+        "keydown",
+        atualizarAvisoCapsLock
+    );
+
+    campoSenhaCapsLock.addEventListener(
+        "keyup",
+        atualizarAvisoCapsLock
+    );
+
+    campoSenhaCapsLock.addEventListener(
+        "blur",
+        () => {
+            avisoCapsLock.hidden = true;
+        }
+    );
+
+})();
