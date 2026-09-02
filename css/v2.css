@@ -2422,7 +2422,30 @@ body.app-v2 {
    ========================================================= */
 
 .fechamento-header-card {
+    width: 100%;
+    min-width: 0;
     margin-bottom: 16px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.fechamento-header-grid {
+    width: 100%;
+    min-width: 0;
+}
+
+.fechamento-header-grid > * {
+    min-width: 0;
+}
+
+.fechamento-header-grid h2 {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.fechamento-header-grid p {
+    max-width: 100%;
+    overflow-wrap: break-word;
 }
 
 .fechamento-header-grid {
@@ -2561,6 +2584,10 @@ body.app-v2 {
 }
 
 @media (max-width: 700px) {
+    
+    .fechamento-header-card {
+    padding: 16px;
+}
 
     .fechamento-kpis {
         grid-template-columns: 1fr;
@@ -2573,6 +2600,7 @@ body.app-v2 {
     .relatorio-tab {
         flex: 1;
     }
+    
 
 }
 /* =========================================================
