@@ -2518,15 +2518,149 @@ async function fecharMesColaborador(fechamentoId) {
         );
 
 
-    const confirmar =
-        window.confirm(
-            `Deseja finalizar o fechamento mensal de ${nome} referente a ${periodo}?`
-        );
+   // =====================================================
+// VALIDAÇÕES ANTES DO FECHAMENTO
+// =====================================================
+
+const anoFechamento =
+    Number(fechamento.ano);
+
+const mesFechamento =
+    Number(fechamento.mes);
+
+const competenciaFechamento =
+    `${anoFechamento}-${String(
+        mesFechamento
+    ).padStart(2, "0")}`;
 
 
-    if (!confirmar) {
-        return;
-    }
+const semanasAvaliadas =
+    new Set(
+
+        relatorioBase
+
+            .filter(avaliacao => {
+
+                const mesmoFuncionario =
+                    String(
+                        avaliacao.funcionario_id
+                    )
+                    ===
+                    String(
+                        fechamento.funcionario_id
+                    );
+
+
+                const mesmaCompetencia =
+                    String(
+                        avaliacao.competencia
+                        || ""
+                    ).slice(0, 7)
+                    ===
+                    competenciaFechamento;
+
+
+                const statusEnviado =
+                    String(
+                        avaliacao.status
+                        || ""
+                    ).toLowerCase()
+                    ===
+                    "enviada";
+
+
+                return (
+                    mesmoFuncionario
+                    &&
+                    mesmaCompetencia
+                    &&
+                    statusEnviado
+                );
+
+            })
+
+            .map(avaliacao =>
+                String(
+                    avaliacao.semana
+                    || avaliacao.id
+                )
+            )
+
+    );
+
+
+const quantidadeAvaliacoes =
+    semanasAvaliadas.size;
+
+
+const agora =
+    new Date();
+
+
+const fimDaCompetencia =
+    new Date(
+        anoFechamento,
+        mesFechamento,
+        0,
+        23,
+        59,
+        59,
+        999
+    );
+
+
+const mesAindaNaoTerminou =
+    agora < fimDaCompetencia;
+
+
+const avisos = [];
+
+
+if (mesAindaNaoTerminou) {
+
+    avisos.push(
+        "• A competência selecionada ainda não terminou."
+    );
+
+}
+
+
+if (quantidadeAvaliacoes < 4) {
+
+    avisos.push(
+        `• Existem somente ${quantidadeAvaliacoes} de 4 avaliações semanais recomendadas.`
+    );
+
+}
+
+
+let mensagemConfirmacao =
+    `Deseja finalizar o fechamento mensal de ${nome} referente a ${periodo}?`;
+
+
+if (avisos.length > 0) {
+
+    mensagemConfirmacao =
+        `ATENÇÃO:\n\n`
+        +
+        avisos.join("\n")
+        +
+        `\n\nO fechamento ficará protegido e será usado no Ranking oficial.`
+        +
+        `\n\nDeseja continuar mesmo assim?`;
+
+}
+
+
+const confirmar =
+    window.confirm(
+        mensagemConfirmacao
+    );
+
+
+if (!confirmar) {
+    return;
+}
 
 
     try {
