@@ -2970,6 +2970,7 @@ body.app-v2 {
 
 .fechamento-modal-btn-secundario:hover {
     background: #1b2026;
+
 }
 
 .fechamento-btn-detalhes {
@@ -2989,6 +2990,46 @@ body.app-v2 {
 
 .fechamento-btn-detalhes:hover {
     background: rgba(255, 115, 23, 0.18);
+}
+
+/* =====================================================
+   AÇÕES DO FECHAMENTO
+===================================================== */
+
+.fechamento-acoes {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.fechamento-btn-reabrir {
+    display: none;
+    padding: 7px 12px;
+
+    border: 1px solid rgba(148, 163, 184, 0.30);
+    border-radius: 7px;
+
+    background: rgba(148, 163, 184, 0.08);
+    color: #aeb8c6;
+
+    font: inherit;
+    font-size: 9px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+body[data-admin="true"] .fechamento-btn-reabrir {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fechamento-btn-reabrir:hover {
+    color: #ffffff;
+    border-color: rgba(255, 115, 23, 0.50);
+    background: rgba(255, 115, 23, 0.12);
 }
 
 @media (max-width: 900px) {

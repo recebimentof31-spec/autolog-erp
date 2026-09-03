@@ -2290,14 +2290,26 @@ function atualizarTabelaFechamento() {
                                 === "fechado"
 
                                     ? `
-                                        <button
-                                            type="button"
-                                            class="fechamento-btn-detalhes"
-                                            onclick="abrirDetalhesFechamento('${item.id}')"
-                                        >
-                                            Ver detalhes
-                                        </button>
-                                    `
+    <div class="fechamento-acoes">
+
+        <button
+            type="button"
+            class="fechamento-btn-detalhes"
+            onclick="abrirDetalhesFechamento('${item.id}')"
+        >
+            Ver detalhes
+        </button>
+
+        <button
+            type="button"
+            class="fechamento-btn-reabrir"
+            onclick="reabrirFechamentoMensal('${item.id}')"
+        >
+            Reabrir
+        </button>
+
+    </div>
+`
 
                                     : `
                                         <button
@@ -2466,6 +2478,159 @@ function mostrarErroFechamento() {
 
             </tr>
         `;
+    }
+
+}
+
+// =====================================================
+// REABRE FECHAMENTO MENSAL
+// SOMENTE ADMINISTRADOR
+// =====================================================
+
+async function reabrirFechamentoMensal(
+    fechamentoId
+) {
+
+    if (!fechamentoId) {
+        return;
+    }
+
+
+    const ehAdmin =
+        typeof usuarioEhAdmin === "function"
+        &&
+        usuarioEhAdmin();
+
+
+    if (!ehAdmin) {
+
+        alert(
+            "Apenas administradores podem reabrir um fechamento."
+        );
+
+        return;
+    }
+
+
+    const fechamento =
+        fechamentoMensalBase.find(
+            item =>
+                String(item.id)
+                ===
+                String(fechamentoId)
+        );
+
+
+    if (!fechamento) {
+
+        alert(
+            "Fechamento não encontrado."
+        );
+
+        return;
+    }
+
+
+    const statusAtual =
+        String(
+            fechamento.status
+            || ""
+        ).toLowerCase();
+
+
+    if (statusAtual !== "fechado") {
+
+        alert(
+            "Este fechamento já está aberto."
+        );
+
+        return;
+    }
+
+
+    const nome =
+        fechamento.funcionario?.nome
+        || "este colaborador";
+
+
+    const periodo =
+        formatarCompetenciaFechamento(
+            fechamento.ano,
+            fechamento.mes
+        );
+
+
+    const confirmar =
+        window.confirm(
+            `Deseja reabrir o fechamento mensal de ${nome} referente a ${periodo}?\n\n`
+            +
+            `O resultado será removido temporariamente do Ranking oficial e voltará a ser atualizado pelas avaliações semanais.`
+        );
+
+
+    if (!confirmar) {
+        return;
+    }
+
+
+    try {
+
+        const { error } =
+            await supabaseClient
+
+                .from(
+                    "fechamentos_mensais"
+                )
+
+                .update({
+
+                    status:
+                        "aberto",
+
+                    fechado_em:
+                        null,
+
+                    fechado_por:
+                        null,
+
+                    updated_at:
+                        new Date()
+                            .toISOString()
+
+                })
+
+                .eq(
+                    "id",
+                    fechamentoId
+                );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        alert(
+            "Fechamento reaberto com sucesso."
+        );
+
+
+        await carregarFechamentoMensal();
+
+    }
+
+    catch (erro) {
+
+        console.error(
+            "Erro ao reabrir fechamento:",
+            erro
+        );
+
+
+        alert(
+            "Não foi possível reabrir o fechamento."
+        );
+
     }
 
 }
